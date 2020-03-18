@@ -1,7 +1,7 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: altinnproxy
+  name: altinn-rettigheter-proxy
   namespace: default
   labels:
     team: arbeidsgiver
@@ -10,7 +10,7 @@ spec:
   team: arbeidsgiver
   port: 8080
   ingresses:
-    - https://arbeidsgiver.nais.preprod.local/altinnproxy/
+    - https://arbeidsgiver.nais.preprod.local/altinn-rettigheter-proxy/
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
