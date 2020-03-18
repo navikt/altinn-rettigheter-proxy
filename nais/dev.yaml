@@ -1,0 +1,21 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: altinnproxy
+  namespace: default
+  labels:
+    team: arbeidsgiver
+spec:
+  image: {{ image }}
+  team: arbeidsgiver
+  port: 8080
+  ingresses:
+    - https://arbeidsgiver.nais.preprod.local/altinnproxy/
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: dev
+  vault:
+    enabled: true
+    paths:
+      - mountPath: /var/run/secrets/nais.io/vault
+        kvPath: /kv/preprod/fss/altinnproxy/default

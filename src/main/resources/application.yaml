@@ -1,0 +1,45 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /altinn-rettigheter-proxy
+
+management.endpoints.web:
+  exposure.include: info, health, metrics, prometheus
+  base-path: /internal/actuator
+
+spring:
+  profiles:
+    active: local
+
+---
+
+spring:
+  profiles: local
+
+mock:
+  enabled: true
+  port: 8081
+  aktorPort: 8082
+
+altinn:
+  url: "http://localhost:${mock.port}/altinn/"
+  apikey: "test"
+  apigw.apikey: "test"
+  iaweb.service:
+    code: 3403
+    edition: 1
+
+
+---
+
+spring:
+  profiles: dev
+
+altinn:
+  url: "https://api-gw-q1.adeo.no/"
+  apikey: ${ALTINN_APIKEY}
+  apigw.apikey: ${ALTINN_APIGW_APIKEY}
+  iaweb.service:
+    code: 3403
+    edition: 1
+
