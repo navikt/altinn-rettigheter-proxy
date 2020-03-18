@@ -10,7 +10,7 @@ class AltinnrettigheterProxyController (val altinnrettigheterProxyService: Altin
     @GetMapping(value= ["/organisasjoner"])
     fun hentOrganisasjoner(): List<AltinnOrganisasjon> {
         val organisasjoner = altinnrettigheterProxyService.hentOrganisasjoner("")
-        println("Organisasjoner: $organisasjoner")
+        println("Organisasjoner: $organisasjoner" )
         return organisasjoner
     }
 
