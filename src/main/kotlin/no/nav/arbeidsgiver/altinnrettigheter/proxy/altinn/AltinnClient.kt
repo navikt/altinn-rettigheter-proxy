@@ -55,8 +55,7 @@ class AltinnClient(val restTemplate: RestTemplate) {
             }
             respons.body!!
         } catch (exception: RestClientException) {
-            //throw AltinnException("Feil ved kall til Altinn", exception) // DOES NOT WORK!
-            throw exception
+            throw AltinnException("Feil ved kall til Altinn", exception)
         }
 
     }
