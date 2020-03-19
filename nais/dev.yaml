@@ -11,11 +11,17 @@ spec:
   port: 8080
   ingresses:
     - https://arbeidsgiver.nais.preprod.local/altinn-rettigheter-proxy/
-  env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: dev
+  liveness:
+    path: /altinn-rettigheter-proxy/internal/healthcheck
+    initialDelay: 30
+  readiness:
+    path: /altinn-rettigheter-proxy/internal/healthcheck
+    initialDelay: 30
   vault:
     enabled: true
     paths:
       - mountPath: /var/run/secrets/nais.io/vault
         kvPath: /kv/preprod/fss/altinnproxy/default
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: dev
