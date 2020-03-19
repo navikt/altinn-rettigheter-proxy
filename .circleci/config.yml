@@ -53,6 +53,7 @@ jobs:
           nais-template: nais/prod.yaml
           environment: prod-fss
           team: arbeidsgiver
+
 workflows:
   version: 2.1
   bygg_og_deploy:
@@ -67,10 +68,23 @@ workflows:
             branches:
               only:
                 - master
+      - godkjenn-til-dev:
+          type: approval
+          filters:
+            branches:
+              ignore:
+                - master
+      - deploy-til-dev:
+          context: tag-ci
+          requires:
+            - godkjenn-til-dev
+            - bygg
+          filters:
+            branches:
+              ignore:
+                - master
       - godkjenn-til-prod:
           type: approval
-          requires:
-            - bygg
           filters:
             branches:
               only:
@@ -79,8 +93,8 @@ workflows:
           context: tag-ci
           requires:
             - godkjenn-til-prod
+            - bygg
           filters:
             branches:
               only:
                 - master
-
