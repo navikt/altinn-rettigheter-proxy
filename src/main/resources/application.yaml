@@ -37,9 +37,22 @@ spring:
 
 altinn:
   url: "https://api-gw-q1.adeo.no/"
-  apikey: ${ALTINN_APIKEY}
-  apigw.apikey: ${ALTINN_APIGW_APIKEY}
+  apikey: "test"
+  apigw.apikey: "test"
   iaweb.service:
     code: 3403
     edition: 1
 
+
+---
+
+spring:
+  profiles: prod
+
+altinn:
+  url: "https://api-gw.adeo.no/"
+  apikey: "test"
+  apigw.apikey: "test"
+  iaweb.service:
+    code: 3403
+    edition: 2
