@@ -23,6 +23,36 @@ jobs:
     - nais/docker:
         image: navikt/altinn-rettigheter-proxy
 
+  deploy-til-dev:
+    docker:
+      - image: navikt/deployment-cli:0.4.2
+    steps:
+      - checkout
+      - run:
+          name: Unpack Private Key
+          command: echo $GITHUB_PRIVATE_KEY | base64 -d > .circleci/github.key.pem
+      - nais/deploy-with-gh-app:
+          repo: navikt/altinn-rettigheter-proxy
+          image: navikt/altinn-rettigheter-proxy
+          github-app-id: 43789
+          nais-template: nais/dev.yaml
+          environment: dev-fss
+          team: arbeidsgiver
+  deploy-til-prod:
+    docker:
+      - image: navikt/deployment-cli:0.4.2
+    steps:
+      - checkout
+      - run:
+          name: Unpack Private Key
+          command: echo $GITHUB_PRIVATE_KEY | base64 -d > .circleci/github.key.pem
+      - nais/deploy-with-gh-app:
+          repo: navikt/altinn-rettigheter-proxy
+          image: navikt/altinn-rettigheter-proxy
+          github-app-id: 43789
+          nais-template: nais/prod.yaml
+          environment: prod-fss
+          team: arbeidsgiver
 workflows:
   version: 2.1
   bygg_og_deploy:
