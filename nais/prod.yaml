@@ -10,7 +10,7 @@ spec:
   team: arbeidsgiver
   port: 8080
   ingresses:
-    - https://arbeidsgiver.nais.preprod.local/altinn-rettigheter-proxy/
+    - https://arbeidsgiver.nais.adeo.no/altinn-rettigheter-proxy/
   liveness:
     path: /altinn-rettigheter-proxy/internal/healthcheck
     initialDelay: 30
@@ -21,4 +21,4 @@ spec:
     enabled: true
   env:
     - name: SPRING_PROFILES_ACTIVE
-      value: dev
+      value: prod
