@@ -43,3 +43,16 @@ altinn:
     code: 3403
     edition: 1
 
+
+---
+
+spring:
+  profiles: prod
+
+altinn:
+  url: "https://api-gw.adeo.no/"
+  apikey: "test"
+  apigw.apikey: "test"
+  iaweb.service:
+    code: 3403
+    edition: 2
