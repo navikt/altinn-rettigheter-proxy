@@ -20,7 +20,7 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /kv/preprod/sbs/altinn-rettigheter-proxy/default
+      - kvPath: /kv/preprod/fss/altinn-rettigheter-proxy/default
         mountPath: /var/run/secrets/nais.io/vault
     env:
       - name: SPRING_PROFILES_ACTIVE
