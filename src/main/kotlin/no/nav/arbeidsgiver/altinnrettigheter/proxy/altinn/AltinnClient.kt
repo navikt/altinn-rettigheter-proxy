@@ -26,8 +26,8 @@ class AltinnClient(val restTemplate: RestTemplate) {
 
     fun hentOrgnumreDerBrukerHarEnkeltrettighetTilIAWeb(
             fnr: Fnr,
-            serviceCode: Int,
-            serviceEdition: Int
+            serviceCode: String,
+            serviceEdition: String
     ): List<AltinnOrganisasjon> {
         val uri: URI = UriComponentsBuilder.fromUriString(altinnUrl).pathSegment()
                 .pathSegment("ekstern", "altinn", "api", "serviceowner", "reportees")

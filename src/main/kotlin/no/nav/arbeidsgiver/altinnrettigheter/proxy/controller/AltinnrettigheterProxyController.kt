@@ -21,11 +21,11 @@ class AltinnrettigheterProxyController(val altinnrettigheterProxyService: Altinn
     @GetMapping(value = ["ekstern/altinn/api/serviceowner/reportees"])
     fun proxyOrganisasjoner(
             @RequestParam ForceEIAuthentication: String,
-            @RequestParam serviceCode: Int,
-            @RequestParam serviceEdition: Int,
+            @RequestParam serviceCode: String,
+            @RequestParam serviceEdition: String,
             @RequestParam subject: String
     ): List<AltinnOrganisasjon> {
-        logger.info("Mottat request for organisasjoner innlogget brukeren har rettigheter i")
+        logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
 
         val fnr = tilgangskotrollService.hentInnloggetBruker().fnr
 
