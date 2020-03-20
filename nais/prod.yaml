@@ -27,3 +27,4 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
+  webproxy: true
