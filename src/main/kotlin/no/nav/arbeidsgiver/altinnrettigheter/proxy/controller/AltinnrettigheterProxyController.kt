@@ -7,7 +7,6 @@ import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.Tilgangskont
 import no.nav.security.oidc.api.Protected
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
-import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -20,13 +19,18 @@ class AltinnrettigheterProxyController(val altinnrettigheterProxyService: Altinn
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @GetMapping(value = ["ekstern/altinn/api/serviceowner/reportees"])
-    fun proxyOrganisasjoner(@RequestParam allRequestParams: Map<String, String>, model: ModelMap): List<AltinnOrganisasjon> {
-        logger.info("Mottat request for organisasjoner innlogget brukeren har rettigheter i")
-        val fnrString = allRequestParams["subject"] ?: error("Mangler subject")
-        val kanInnloggetGjøreOppsalg = Fnr(fnrString) == tilgangskotrollService.hentInnloggetBruker().fnr
+    fun proxyOrganisasjoner(
+            @RequestParam ForceEIAuthentication: String,
+            @RequestParam serviceCode: String,
+            @RequestParam serviceEdition: String,
+            @RequestParam subject: String
+    ): List<AltinnOrganisasjon> {
+        logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
 
-        if (kanInnloggetGjøreOppsalg) {
-            return altinnrettigheterProxyService.hentOrganisasjoner(fnrString)
+        val fnr = tilgangskotrollService.hentInnloggetBruker().fnr
+
+        if (Fnr(subject) == fnr) {
+            return altinnrettigheterProxyService.hentOrganisasjoner(fnr, serviceCode, serviceEdition)
         } else {
             throw ResponseStatusException(
                     HttpStatus.FORBIDDEN, "Du har ikke rettigheter til denne")

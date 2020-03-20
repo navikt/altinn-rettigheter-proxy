@@ -1,7 +1,6 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
-import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnRolle
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
@@ -25,13 +24,17 @@ class AltinnClient(val restTemplate: RestTemplate) {
     @Value("\${altinn.iaweb.service.edition}")
     lateinit var iawebServiceEdition: String
 
-    fun hentOrgnumreDerBrukerHarEnkeltrettighetTilIAWeb(fnr: Fnr): List<AltinnOrganisasjon> {
+    fun hentOrgnumreDerBrukerHarEnkeltrettighetTilIAWeb(
+            fnr: Fnr,
+            serviceCode: String,
+            serviceEdition: String
+    ): List<AltinnOrganisasjon> {
         val uri: URI = UriComponentsBuilder.fromUriString(altinnUrl).pathSegment()
                 .pathSegment("ekstern", "altinn", "api", "serviceowner", "reportees")
                 .queryParam("ForceEIAuthentication")
                 .queryParam("subject", fnr.verdi)
-                .queryParam("serviceCode", iawebServiceCode)
-                .queryParam("serviceEdition", iawebServiceEdition)
+                .queryParam("serviceCode", serviceCode)
+                .queryParam("serviceEdition", serviceEdition)
                 .build()
                 .toUri()
 
