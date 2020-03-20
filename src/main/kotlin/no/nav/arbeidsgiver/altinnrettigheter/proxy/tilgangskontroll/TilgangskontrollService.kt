@@ -7,7 +7,7 @@ class TilgangskontrollService(val tokenUtils: TilgangskontrollUtils) {
 
     fun hentInnloggetBruker(): InnloggetBruker {
         return if (tokenUtils.erInnloggetSelvbetjeningBruker()) {
-            tokenUtils.hentInnloggetSelvbetjeningBruker()!!
+            tokenUtils.hentInnloggetSelvbetjeningBruker()
         } else {
             throw TilgangskontrollException("Innlogget bruker er ikke selvbetjeningsbruker")
         }

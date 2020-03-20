@@ -12,7 +12,7 @@ class TilgangskontrollUtils(private val oidcRequestContextHolder: OIDCRequestCon
 
     private val ISSUER_SELVBETJENING = "selvbetjening"
 
-    fun hentInnloggetSelvbetjeningBruker(): InnloggetBruker? {
+    fun hentInnloggetSelvbetjeningBruker(): InnloggetBruker {
         val fnr = hentClaim(ISSUER_SELVBETJENING, "sub")
                 .orElseThrow<RuntimeException> { TilgangskontrollException("Finner ikke fodselsnummer til bruker.") }
         return InnloggetBruker(Fnr(fnr ?: throw TilgangskontrollException("Finner ikke fodselsnummer til bruker.")))

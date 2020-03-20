@@ -25,11 +25,6 @@ class AltinnClient(val restTemplate: RestTemplate) {
     @Value("\${altinn.iaweb.service.edition}")
     lateinit var iawebServiceEdition: String
 
-
-    fun hentRoller(): AltinnRolle {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     fun hentOrgnumreDerBrukerHarEnkeltrettighetTilIAWeb(fnr: Fnr): List<AltinnOrganisasjon> {
         val uri: URI = UriComponentsBuilder.fromUriString(altinnUrl).pathSegment()
                 .pathSegment("ekstern", "altinn", "api", "serviceowner", "reportees")

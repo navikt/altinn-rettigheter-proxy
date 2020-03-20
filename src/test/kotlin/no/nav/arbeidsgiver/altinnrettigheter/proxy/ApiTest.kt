@@ -16,17 +16,11 @@ import java.net.http.HttpResponse.BodyHandlers
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = ["wiremock.mock.port=8083"])
-//@ActiveProfiles("test")
 class ApiTest {
 
     @LocalServerPort
     lateinit var port: String
 
-
-    @AfterEach
-    internal fun tearDown() {
-        //stopRedisMocked() : ref https://github.com/navikt/sosialhjelp-login-api/blob/94594bc49f561bff6a03e5d67e02047df97e9e34/src/main/kotlin/no/nav/sbl/sosialhjelp/login/api/redis/RedisMockUtil.kt
-    }
 
     @Test
     fun `Request med gyldig token og fnr som matcher subject får et svar`() {
