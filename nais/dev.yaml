@@ -23,7 +23,7 @@ spec:
       - kvPath: /kv/preprod/fss/altinn-rettigheter-proxy/default
         mountPath: /var/run/secrets/nais.io/vault
       - kvPath: /apikey/apigw/dev/eksternapp.altinn.serviceowner/altinn-rettigheter-proxy_q1
-        mountPath: /var/run/secrets/nais.io/vault
+        mountPath: /var/run/secrets/nais.io/altinn
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
