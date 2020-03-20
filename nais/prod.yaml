@@ -19,6 +19,11 @@ spec:
     initialDelay: 30
   vault:
     enabled: true
+    paths:
+      - kvPath: /kv/prod/fss/altinn-rettigheter-proxy/default
+        mountPath: /var/run/secrets/nais.io/vault
+      - kvPath: /apikey/apigw/prod/eksternapp.altinn.serviceowner/altinn-rettigheter-proxy
+        mountPath: /var/run/secrets/nais.io/vault
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
