@@ -16,10 +16,13 @@ spring:
 spring:
   profiles: local
 
+server:
+  port: 9090
+
 mock:
   enabled: true
-  port: 8081
-  aktorPort: 8082
+  port: 9091
+  aktorPort: 9092
 
 altinn:
   url: "http://localhost:${mock.port}/altinn/"

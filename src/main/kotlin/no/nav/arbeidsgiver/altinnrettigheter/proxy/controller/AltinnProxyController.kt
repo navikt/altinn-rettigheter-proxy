@@ -1,5 +1,6 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.controller
 
+import no.nav.security.oidc.api.Protected
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
@@ -9,6 +10,7 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
 import java.net.URI
 
+@Protected
 @RestController
 class AltinnProxyController (val restTemplate: RestTemplate) {
 
