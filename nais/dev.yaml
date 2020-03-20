@@ -19,6 +19,9 @@ spec:
     initialDelay: 30
   vault:
     enabled: true
-  env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: dev
+    paths:
+      - kvPath: /kv/preprod/sbs/altinn-rettigheter-proxy/default
+        mountPath: /var/run/secrets/nais.io/vault
+    env:
+      - name: SPRING_PROFILES_ACTIVE
+        value: dev
