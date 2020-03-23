@@ -1,8 +1,10 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.config
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.common.cache.CacheBuilder
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.metrics.ConcurrentMapCacheMetricsWrapper
 import org.springframework.cache.CacheManager
+import org.springframework.cache.caffeine.CaffeineCache
 import org.springframework.cache.concurrent.ConcurrentMapCache
 import org.springframework.cache.support.SimpleCacheManager
 import org.springframework.context.annotation.Bean
@@ -18,14 +20,12 @@ class CachingConfig {
         val cacheManager = SimpleCacheManager()
 
 
-        val reporteesCache = ConcurrentMapCacheMetricsWrapper(
+        val reporteesCache = CaffeineCache(
                 "reportees",
-                CacheBuilder
-                        .newBuilder()
+                Caffeine.newBuilder()
                         .expireAfterWrite(5, TimeUnit.MINUTES)
                         .maximumSize(10000)
-                        .build<Any, Any>()
-                        .asMap(),
+                        .build<Any, Any>(),
                 false)
 
         cacheManager.setCaches(listOf(reporteesCache))
