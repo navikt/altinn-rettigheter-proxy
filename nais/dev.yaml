@@ -27,5 +27,8 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
+  prometheus:
+    enabled: true
+    path: /altinn-rettigheter-proxy/internal/actuator/prometheus
   webproxy: true
 
