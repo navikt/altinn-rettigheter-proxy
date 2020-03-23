@@ -1,11 +1,8 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.config
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.google.common.cache.CacheBuilder
-import no.nav.arbeidsgiver.altinnrettigheter.proxy.metrics.ConcurrentMapCacheMetricsWrapper
 import org.springframework.cache.CacheManager
 import org.springframework.cache.caffeine.CaffeineCache
-import org.springframework.cache.concurrent.ConcurrentMapCache
 import org.springframework.cache.support.SimpleCacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
