@@ -3,6 +3,7 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy.controller
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.service.AltinnrettigheterProxyService
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.service.AltinnrettigheterService
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollService
 import no.nav.security.oidc.api.Protected
 import org.slf4j.LoggerFactory
@@ -14,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException
 
 @Protected
 @RestController
-class AltinnrettigheterProxyController(val altinnrettigheterProxyService: AltinnrettigheterProxyService, var tilgangskotrollService: TilgangskontrollService) {
+class AltinnrettigheterProxyController(val altinnrettigheterService: AltinnrettigheterService, var tilgangskotrollService: TilgangskontrollService) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -30,7 +31,7 @@ class AltinnrettigheterProxyController(val altinnrettigheterProxyService: Altinn
         val fnr = tilgangskotrollService.hentInnloggetBruker().fnr
 
         if (Fnr(subject) == fnr) {
-            return altinnrettigheterProxyService.hentOrganisasjoner(fnr, serviceCode, serviceEdition)
+            return altinnrettigheterService.hentOrganisasjoner(fnr, serviceCode, serviceEdition)
         } else {
             throw ResponseStatusException(
                     HttpStatus.FORBIDDEN, "Du har ikke rettigheter til denne")

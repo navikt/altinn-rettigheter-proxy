@@ -1,6 +1,7 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 
 data class AltinnOrganisasjon(
         @JsonProperty("Name")
@@ -15,15 +16,4 @@ data class AltinnOrganisasjon(
         val organizationForm: String,
         @JsonProperty("Status")
         val status: String
-)
-
-data class AltinnRolle(
-        @JsonProperty("RoleType")
-        private var type: String,
-        @JsonProperty("RoleDefinitionId")
-        private val definitionId: String,
-        @JsonProperty("RoleName")
-        private val name: String,
-        @JsonProperty("RoleDescription")
-        private val description: String? = null
-)
+) : Serializable

@@ -27,5 +27,7 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
+    - name: REDIS_HOST
+      value: altinn-rettigheter-proxy-redis.default.svc.nais.local
   webproxy: true
 

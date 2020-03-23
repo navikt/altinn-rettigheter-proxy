@@ -13,7 +13,11 @@ class AltinnrettigheterProxyService(val altinnClient: AltinnClient) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @Cacheable("reportees")
-    fun hentOrganisasjoner(fnr: Fnr, serviceCode: String, serviceEdition: String): List<AltinnOrganisasjon> {
+    fun hentOrganisasjonerCached(fnr: Fnr, serviceCode: String, serviceEdition: String): List<AltinnOrganisasjon> {
+        return hentOrganisasjonerIAltinn(fnr, serviceCode, serviceEdition)
+    }
+
+    fun hentOrganisasjonerIAltinn(fnr: Fnr, serviceCode: String, serviceEdition: String): List<AltinnOrganisasjon> {
         logger.info("Kall til Altinn")
         return altinnClient.hentOrgnumreDerBrukerHarEnkeltrettighetTilIAWeb(fnr, serviceCode, serviceEdition)
     }
