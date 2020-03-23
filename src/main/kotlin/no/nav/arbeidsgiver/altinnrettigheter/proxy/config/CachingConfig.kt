@@ -1,6 +1,7 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.config
 
 import com.google.common.cache.CacheBuilder
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.metrics.ConcurrentMapCacheMetricsWrapper
 import org.springframework.cache.CacheManager
 import org.springframework.cache.concurrent.ConcurrentMapCache
 import org.springframework.cache.support.SimpleCacheManager
@@ -17,7 +18,7 @@ class CachingConfig {
         val cacheManager = SimpleCacheManager()
 
 
-        val reporteesCache = ConcurrentMapCache(
+        val reporteesCache = ConcurrentMapCacheMetricsWrapper(
                 "reportees",
                 CacheBuilder
                         .newBuilder()
