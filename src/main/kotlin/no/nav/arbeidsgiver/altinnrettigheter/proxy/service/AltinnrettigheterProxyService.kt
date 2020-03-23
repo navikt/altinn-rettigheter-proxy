@@ -1,6 +1,7 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.service
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.AltinnClient
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.config.CachingConfig.Companion.REPORTEES_CACHE
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import org.slf4j.LoggerFactory
@@ -12,7 +13,7 @@ class AltinnrettigheterProxyService(val altinnClient: AltinnClient) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    @Cacheable("reportees")
+    @Cacheable(REPORTEES_CACHE)
     fun hentOrganisasjoner(fnr: Fnr, serviceCode: String, serviceEdition: String): List<AltinnOrganisasjon> {
         logger.info("Kall til Altinn")
         return altinnClient.hentOrgnumreDerBrukerHarEnkeltrettighetTilIAWeb(fnr, serviceCode, serviceEdition)
