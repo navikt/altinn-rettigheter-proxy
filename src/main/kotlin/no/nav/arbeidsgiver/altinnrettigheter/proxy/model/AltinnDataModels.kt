@@ -10,7 +10,7 @@ data class AltinnOrganisasjon(
         @JsonProperty("ParentOrganizationNumber")
         val parentOrganizationNumber: String? = null,
         @JsonProperty("OrganizationNumber")
-        val organizationNumber: String,
+        val organizationNumber: String?,
         @JsonProperty("OrganizationForm")
         val organizationForm: String,
         @JsonProperty("Status")
