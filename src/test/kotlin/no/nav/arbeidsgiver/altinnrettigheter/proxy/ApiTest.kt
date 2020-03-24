@@ -72,6 +72,6 @@ class ApiTest {
         )
 
         Assertions.assertThat(response.statusCode()).isEqualTo(400)
-        Assertions.assertThat(response.body()).isEqualTo("{\"message\":\"Mangler obligatorisk parameter 'subject'\"}")
+        Assertions.assertThat(response.body()).isEqualTo("{\"message\":\"400 BAD_REQUEST \\\"Obligatoriske parametre ble ikke sendt med: [subject]\\\"\"}")
     }
 }

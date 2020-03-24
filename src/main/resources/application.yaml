@@ -37,9 +37,6 @@ altinn:
   url: "http://localhost:${mock.port}/altinn/"
   apikey: "test"
   apigw.apikey: "test"
-  iaweb.service:
-    code: 3403
-    edition: 1
 
 no.nav.security.oidc:
   issuers: iss-localhost, selvbetjening
@@ -66,9 +63,6 @@ spring:
 
 altinn:
   url: "https://api-gw-q1.adeo.no/"
-  iaweb.service:
-    code: 3403
-    edition: 1
 
 no.nav.security.oidc:
   issuers: selvbetjening
@@ -92,9 +86,6 @@ spring:
 
 altinn:
   url: "https://api-gw.adeo.no/"
-  iaweb.service:
-    code: 3403
-    edition: 2
 
 no.nav.security.oidc:
   issuers: selvbetjening

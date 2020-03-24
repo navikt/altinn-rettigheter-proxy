@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.context.request.WebRequest
+import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.nio.file.AccessDeniedException
 import java.util.*
@@ -20,24 +21,6 @@ import java.util.*
 
 @ControllerAdvice
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
-
-    override fun handleMissingServletRequestParameter(
-            ex: MissingServletRequestParameterException,
-            headers: HttpHeaders,
-            status: HttpStatus,
-            request: WebRequest
-    ): ResponseEntity<Any> {
-        val body = HashMap<String, String>(1)
-        body["message"] = "Mangler obligatorisk parameter '${ex.parameterName}'"
-
-        Companion.logger.info(String.format(
-                "Returnerer følgende HttpStatus '%s' med melding '%s' pga exception '%s'",
-                status.toString(),
-                body["message"],
-                ex.message
-        ))
-        return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(body)
-    }
 
     @ExceptionHandler(value = [TilgangskontrollException::class])
     @ResponseBody
@@ -56,6 +39,13 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
     protected fun handleAltinnException(e: RuntimeException, webRequest: WebRequest?): ResponseEntity<Any> {
         Companion.logger.warn("Feil ved Altinn integrasjon", e)
         return getResponseEntity(e, "Internal error", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    @ExceptionHandler(value = [ResponseStatusException::class])
+    @ResponseBody
+    protected fun handleResponseStatusException(e: ResponseStatusException, webRequest: WebRequest?): ResponseEntity<Any> {
+        Companion.logger.warn(e.message, e)
+        return getResponseEntity(e, e.message, e.status)
     }
 
     @ExceptionHandler(value = [Exception::class])
