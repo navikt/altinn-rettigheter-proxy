@@ -16,6 +16,15 @@ spring:
 spring:
   profiles: local
 
+  redis:
+    host: localhost
+    port: 6379
+    password: foobared # default passord lokalt i /usr/local/etc/redis.conf
+    timeout: 500
+  cache:
+    redis:
+      time-to-live: 30000 # 30 sek i millis
+
 server:
   port: 9090
 
@@ -46,6 +55,14 @@ no.nav.security.oidc:
 
 spring:
   profiles: dev
+  redis:
+    host: ${REDIS_HOST}
+    port: 6379
+    password: ${REDIS_PASSWORD}
+    timeout: 500
+  cache:
+    redis:
+      time-to-live: 30000 # 30 sek i millis
 
 altinn:
   url: "https://api-gw-q1.adeo.no/"
@@ -64,6 +81,14 @@ no.nav.security.oidc:
 
 spring:
   profiles: prod
+  redis:
+    host: ${REDIS_HOST}
+    port: 6379
+    password: ${REDIS_PASSWORD}
+    timeout: 500
+  cache:
+    redis:
+      time-to-live: 30000 # 30 sek i millis
 
 altinn:
   url: "https://api-gw.adeo.no/"
