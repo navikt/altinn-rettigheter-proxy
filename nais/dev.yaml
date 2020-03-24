@@ -29,5 +29,7 @@ spec:
       value: dev
     - name: REDIS_HOST
       value: altinn-rettigheter-proxy-redis.default.svc.nais.local
+  prometheus:
+    enabled: true
+    path: /altinn-rettigheter-proxy/internal/actuator/prometheus
   webproxy: true
-
