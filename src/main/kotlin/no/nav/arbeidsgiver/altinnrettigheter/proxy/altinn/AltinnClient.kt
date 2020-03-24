@@ -22,7 +22,7 @@ class AltinnClient(val restTemplate: RestTemplate) {
     @Value("\${altinn.apikey}")
     lateinit var altinnApikey: String
 
-    fun hentOrgnumre(
+    fun hentOrganisasjoner(
             query: Map<String, String>
     ): List<AltinnOrganisasjon> {
 

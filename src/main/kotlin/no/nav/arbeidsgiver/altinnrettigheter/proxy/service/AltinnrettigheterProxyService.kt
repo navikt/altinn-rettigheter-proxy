@@ -15,7 +15,7 @@ class AltinnrettigheterProxyService(val altinnClient: AltinnClient) {
     @Cacheable(REPORTEES_CACHE)
     fun hentOrganisasjoner(query: Map<String, String>): List<AltinnOrganisasjon> {
         logger.info("Kall til Altinn")
-        return altinnClient.hentOrgnumre(query)
+        return altinnClient.hentOrganisasjoner(query)
     }
 
 }
