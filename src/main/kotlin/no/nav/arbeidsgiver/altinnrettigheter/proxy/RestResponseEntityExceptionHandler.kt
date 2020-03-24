@@ -22,24 +22,6 @@ import java.util.*
 @ControllerAdvice
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
 
-    override fun handleMissingServletRequestParameter(
-            ex: MissingServletRequestParameterException,
-            headers: HttpHeaders,
-            status: HttpStatus,
-            request: WebRequest
-    ): ResponseEntity<Any> {
-        val body = HashMap<String, String>(1)
-        body["message"] = "Mangler obligatorisk parameter '${ex.parameterName}'"
-
-        Companion.logger.info(String.format(
-                "Returnerer følgende HttpStatus '%s' med melding '%s' pga exception '%s'",
-                status.toString(),
-                body["message"],
-                ex.message
-        ))
-        return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(body)
-    }
-
     @ExceptionHandler(value = [TilgangskontrollException::class])
     @ResponseBody
     protected fun handleTilgangskontrollException(e: RuntimeException, webRequest: WebRequest?): ResponseEntity<Any> {
