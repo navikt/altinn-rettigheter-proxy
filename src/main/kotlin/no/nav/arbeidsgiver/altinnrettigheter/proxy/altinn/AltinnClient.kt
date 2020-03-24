@@ -41,8 +41,6 @@ class AltinnClient(val restTemplate: RestTemplate) {
 
         val uri: URI = uriBuilder.build().toUri()
 
-        logger.info("uri: $uri")
-
         return try {
             val respons = restTemplate.exchange(
                     uri,
@@ -69,11 +67,4 @@ class AltinnClient(val restTemplate: RestTemplate) {
         headers["APIKEY"] = altinnApikey
         return HttpEntity(headers)
     }
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(AltinnClient::class.java)
-    }
 }
-
-// ekstern/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=01065500791&serviceCode=3403&serviceEdition=1
-// ekstern/altinn/api/serviceowner/reportees?ForceEIAuthentication=&subject=01065500791&serviceCode=3403&serviceEdition=1
