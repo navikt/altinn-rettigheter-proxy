@@ -59,7 +59,7 @@ spring:
     timeout: 500
   cache:
     redis:
-      time-to-live: 60000 # 1 min i millis
+      time-to-live: 300000 # 5 min i millis
 
 altinn:
   url: "https://api-gw-q1.adeo.no/"
