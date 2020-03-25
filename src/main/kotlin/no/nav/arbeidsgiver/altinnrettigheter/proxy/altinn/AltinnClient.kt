@@ -16,7 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
-class AltinnClient(val restTemplateBuilder: RestTemplateBuilder) {
+class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
 
     private val restTemplate: RestTemplate = restTemplateBuilder.build()
 
