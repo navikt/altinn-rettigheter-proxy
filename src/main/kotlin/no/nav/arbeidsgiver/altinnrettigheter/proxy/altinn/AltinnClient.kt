@@ -1,20 +1,25 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
-import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.*
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
-class AltinnClient(val restTemplate: RestTemplate) {
+class AltinnClient(val restTemplateBuilder: RestTemplateBuilder) {
+
+    private val restTemplate: RestTemplate = restTemplateBuilder.build()
+
     @Value("\${altinn.url}")
     lateinit var altinnUrl: String
     @Value("\${altinn.apigw.apikey}")
@@ -55,7 +60,22 @@ class AltinnClient(val restTemplate: RestTemplate) {
                 throw RuntimeException(message)
             }
             respons.body!!
-        } catch (exception: RestClientException) {
+        } catch (exception: HttpClientErrorException) {
+            if (exception.statusCode.is4xxClientError) {
+                throw ProxyClientErrorException(
+                        exception.statusCode,
+                        exception.statusText,
+                        exception.responseHeaders,
+                        exception.responseBodyAsString,
+                        exception
+                )
+            }
+            throw AltinnException("Feil ved kall til Altinn med returkode '${exception.statusCode}' " +
+                    "og tekst '${exception.statusText}' ",
+                    exception
+            )
+        }
+        catch (exception: RestClientException) {
             throw AltinnException("Feil ved kall til Altinn", exception)
         }
 
