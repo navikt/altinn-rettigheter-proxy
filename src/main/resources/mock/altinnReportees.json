@@ -70,5 +70,11 @@
     "OrganizationNumber": "444444444",
     "OrganizationForm": "BEDR",
     "Status": "Active"
+  },
+  {
+    "Name": "NAV HAMAR 4",
+    "Type": "Business",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
   }
 ]
