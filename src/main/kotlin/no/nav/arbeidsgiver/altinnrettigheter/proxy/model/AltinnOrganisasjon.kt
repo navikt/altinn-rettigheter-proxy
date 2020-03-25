@@ -13,7 +13,7 @@ data class AltinnOrganisasjon(
         @JsonProperty("OrganizationNumber")
         val organizationNumber: String?,
         @JsonProperty("OrganizationForm")
-        val organizationForm: String,
+        val organizationForm: String?,
         @JsonProperty("Status")
         val status: String
 ) : Serializable
