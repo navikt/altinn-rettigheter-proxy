@@ -37,7 +37,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(value = [AltinnException::class])
     @ResponseBody
     protected fun handleAltinnException(e: RuntimeException, webRequest: WebRequest?): ResponseEntity<Any> {
-        Companion.logger.warn("Feil ved Altinn integrasjon", e)
+        Companion.logger.error("Feil ved Altinn integrasjon", e)
         return getResponseEntity(e, "Internal error", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
