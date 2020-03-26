@@ -47,7 +47,7 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
             }
             respons.body!!
         } catch (exception: HttpClientErrorException) {
-            if (exception.statusCode.is4xxClientError) {
+            if (exception.statusCode.isError) {
                 throw ProxyClientErrorException(
                         exception.statusCode,
                         exception.statusText,
