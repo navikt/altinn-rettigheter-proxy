@@ -2,6 +2,7 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.AltinnClient
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.ProxyClientErrorException
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -42,7 +43,6 @@ class RestTemplateTest {
                 requestTo(
                         "http://local.test/ekstern/altinn/api/serviceowner/reportees" +
                                 "?ForceEIAuthentication" +
-                                "&subject=01065500791" +
                                 "&serviceCode=9999" +
                                 "&serviceEdition=1"
                 )
@@ -53,10 +53,10 @@ class RestTemplateTest {
         klient.hentOrganisasjoner(
                 mapOf(
                         "ForceEIAuthentication" to "",
-                        "subject" to "01065500791",
                         "serviceCode" to "9999",
                         "serviceEdition" to "1"
-                )
+                ),
+                Fnr("01065500791")
         )
         server.verify()
     }
