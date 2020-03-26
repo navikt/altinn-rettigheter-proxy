@@ -57,8 +57,7 @@ class ApiTest {
                                 URI.create(
                                         "http://localhost:$port" +
                                                 "/altinn-rettigheter-proxy/ekstern/altinn/api/serviceowner/reportees" +
-                                                "?ForceEIAuthentication" +
-                                                "&serviceCode=3403" +
+                                                "?serviceCode=3403" +
                                                 "&serviceEdition=1"
                                 )
                         )
@@ -72,6 +71,6 @@ class ApiTest {
         )
 
         Assertions.assertThat(response.statusCode()).isEqualTo(400)
-        Assertions.assertThat(response.body()).isEqualTo("{\"message\":\"400 BAD_REQUEST \\\"Obligatoriske parametre ble ikke sendt med: [subject]\\\"\"}")
+        Assertions.assertThat(response.body()).isEqualTo("{\"message\":\"400 BAD_REQUEST \\\"Obligatoriske parametre ble ikke sendt med: [ForceEIAuthentication]\\\"\"}")
     }
 }
