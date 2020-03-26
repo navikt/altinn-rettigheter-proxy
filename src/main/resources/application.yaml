@@ -14,6 +14,16 @@ spring:
 ---
 
 spring:
+  profiles: test
+
+altinn:
+  url: "http://local.test"
+  apikey: "test"
+  apigw.apikey: "test"
+
+---
+
+spring:
   profiles: local
 
   redis:

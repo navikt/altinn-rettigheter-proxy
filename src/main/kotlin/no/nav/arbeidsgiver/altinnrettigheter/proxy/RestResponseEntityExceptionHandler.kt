@@ -1,14 +1,13 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.AltinnException
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.ProxyClientErrorException
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollException
 import no.nav.security.spring.oidc.validation.interceptor.OIDCUnauthorizedException
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
@@ -17,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.nio.file.AccessDeniedException
 import java.util.*
+import java.util.stream.Collectors.toMap
 
 
 @ControllerAdvice
@@ -39,6 +39,28 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
     protected fun handleAltinnException(e: RuntimeException, webRequest: WebRequest?): ResponseEntity<Any> {
         Companion.logger.error("Feil ved Altinn integrasjon", e)
         return getResponseEntity(e, "Internal error", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    @ExceptionHandler(value = [ProxyClientErrorException::class])
+    @ResponseBody
+    protected fun handleAltinnHttpClientErrorException(
+            e: ProxyClientErrorException,
+            webRequest: WebRequest?
+    ): ResponseEntity<Any> {
+        Companion.logger.warn("Klient feil ved Altinn integrasjon, " +
+                "med status '${e.httpStatus}' " +
+                ", statusText '${e.statusText}'" +
+                " og responseBody '${e.responseBodyAsString}'",
+                e
+        )
+
+        return ResponseEntity
+                .status(e.httpStatus)
+                .body(
+                        mapOf(
+                                "responseBody" to e.responseBodyAsString,
+                                "statusText" to e.statusText)
+                )
     }
 
     @ExceptionHandler(value = [ResponseStatusException::class])
