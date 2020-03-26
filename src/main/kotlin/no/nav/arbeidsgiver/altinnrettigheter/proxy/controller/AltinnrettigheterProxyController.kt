@@ -26,7 +26,10 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
         val validertQuery = validerOgFiltrerQuery(query)
 
-        return altinnrettigheterService.hentOrganisasjoner(validertQuery)
+        return altinnrettigheterService.hentOrganisasjoner(
+                validertQuery,
+                tilgangskotrollService.hentInnloggetBruker().fnr
+        )
     }
 
     private fun validerOgFiltrerQuery(query: Map<String, String>): Map<String, String> {
