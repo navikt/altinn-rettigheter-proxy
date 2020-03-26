@@ -1,6 +1,7 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.core.ParameterizedTypeReference
@@ -28,7 +29,8 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
     lateinit var altinnApikey: String
 
     fun hentOrganisasjoner(
-            query: Map<String, String>
+            query: Map<String, String>,
+            fnr: Fnr
     ): List<AltinnOrganisasjon> {
         return try {
             val respons = restTemplate.exchange(
@@ -53,19 +55,27 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
                         exception
                 )
             }
-            throw AltinnException("Feil ved kall til Altinn med returkode '${exception.statusCode}' " +
+            throw AltinnException(
+                    "Feil ved kall til Altinn med returkode '${exception.statusCode}' " +
                     "og tekst '${exception.statusText}' ",
                     exception
             )
-        }
-        catch (exception: RestClientException) {
+        } catch (exception: RestClientException) {
             throw AltinnException("Feil ved kall til Altinn", exception)
         }
-
     }
+
     private fun getURI(query: Map<String, String>): URI {
-        val uriBuilder = UriComponentsBuilder.fromUriString(altinnUrl).pathSegment()
-                .pathSegment("ekstern", "altinn", "api", "serviceowner", "reportees")
+        val uriBuilder = UriComponentsBuilder
+                .fromUriString(altinnUrl)
+                .pathSegment()
+                .pathSegment(
+                        "ekstern",
+                        "altinn",
+                        "api",
+                        "serviceowner",
+                        "reportees"
+                )
 
         query.forEach { (key, value) ->
             run {
@@ -76,9 +86,9 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
                 }
             }
         }
-
         return uriBuilder.build().toUri()
     }
+
     private fun getHeaderEntity(): HttpEntity<Any?>? {
         val headers = HttpHeaders()
         headers["X-NAV-APIKEY"] = altinnAPIGWApikey
