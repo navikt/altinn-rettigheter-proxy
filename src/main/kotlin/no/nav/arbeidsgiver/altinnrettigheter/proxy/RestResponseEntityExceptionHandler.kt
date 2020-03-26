@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.nio.file.AccessDeniedException
 import java.util.*
+import java.util.stream.Collectors.toMap
 
 
 @ControllerAdvice
@@ -48,14 +49,18 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
     ): ResponseEntity<Any> {
         Companion.logger.warn("Klient feil ved Altinn integrasjon, " +
                 "med status '${e.httpStatus}' " +
-                "og statusText '${e.statusText}'",
+                ", statusText '${e.statusText}'" +
+                " og responseBody '${e.responseBodyAsString}'",
                 e
         )
 
         return ResponseEntity
                 .status(e.httpStatus)
-                .headers(e.httpHeaders)
-                .body(e.responseBodyAsString)
+                .body(
+                        mapOf(
+                                "responseBody" to e.responseBodyAsString,
+                                "statusText" to e.statusText)
+                )
     }
 
     @ExceptionHandler(value = [ResponseStatusException::class])

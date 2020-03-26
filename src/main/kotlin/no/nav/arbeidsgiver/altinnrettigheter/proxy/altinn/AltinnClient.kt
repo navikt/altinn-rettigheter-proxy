@@ -49,7 +49,6 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
                 throw ProxyClientErrorException(
                         exception.statusCode,
                         exception.statusText,
-                        exception.responseHeaders,
                         exception.responseBodyAsString,
                         exception
                 )
