@@ -34,7 +34,7 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
     ): List<AltinnOrganisasjon> {
         return try {
             val respons = restTemplate.exchange(
-                    getURI(query),
+                    getURI(query, fnr),
                     HttpMethod.GET,
                     getHeaderEntity(),
                     object : ParameterizedTypeReference<List<AltinnOrganisasjon>>() {}
@@ -65,7 +65,7 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
         }
     }
 
-    private fun getURI(query: Map<String, String>): URI {
+    private fun getURI(query: Map<String, String>, fnr: Fnr): URI {
         val uriBuilder = UriComponentsBuilder
                 .fromUriString(altinnUrl)
                 .pathSegment()
@@ -86,6 +86,8 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
                 }
             }
         }
+        uriBuilder.queryParam("subject", fnr.verdi)
+
         return uriBuilder.build().toUri()
     }
 

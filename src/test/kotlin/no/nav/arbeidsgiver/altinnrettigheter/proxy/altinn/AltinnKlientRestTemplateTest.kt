@@ -1,7 +1,5 @@
-package no.nav.arbeidsgiver.altinnrettigheter.proxy
+package no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn
 
-import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.AltinnClient
-import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.ProxyClientErrorException
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import org.junit.Assert
 import org.junit.Test
@@ -22,7 +20,7 @@ import org.springframework.test.web.client.response.MockRestResponseCreators.wit
 @RunWith(SpringRunner::class)
 @ActiveProfiles("test")
 @RestClientTest(AltinnClient::class)
-class RestTemplateTest {
+class AltinnKlientRestTemplateTest {
 
     @Autowired
     private lateinit var server: MockRestServiceServer
@@ -44,7 +42,8 @@ class RestTemplateTest {
                         "http://local.test/ekstern/altinn/api/serviceowner/reportees" +
                                 "?ForceEIAuthentication" +
                                 "&serviceCode=9999" +
-                                "&serviceEdition=1"
+                                "&serviceEdition=1" +
+                                "&subject=01065500791"
                 )
         )
                 .andExpect(method(HttpMethod.GET))
