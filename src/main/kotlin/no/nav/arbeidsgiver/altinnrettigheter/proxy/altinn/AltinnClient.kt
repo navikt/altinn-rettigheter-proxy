@@ -2,14 +2,12 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
@@ -23,7 +21,8 @@ class AltinnClient(val restTemplate: RestTemplate) {
     lateinit var altinnApikey: String
 
     fun hentOrganisasjoner(
-            query: Map<String, String>
+            query: Map<String, String>,
+            fnr: Fnr
     ): List<AltinnOrganisasjon> {
 
         val uriBuilder = UriComponentsBuilder.fromUriString(altinnUrl).pathSegment()
@@ -38,6 +37,8 @@ class AltinnClient(val restTemplate: RestTemplate) {
                 }
             }
         }
+
+        uriBuilder.queryParam("subject", fnr.verdi)
 
         val uri: URI = uriBuilder.build().toUri()
 

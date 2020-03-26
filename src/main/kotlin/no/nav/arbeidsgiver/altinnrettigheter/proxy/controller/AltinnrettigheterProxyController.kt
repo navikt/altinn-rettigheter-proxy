@@ -24,18 +24,23 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
     ): List<AltinnOrganisasjon> {
         logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
 
-        validerObligatoriskeParametre(query, "subject", "ForceEIAuthentication");
+        val validertQuery = validerOgFiltrerQuery(query)
 
-        val subject: String = query["subject"]!!
+        return altinnrettigheterService.hentOrganisasjoner(
+                validertQuery,
+                tilgangskotrollService.hentInnloggetBruker().fnr
+        )
+    }
 
-        val fnr = tilgangskotrollService.hentInnloggetBruker().fnr
+    private fun validerOgFiltrerQuery(query: Map<String, String>): Map<String, String> {
+        validerObligatoriskeParametre(query,"ForceEIAuthentication")
 
-        if (Fnr(subject) == fnr) {
-            return altinnrettigheterService.hentOrganisasjoner(query)
-        } else {
-            throw ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "Du har ikke rettigheter til denne")
+        if (query.containsKey("subject")) {
+            logger.warn("Request inneholder subject (fødselsnummer). Dette burde forhindres av personvernshensyn, da det logges av andre systemer.")
+
+            return query.filter { (key, _) -> key != "subject" }
         }
+        return query
     }
 
     private fun validerObligatoriskeParametre(query: Map<String, String>, vararg obligatorisk: String) {
