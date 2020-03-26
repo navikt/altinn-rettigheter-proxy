@@ -30,25 +30,9 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
     fun hentOrganisasjoner(
             query: Map<String, String>
     ): List<AltinnOrganisasjon> {
-
-        val uriBuilder = UriComponentsBuilder.fromUriString(altinnUrl).pathSegment()
-                .pathSegment("ekstern", "altinn", "api", "serviceowner", "reportees")
-
-        query.forEach { (key, value) ->
-            run {
-                if (value == "") {
-                    uriBuilder.queryParam(key)
-                } else {
-                    uriBuilder.queryParam(key, value)
-                }
-            }
-        }
-
-        val uri: URI = uriBuilder.build().toUri()
-
         return try {
             val respons = restTemplate.exchange(
-                    uri,
+                    getURI(query),
                     HttpMethod.GET,
                     getHeaderEntity(),
                     object : ParameterizedTypeReference<List<AltinnOrganisasjon>>() {}
@@ -80,7 +64,22 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
         }
 
     }
+    private fun getURI(query: Map<String, String>): URI {
+        val uriBuilder = UriComponentsBuilder.fromUriString(altinnUrl).pathSegment()
+                .pathSegment("ekstern", "altinn", "api", "serviceowner", "reportees")
 
+        query.forEach { (key, value) ->
+            run {
+                if (value == "") {
+                    uriBuilder.queryParam(key)
+                } else {
+                    uriBuilder.queryParam(key, value)
+                }
+            }
+        }
+
+        return uriBuilder.build().toUri()
+    }
     private fun getHeaderEntity(): HttpEntity<Any?>? {
         val headers = HttpHeaders()
         headers["X-NAV-APIKEY"] = altinnAPIGWApikey
