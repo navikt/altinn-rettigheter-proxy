@@ -1,11 +1,11 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn
 
 import org.springframework.http.HttpStatus
-import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.HttpStatusCodeException
 
-class ProxyClientErrorException(
+class ProxyHttpStatusCodeException(
         var httpStatus: HttpStatus,
         var statusText: String,
         var responseBodyAsString: String,
-        exception: HttpClientErrorException
+        exception: HttpStatusCodeException
 ) : RuntimeException(exception)

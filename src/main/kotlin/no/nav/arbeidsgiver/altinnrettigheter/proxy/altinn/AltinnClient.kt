@@ -10,7 +10,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
@@ -46,9 +46,9 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
                 throw RuntimeException(message)
             }
             respons.body!!
-        } catch (exception: HttpClientErrorException) {
+        } catch (exception: HttpStatusCodeException) {
             if (exception.statusCode.isError) {
-                throw ProxyClientErrorException(
+                throw ProxyHttpStatusCodeException(
                         exception.statusCode,
                         exception.statusText,
                         exception.responseBodyAsString,

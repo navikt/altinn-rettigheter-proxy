@@ -1,7 +1,7 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,12 +29,36 @@ class AltinnKlientRestTemplateTest {
     private lateinit var klient: AltinnClient
 
 
-    @Test(expected = ProxyClientErrorException::class)
-    fun altinnKlient_hentOrganisasjoner_kaster_AltinnHttpClientErrorException_dersom_Altinn_returnerer_400() {
+    @Test
+    fun altinnKlient_hentOrganisasjoner_sender_kall_till_Altinn_med_riktige_parametre() {
 
-        Assert.assertNotNull(klient)
-        Assert.assertNotNull(server)
+        server.expect(
+                ExpectedCount.once(),
+                requestTo(
+                        "http://local.test/ekstern/altinn/api/serviceowner/reportees" +
+                                "?ForceEIAuthentication" +
+                                "&serviceCode=3403" +
+                                "&serviceEdition=1" +
+                                "&subject=01065500791"
+                )
+        )
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.OK))
 
+        klient.hentOrganisasjoner(
+                mapOf(
+                        "ForceEIAuthentication" to "",
+                        "serviceCode" to "3403",
+                        "serviceEdition" to "1"
+                ),
+                Fnr("01065500791")
+        )
+        server.verify()
+    }
+
+
+    @Test
+    fun altinnKlient_hentOrganisasjoner_kaster_ProxyHttpStatusCodeException_med_HttpStatus_400_dersom_Altinn_returnerer_400() {
 
         server.expect(
                 ExpectedCount.once(),
@@ -49,14 +73,46 @@ class AltinnKlientRestTemplateTest {
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.BAD_REQUEST))
 
-        klient.hentOrganisasjoner(
-                mapOf(
-                        "ForceEIAuthentication" to "",
-                        "serviceCode" to "9999",
-                        "serviceEdition" to "1"
-                ),
-                Fnr("01065500791")
+        try {
+            klient.hentOrganisasjoner(
+                    mapOf(
+                            "ForceEIAuthentication" to "",
+                            "serviceCode" to "9999",
+                            "serviceEdition" to "1"
+                    ),
+                    Fnr("01065500791")
+            )
+        } catch (e: ProxyHttpStatusCodeException) {
+            assertThat(e.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @Test
+    fun altinnKlient_hentOrganisasjoner_kaster_ProxyHttpStatusCodeException_med_HttpStatus_502_dersom_ApiGw_returnerer_502() {
+        server.expect(
+                ExpectedCount.once(),
+                requestTo(
+                        "http://local.test/ekstern/altinn/api/serviceowner/reportees" +
+                                "?ForceEIAuthentication" +
+                                "&serviceCode=3403" +
+                                "&serviceEdition=1" +
+                                "&subject=01065500791"
+                )
         )
-        server.verify()
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.BAD_GATEWAY))
+
+        try {
+            klient.hentOrganisasjoner(
+                    mapOf(
+                            "ForceEIAuthentication" to "",
+                            "serviceCode" to "9999",
+                            "serviceEdition" to "1"
+                    ),
+                    Fnr("01065500791")
+            )
+        } catch (e: ProxyHttpStatusCodeException) {
+            assertThat(e.httpStatus).isEqualTo(HttpStatus.BAD_GATEWAY)
+        }
     }
 }

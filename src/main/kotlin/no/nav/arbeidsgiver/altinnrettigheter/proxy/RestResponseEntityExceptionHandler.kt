@@ -1,7 +1,7 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.AltinnException
-import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.ProxyClientErrorException
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.ProxyHttpStatusCodeException
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollException
 import no.nav.security.spring.oidc.validation.interceptor.OIDCUnauthorizedException
 import org.slf4j.LoggerFactory
@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.nio.file.AccessDeniedException
 import java.util.*
-import java.util.stream.Collectors.toMap
 
 
 @ControllerAdvice
@@ -41,13 +40,13 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         return getResponseEntity(e, "Internal error", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
-    @ExceptionHandler(value = [ProxyClientErrorException::class])
+    @ExceptionHandler(value = [ProxyHttpStatusCodeException::class])
     @ResponseBody
-    protected fun handleAltinnHttpClientErrorException(
-            e: ProxyClientErrorException,
+    protected fun handleProxyHttpStatusCodeException(
+            e: ProxyHttpStatusCodeException,
             webRequest: WebRequest?
     ): ResponseEntity<Any> {
-        Companion.logger.warn("Klient feil ved Altinn integrasjon, " +
+        Companion.logger.warn("Feil ved Altinn integrasjon, " +
                 "med status '${e.httpStatus}' " +
                 ", statusText '${e.statusText}'" +
                 " og responseBody '${e.responseBodyAsString}'",
