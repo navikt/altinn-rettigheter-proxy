@@ -30,7 +30,7 @@ class AltinnKlientRestTemplateTest {
 
 
     @Test
-    fun altinnKlient_hentOrganisasjoner_sender_kall_till_Altinn_med_riktige_parametre() {
+    fun altinnKlient_hentOrganisasjoner_sender_kall_til_Altinn_med_riktige_parametre() {
 
         server.expect(
                 ExpectedCount.once(),
