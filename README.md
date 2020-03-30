@@ -6,16 +6,16 @@ Denne appen er en proxy mot Altinn sine tjenester til arbeidsgiver.
 # Komme i gang
 
 Koden kan kjøres som en vanlig Spring Boot-applikasjon fra AltinnrettigheterproxyApplication.
- Åpnes i browser: [http://localhost:8080/altinn-rettigheter-proxy/internal/healthcheck](http://localhost:8080/altinn-rettigheter-proxy/internal/healthcheck)
+ Åpnes i browser: [http://localhost:9090/altinn-rettigheter-proxy/internal/healthcheck](http://localhost:9090/altinn-rettigheter-proxy/internal/healthcheck)
 
- Default spring-profil er local, og da er alle avhengigheter mocket på localhost:8081. 
+ Default spring-profil er local, og da er alle avhengigheter mocket på localhost:9091. 
 
 ## Docker
 Bygg image
 `docker build -t altinnproxy .`
 
 Kjør container
-`docker run -d -p 8080:8080 altinnproxy`
+`docker run -d -p 9090:9090 altinnproxy`
 
 ---
 
