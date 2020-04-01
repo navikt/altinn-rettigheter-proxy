@@ -69,7 +69,7 @@ spring:
     timeout: 500
   cache:
     redis:
-      time-to-live: 300000 # 5 min i millis
+      time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
 
 altinn:
   url: "https://api-gw-q1.adeo.no/"
@@ -92,7 +92,7 @@ spring:
     timeout: 500
   cache:
     redis:
-      time-to-live: 300000 # 5 min i millis
+      time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
 
 altinn:
   url: "https://api-gw.adeo.no/"
