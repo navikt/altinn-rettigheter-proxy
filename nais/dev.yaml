@@ -6,7 +6,7 @@ metadata:
   labels:
     team: arbeidsgiver
 spec:
-  image: {{ image }}
+  image: docker.pkg.github.com/navikt/altinn-rettigheter-proxy/altinn-rettigheter-proxy:52a7cfdba8a69b3ae57806e8c20b326b781cd43e
   team: arbeidsgiver
   port: 8080
   ingresses:
@@ -30,7 +30,7 @@ spec:
     - name: REDIS_HOST
       value: altinn-rettigheter-proxy-redis.default.svc.nais.local
     - name: CACHE_TIME_TO_LIVE_MILLIS
-      value: 300000
+      value: "600000"
   prometheus:
     enabled: true
     path: /altinn-rettigheter-proxy/internal/actuator/prometheus
