@@ -1,7 +1,6 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.controller
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
-import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.service.AltinnrettigheterService
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollService
 import no.nav.security.oidc.api.Protected
@@ -14,9 +13,21 @@ import org.springframework.web.server.ResponseStatusException
 
 @Protected
 @RestController
-class AltinnrettigheterProxyController(val altinnrettigheterService: AltinnrettigheterService, var tilgangskotrollService: TilgangskontrollService) {
+class AltinnrettigheterProxyController(val altinnrettigheterService: AltinnrettigheterService, var tilgangskontrollService: TilgangskontrollService) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
+
+    @GetMapping(value = ["organisasjoner"])
+    fun proxyOrganisasjonerNY(
+            @RequestParam query: Map<String, String>
+    ): List<AltinnOrganisasjon> {
+        return proxyOrganisasjoner(
+                leggTilParameter(
+                        query, "ForceEIAuthentication",
+                        ""
+                )
+        )
+    }
 
     @GetMapping(value = ["ekstern/altinn/api/serviceowner/reportees"])
     fun proxyOrganisasjoner(
@@ -28,8 +39,15 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
         return altinnrettigheterService.hentOrganisasjoner(
                 validertQuery,
-                tilgangskotrollService.hentInnloggetBruker().fnr
+                tilgangskontrollService.hentInnloggetBruker().fnr
         )
+    }
+
+
+    private fun leggTilParameter(query: Map<String, String>, key: String, value: String): Map<String, String> {
+        val oppdaterbarQuery = query.toMutableMap()
+        oppdaterbarQuery[key] = value
+        return oppdaterbarQuery.toMap()
     }
 
     private fun validerOgFiltrerQuery(query: Map<String, String>): Map<String, String> {

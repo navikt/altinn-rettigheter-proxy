@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.client.ExpectedCount
@@ -43,7 +44,11 @@ class AltinnKlientRestTemplateTest {
                 )
         )
                 .andExpect(method(HttpMethod.GET))
-                .andRespond(withStatus(HttpStatus.OK))
+                .andRespond(
+                        withStatus(HttpStatus.OK)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body("[]")
+                )
 
         klient.hentOrganisasjoner(
                 mapOf(
@@ -106,7 +111,7 @@ class AltinnKlientRestTemplateTest {
             klient.hentOrganisasjoner(
                     mapOf(
                             "ForceEIAuthentication" to "",
-                            "serviceCode" to "9999",
+                            "serviceCode" to "3403",
                             "serviceEdition" to "1"
                     ),
                     Fnr("01065500791")
