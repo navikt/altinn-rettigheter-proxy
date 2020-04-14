@@ -103,7 +103,7 @@ class ApiTest {
      */
 
     @Test
-    fun `Request med gyldig token og fnr som matcher subject får et svar`() {
+    fun `Request med gyldig token får et svar`() {
 
         val response = HttpClient.newBuilder().build().send(
                 HttpRequest.newBuilder()
