@@ -19,12 +19,13 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
     @GetMapping(value = ["organisasjoner"])
     fun proxyOrganisasjonerNY(
-            @RequestParam query: Map<String, String>
+            @RequestParam serviceCode: String, @RequestParam serviceEdition: String
     ): List<AltinnOrganisasjon> {
         return proxyOrganisasjoner(
-                leggTilParameter(
-                        query, "ForceEIAuthentication",
-                        ""
+                mapOf(
+                        "ForceEIAuthentication" to "",
+                        "serviceCode" to serviceCode,
+                        "serviceEdition" to serviceEdition
                 )
         )
     }
@@ -43,12 +44,6 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
         )
     }
 
-
-    private fun leggTilParameter(query: Map<String, String>, key: String, value: String): Map<String, String> {
-        val oppdaterbarQuery = query.toMutableMap()
-        oppdaterbarQuery[key] = value
-        return oppdaterbarQuery.toMap()
-    }
 
     private fun validerOgFiltrerQuery(query: Map<String, String>): Map<String, String> {
         validerObligatoriskeParametre(query,"ForceEIAuthentication")
