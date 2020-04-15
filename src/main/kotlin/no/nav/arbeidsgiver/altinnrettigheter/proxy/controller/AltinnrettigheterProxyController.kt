@@ -1,7 +1,6 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.controller
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
-import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.service.AltinnrettigheterService
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollService
 import no.nav.security.oidc.api.Protected
@@ -14,9 +13,22 @@ import org.springframework.web.server.ResponseStatusException
 
 @Protected
 @RestController
-class AltinnrettigheterProxyController(val altinnrettigheterService: AltinnrettigheterService, var tilgangskotrollService: TilgangskontrollService) {
+class AltinnrettigheterProxyController(val altinnrettigheterService: AltinnrettigheterService, var tilgangskontrollService: TilgangskontrollService) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
+
+    @GetMapping(value = ["organisasjoner"])
+    fun proxyOrganisasjonerNY(
+            @RequestParam serviceCode: String, @RequestParam serviceEdition: String
+    ): List<AltinnOrganisasjon> {
+        return proxyOrganisasjoner(
+                mapOf(
+                        "ForceEIAuthentication" to "",
+                        "serviceCode" to serviceCode,
+                        "serviceEdition" to serviceEdition
+                )
+        )
+    }
 
     @GetMapping(value = ["ekstern/altinn/api/serviceowner/reportees"])
     fun proxyOrganisasjoner(
@@ -28,9 +40,10 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
         return altinnrettigheterService.hentOrganisasjoner(
                 validertQuery,
-                tilgangskotrollService.hentInnloggetBruker().fnr
+                tilgangskontrollService.hentInnloggetBruker().fnr
         )
     }
+
 
     private fun validerOgFiltrerQuery(query: Map<String, String>): Map<String, String> {
         validerObligatoriskeParametre(query,"ForceEIAuthentication")

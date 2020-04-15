@@ -21,8 +21,89 @@ class ApiTest {
     lateinit var port: String
 
 
+    /*
+      Tester på endepunkt: /organisasjoner
+     */
+
     @Test
-    fun `Request med gyldig token og fnr som matcher subject får et svar`() {
+    fun `Endepunkt _organisasjoner_ returnerer en liste av organisasjoner innlogget bruker har rettigheter i`() {
+        val response = HttpClient.newBuilder().build().send(
+                HttpRequest.newBuilder()
+                        .uri(
+                                URI.create(
+                                        "http://localhost:$port" +
+                                                "/altinn-rettigheter-proxy/organisasjoner" +
+                                                "?serviceCode=3403" +
+                                                "&serviceEdition=1"
+                                )
+                        )
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + JwtTokenGenerator.signedJWTAsString("01065500791")
+                        )
+                        .GET()
+                        .build(),
+                BodyHandlers.ofString()
+        )
+
+        Assertions.assertThat(response.statusCode()).isEqualTo(200)
+    }
+
+    @Test
+    fun `Endepunkt _organisasjoner_ krever AUTH header med gyldig token`() {
+        val response = HttpClient.newBuilder().build().send(
+                HttpRequest.newBuilder()
+                        .uri(
+                                URI.create(
+                                        "http://localhost:$port" +
+                                                "/altinn-rettigheter-proxy/organisasjoner" +
+                                                "?serviceCode=3403" +
+                                                "&serviceEdition=1"
+                                )
+                        )
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + "DETTE_ER_IKKE_EN_GYLDIG_TOKEN"
+                        )
+                        .GET()
+                        .build(),
+                BodyHandlers.ofString()
+        )
+
+        Assertions.assertThat(response.statusCode()).isEqualTo(401)
+        Assertions.assertThat(response.body()).isEqualTo("{\"message\":\"You are not authorized to access this ressource\"}")
+    }
+
+    @Test
+    fun `Endepunkt _organisasjoner_ trenger serviceCode og serviceEdition`() {
+        val response = HttpClient.newBuilder().build().send(
+                HttpRequest.newBuilder()
+                        .uri(
+                                URI.create(
+                                        "http://localhost:$port" +
+                                                "/altinn-rettigheter-proxy/organisasjoner" +
+                                                "?serviceCode=3403"
+                                )
+                        )
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + JwtTokenGenerator.signedJWTAsString("01065500791")
+                        )
+                        .GET()
+                        .build(),
+                BodyHandlers.ofString()
+        )
+
+        Assertions.assertThat(response.statusCode()).isEqualTo(400)
+    }
+
+
+    /*
+      Tester på endepunkt: /ekstern/altinn/api/serviceowner/reportees
+     */
+
+    @Test
+    fun `Request med gyldig token får et svar`() {
 
         val response = HttpClient.newBuilder().build().send(
                 HttpRequest.newBuilder()
@@ -31,7 +112,6 @@ class ApiTest {
                                         "http://localhost:$port" +
                                                 "/altinn-rettigheter-proxy/ekstern/altinn/api/serviceowner/reportees" +
                                                 "?ForceEIAuthentication" +
-                                                "&subject=01065500791" +
                                                 "&serviceCode=3403" +
                                                 "&serviceEdition=1"
                                 )
@@ -71,6 +151,7 @@ class ApiTest {
         )
 
         Assertions.assertThat(response.statusCode()).isEqualTo(400)
-        Assertions.assertThat(response.body()).isEqualTo("{\"message\":\"400 BAD_REQUEST \\\"Obligatoriske parametre ble ikke sendt med: [ForceEIAuthentication]\\\"\"}")
+        Assertions.assertThat(response.body()).isEqualTo(
+                "{\"message\":\"400 BAD_REQUEST \\\"Obligatoriske parametre ble ikke sendt med: [ForceEIAuthentication]\\\"\"}")
     }
 }
