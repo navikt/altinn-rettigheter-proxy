@@ -3,10 +3,13 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy.controller
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.service.AltinnrettigheterService
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollService
+import no.nav.metrics.MetricsFactory
+import no.nav.metrics.Timer
 import no.nav.security.oidc.api.Protected
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
@@ -19,9 +22,11 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
     @GetMapping(value = ["organisasjoner"])
     fun proxyOrganisasjonerNY(
+            @RequestHeader(value = "X-Correlation-ID", required = false) correlationId: String?,
             @RequestParam serviceCode: String, @RequestParam serviceEdition: String
     ): List<AltinnOrganisasjon> {
         return proxyOrganisasjoner(
+                correlationId,
                 mapOf(
                         "ForceEIAuthentication" to "",
                         "serviceCode" to serviceCode,
@@ -32,16 +37,24 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
     @GetMapping(value = ["ekstern/altinn/api/serviceowner/reportees"])
     fun proxyOrganisasjoner(
+            @RequestHeader(value = "X-Correlation-ID", required = false) correlationId: String?,
             @RequestParam query: Map<String, String>
     ): List<AltinnOrganisasjon> {
         logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
 
         val validertQuery = validerOgFiltrerQuery(query)
 
-        return altinnrettigheterService.hentOrganisasjoner(
+        val timer: Timer = MetricsFactory
+                .createTimer(
+                "altinn.rettigheter.proxy.responsetid.${correlationId?:"UKJENT_KLIENT_APP"}")
+                .start()
+
+        val organisasjoner = altinnrettigheterService.hentOrganisasjoner(
                 validertQuery,
                 tilgangskontrollService.hentInnloggetBruker().fnr
         )
+        timer.stop().report()
+        return organisasjoner
     }
 
 
