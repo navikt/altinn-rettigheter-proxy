@@ -46,7 +46,7 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
         val timer: Timer = MetricsFactory
                 .createTimer(
-                "altinn.rettigheter.proxy.responsetid.${correlationId?:"UKJENT_KLIENT_APP"}")
+                "altinn-rettigheter-proxy.reportees.responsetid.${correlationId?:"UKJENT_KLIENT_APP"}")
                 .start()
 
         val organisasjoner = altinnrettigheterService.hentOrganisasjoner(
@@ -54,6 +54,11 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
                 tilgangskontrollService.hentInnloggetBruker().fnr
         )
         timer.stop().report()
+
+        MetricsFactory.createEvent("altinn-rettigheter-proxy.reportees")
+                .addTagToReport("klientapp", correlationId?:"UKJENT_KLIENT_APP")
+                .report()
+
         return organisasjoner
     }
 
