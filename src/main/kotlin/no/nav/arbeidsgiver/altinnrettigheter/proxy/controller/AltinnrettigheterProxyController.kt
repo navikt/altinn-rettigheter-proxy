@@ -22,11 +22,11 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
     @GetMapping(value = ["organisasjoner"])
     fun proxyOrganisasjonerNY(
-            @RequestHeader(value = "X-Correlation-ID", required = false) correlationId: String?,
+            @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
             @RequestParam serviceCode: String, @RequestParam serviceEdition: String
     ): List<AltinnOrganisasjon> {
         return proxyOrganisasjoner(
-                correlationId,
+                consumerId,
                 mapOf(
                         "ForceEIAuthentication" to "",
                         "serviceCode" to serviceCode,
@@ -37,7 +37,7 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
     @GetMapping(value = ["ekstern/altinn/api/serviceowner/reportees"])
     fun proxyOrganisasjoner(
-            @RequestHeader(value = "X-Correlation-ID", required = false) correlationId: String?,
+            @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
             @RequestParam query: Map<String, String>
     ): List<AltinnOrganisasjon> {
         logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
@@ -46,7 +46,7 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
         val responsetidPerKlient: Timer = MetricsFactory
                 .createTimer(
-                "altinn-rettigheter-proxy.reportees.responsetid.${correlationId?:"UKJENT_KLIENT_APP"}")
+                "altinn-rettigheter-proxy.reportees.responsetid.${consumerId?:"UKJENT_KLIENT_APP"}")
                 .start()
         val responsetidAlleKlienter: Timer = MetricsFactory
                 .createTimer(
@@ -62,7 +62,7 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
         responsetidAlleKlienter.stop().report()
 
         MetricsFactory.createEvent("altinn-rettigheter-proxy.reportees")
-                .addTagToReport("klientapp", correlationId?:"UKJENT_KLIENT_APP")
+                .addTagToReport("klientapp", consumerId?:"UKJENT_KLIENT_APP")
                 .report()
 
         return organisasjoner
