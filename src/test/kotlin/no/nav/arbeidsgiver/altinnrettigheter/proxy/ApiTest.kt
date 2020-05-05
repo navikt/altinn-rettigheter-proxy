@@ -41,6 +41,7 @@ class ApiTest {
                                 HttpHeaders.AUTHORIZATION,
                                 "Bearer " + JwtTokenGenerator.signedJWTAsString("01065500791")
                         )
+                        .header("X-Correlation-ID", "klient-applikasjon")
                         .GET()
                         .build(),
                 BodyHandlers.ofString()
