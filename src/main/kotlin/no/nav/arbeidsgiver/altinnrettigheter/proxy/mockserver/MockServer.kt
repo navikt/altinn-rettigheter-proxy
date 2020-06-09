@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
-import java.io.UnsupportedEncodingException
 import java.net.URL
-import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @Profile("local")
@@ -24,6 +22,8 @@ class MockServer @Autowired constructor(
         val altinnUrl: String
 ) {
 
+    private val MOCK_SERVER_DEBUG_ENABLED = false;
+
     init {
         System.out.println("mocking")
         val server = WireMockServer(
@@ -33,7 +33,7 @@ class MockServer @Autowired constructor(
                                 ResponseTemplateTransformer(true)
                         )
                         .notifier(
-                                ConsoleNotifier(true)
+                                ConsoleNotifier(MOCK_SERVER_DEBUG_ENABLED)
                         )
         )
         val altinnPathToReportees = URL(altinnUrl).path + "ekstern/altinn/api/serviceowner/reportees?" +
