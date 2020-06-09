@@ -91,6 +91,8 @@ class AltinnrettigheterProxyController(
         var pageNumber = 0
 
         if (inkluderAlle) {
+            val filterParamVerdi = "Type+ne+'Person'+and+Status+eq+'Active'"
+
             while (hasMore) {
                 pageNumber++
                 val organisasjoner = altinnrettigheterService.hentOrganisasjoner(
@@ -99,7 +101,8 @@ class AltinnrettigheterProxyController(
                                 "serviceCode" to serviceCode,
                                 "serviceEdition" to serviceEdition,
                                 "\$top" to altinnReporteesPageSize,
-                                "\$skip" to ((pageNumber - 1) * Integer.valueOf(altinnReporteesPageSize)).toString()
+                                "\$skip" to ((pageNumber - 1) * Integer.valueOf(altinnReporteesPageSize)).toString(),
+                                "\$filter" to filterParamVerdi
                         ),
                         fnr
                 )

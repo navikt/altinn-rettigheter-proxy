@@ -46,6 +46,7 @@ class MockServer @Autowired constructor(
                  "$altinnPathToReportees"
                  + "&\$top=5"
                  + "&\$skip=0"
+                 + "&\$filter=Type+ne+'Person'+and+Status+eq+'Active'"
                  + "&subject=01065500791",
         "altinnReportees-del1.json"
          )
@@ -54,6 +55,7 @@ class MockServer @Autowired constructor(
                  "$altinnPathToReportees"
                          + "&\$top=5"
                          + "&\$skip=5"
+                         + "&\$filter=Type+ne+'Person'+and+Status+eq+'Active'"
                          + "&subject=01065500791",
                  "altinnReportees-del2.json"
          )
