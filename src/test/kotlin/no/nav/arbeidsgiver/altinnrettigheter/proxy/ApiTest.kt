@@ -1,6 +1,8 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.net.HttpHeaders
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
 import no.nav.security.oidc.test.support.JwtTokenGenerator
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -25,6 +27,10 @@ class ApiTest {
       Tester på endepunkt: /organisasjoner
      */
 
+    companion object {
+        val objectMapper = ObjectMapper()
+    }
+
     @Test
     fun `Endepunkt _organisasjoner_ returnerer en liste av organisasjoner innlogget bruker har rettigheter i`() {
         val response = HttpClient.newBuilder().build().send(
@@ -48,6 +54,48 @@ class ApiTest {
         )
 
         Assertions.assertThat(response.statusCode()).isEqualTo(200)
+        val altinnOrganisasjoner: List<AltinnOrganisasjon> = objectMapper.readValue(
+                response.body(),
+                objectMapper.typeFactory.constructCollectionType(
+                        MutableList::class.java,
+                        AltinnOrganisasjon::class.java
+                )
+        )
+        Assertions.assertThat(altinnOrganisasjoner.size).isEqualTo(10)
+    }
+
+    @Test
+    fun `Endepunkt organisasjoner returnerer en liste av organisasjoner i flere kall til Altinn`() {
+        val response = HttpClient.newBuilder().build().send(
+                HttpRequest.newBuilder()
+                        .uri(
+                                URI.create(
+                                        "http://localhost:$port" +
+                                                "/altinn-rettigheter-proxy/organisasjoner" +
+                                                "?serviceCode=3403" +
+                                                "&serviceEdition=1" +
+                                                "&inkluderAlle=true"
+                                )
+                        )
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + JwtTokenGenerator.signedJWTAsString("01065500791")
+                        )
+                        .header("X-Correlation-ID", "klient-applikasjon")
+                        .GET()
+                        .build(),
+                BodyHandlers.ofString()
+        )
+
+        Assertions.assertThat(response.statusCode()).isEqualTo(200)
+        val altinnOrganisasjoner: List<AltinnOrganisasjon> = objectMapper.readValue(
+                response.body(),
+                objectMapper.typeFactory.constructCollectionType(
+                        MutableList::class.java,
+                        AltinnOrganisasjon::class.java
+                )
+        )
+        Assertions.assertThat(altinnOrganisasjoner.size).isEqualTo(9)
     }
 
     @Test

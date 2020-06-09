@@ -17,6 +17,8 @@ spring:
   profiles: test
 
 altinn:
+  reportees:
+    pagesize: 5
   url: "http://local.test"
   apikey: "test"
   apigw.apikey: "test"
@@ -44,6 +46,8 @@ mock:
   aktorPort: 9092
 
 altinn:
+  reportees:
+    pagesize: 5
   url: "http://localhost:${mock.port}/altinn/"
   apikey: "test"
   apigw.apikey: "test"
@@ -72,6 +76,8 @@ spring:
       time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
 
 altinn:
+  reportees:
+    pagesize: 500
   url: "https://api-gw-q1.adeo.no/"
 
 no.nav.security.oidc:
@@ -95,6 +101,8 @@ spring:
       time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
 
 altinn:
+  reportees:
+    pagesize: 500
   url: "https://api-gw.adeo.no/"
 
 no.nav.security.oidc:
