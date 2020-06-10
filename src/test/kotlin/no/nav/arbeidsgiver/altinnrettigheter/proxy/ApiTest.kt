@@ -2,12 +2,12 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy
 
 import com.google.common.net.HttpHeaders
 import no.nav.security.oidc.test.support.JwtTokenGenerator
+import org.apache.http.client.utils.URIBuilder
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.TestPropertySource
-import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
@@ -30,12 +30,13 @@ class ApiTest {
         val response = HttpClient.newBuilder().build().send(
                 HttpRequest.newBuilder()
                         .uri(
-                                URI.create(
-                                        "http://localhost:$port" +
-                                                "/altinn-rettigheter-proxy/organisasjoner" +
-                                                "?serviceCode=3403" +
-                                                "&serviceEdition=1"
-                                )
+                                URIBuilder()
+                                        .setScheme("http")
+                                        .setHost("localhost:$port")
+                                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
+                                        .addParameter("serviceCode", "3403")
+                                        .addParameter("serviceEdition", "1")
+                                        .build()
                         )
                         .header(
                                 HttpHeaders.AUTHORIZATION,
@@ -55,12 +56,13 @@ class ApiTest {
         val response = HttpClient.newBuilder().build().send(
                 HttpRequest.newBuilder()
                         .uri(
-                                URI.create(
-                                        "http://localhost:$port" +
-                                                "/altinn-rettigheter-proxy/organisasjoner" +
-                                                "?serviceCode=3403" +
-                                                "&serviceEdition=1"
-                                )
+                                URIBuilder()
+                                        .setScheme("http")
+                                        .setHost("localhost:$port")
+                                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
+                                        .addParameter("serviceCode", "3403")
+                                        .addParameter("serviceEdition", "1")
+                                        .build()
                         )
                         .header(
                                 HttpHeaders.AUTHORIZATION,
@@ -80,11 +82,12 @@ class ApiTest {
         val response = HttpClient.newBuilder().build().send(
                 HttpRequest.newBuilder()
                         .uri(
-                                URI.create(
-                                        "http://localhost:$port" +
-                                                "/altinn-rettigheter-proxy/organisasjoner" +
-                                                "?serviceCode=3403"
-                                )
+                                URIBuilder()
+                                        .setScheme("http")
+                                        .setHost("localhost:$port")
+                                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
+                                        .addParameter("serviceCode", "3403")
+                                        .build()
                         )
                         .header(
                                 HttpHeaders.AUTHORIZATION,
@@ -106,16 +109,21 @@ class ApiTest {
     @Test
     fun `Request med gyldig token får et svar`() {
 
+
         val response = HttpClient.newBuilder().build().send(
                 HttpRequest.newBuilder()
                         .uri(
-                                URI.create(
-                                        "http://localhost:$port" +
-                                                "/altinn-rettigheter-proxy/ekstern/altinn/api/serviceowner/reportees" +
-                                                "?ForceEIAuthentication" +
-                                                "&serviceCode=3403" +
-                                                "&serviceEdition=1"
-                                )
+                                URIBuilder()
+                                        .setScheme("http")
+                                        .setHost("localhost:$port")
+                                        .setPath("/altinn-rettigheter-proxy/ekstern/altinn/api/serviceowner/reportees")
+                                        .addParameter("ForceEIAuthentication", "")
+                                        .addParameter("serviceCode", "3403")
+                                        .addParameter("serviceEdition", "1")
+                                        .addParameter("\$filter", "Type+ne+'Person'+and+Status+eq+'Active'")
+                                        .addParameter("\$top", "500")
+                                        .addParameter("\$skip", "0")
+                                        .build()
                         )
                         .header(
                                 HttpHeaders.AUTHORIZATION,
@@ -135,12 +143,13 @@ class ApiTest {
         val response = HttpClient.newBuilder().build().send(
                 HttpRequest.newBuilder()
                         .uri(
-                                URI.create(
-                                        "http://localhost:$port" +
-                                                "/altinn-rettigheter-proxy/ekstern/altinn/api/serviceowner/reportees" +
-                                                "?serviceCode=3403" +
-                                                "&serviceEdition=1"
-                                )
+                                URIBuilder()
+                                        .setScheme("http")
+                                        .setHost("localhost:$port")
+                                        .setPath("/altinn-rettigheter-proxy/ekstern/altinn/api/serviceowner/reportees")
+                                        .addParameter("serviceCode", "3403")
+                                        .addParameter("serviceEdition", "1")
+                                        .build()
                         )
                         .header(
                                 HttpHeaders.AUTHORIZATION,
