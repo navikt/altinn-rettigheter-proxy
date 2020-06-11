@@ -2,6 +2,7 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy.mockserver
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
 import org.apache.commons.io.IOUtils
@@ -21,6 +22,8 @@ class MockServer @Autowired constructor(
         val altinnUrl: String
 ) {
 
+    private val MOCK_SERVER_VERBOSE_CONSOLE_LOGGING_ENABLED = false;
+
     init {
         System.out.println("mocking")
         val server = WireMockServer(
@@ -29,19 +32,40 @@ class MockServer @Autowired constructor(
                         .extensions(
                                 ResponseTemplateTransformer(true)
                         )
+                        .notifier(
+                                ConsoleNotifier(MOCK_SERVER_VERBOSE_CONSOLE_LOGGING_ENABLED)
+                        )
         )
-        val altinnPathToReportees = URL(altinnUrl).path + "ekstern/altinn/api/serviceowner/reportees"
-         mockForPath(server, altinnPathToReportees,"altinnReportees.json")
+        val altinnPathToReportees = URL(altinnUrl).path + "ekstern/altinn/api/serviceowner/reportees?"
 
+        mockForPath(
+                server,
+                "$altinnPathToReportees"
+                        + "ForceEIAuthentication"
+                        + "&serviceCode=3403"
+                        + "&serviceEdition=1"
+                        + "&\$filter=Type+ne+'Person'+and+Status+eq+'Active'"
+                        + "&\$top=500"
+                        + "&\$skip=0"
+                        + "&subject=01065500791",
+                "altinnReportees.json"
+        )
         server.start()
     }
 
     private fun mockForPath(server: WireMockServer, path: String, responseFile: String) {
-        server.stubFor(WireMock.any(WireMock.urlPathMatching("$path.*"))
-                .willReturn(WireMock.aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(hentStringFraFil(responseFile))
-                ))
+        server.stubFor(
+                WireMock.get(
+                        path
+                )
+                        .willReturn(
+                                WireMock.aResponse()
+                                        .withHeader("Content-Type", "application/json")
+                                        .withBody(
+                                                hentStringFraFil(responseFile)
+                                        )
+                        )
+        )
     }
 
     fun hentStringFraFil(filnavn: String):String{
