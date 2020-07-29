@@ -44,6 +44,18 @@ class MockServer @Autowired constructor(
                         + "ForceEIAuthentication"
                         + "&serviceCode=3403"
                         + "&serviceEdition=1"
+                        + "&\$filter=Type%20ne%20'Person'%20and%20Status%20eq%20'Active'"
+                        + "&\$top=500"
+                        + "&\$skip=0"
+                        + "&subject=01065500791",
+                "altinnReportees.json"
+        )
+        mockForPath(
+                server,
+                "$altinnPathToReportees"
+                        + "ForceEIAuthentication"
+                        + "&serviceCode=3403"
+                        + "&serviceEdition=1"
                         + "&\$filter=Type+ne+'Person'+and+Status+eq+'Active'"
                         + "&\$top=500"
                         + "&\$skip=0"

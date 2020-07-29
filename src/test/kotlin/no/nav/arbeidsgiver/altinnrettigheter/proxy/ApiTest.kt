@@ -101,14 +101,45 @@ class ApiTest {
         Assertions.assertThat(response.statusCode()).isEqualTo(400)
     }
 
+    /*
+      Tester på endepunkt: /v2/organisasjoner
+     */
+
+    @Test
+    fun `Endepunkt _organisasjonerV2_ returnerer en liste av organisasjoner innlogget bruker har rettigheter i`() {
+        val response = HttpClient.newBuilder().build().send(
+                HttpRequest.newBuilder()
+                        .uri(
+                                URIBuilder()
+                                        .setScheme("http")
+                                        .setHost("localhost:$port")
+                                        .setPath("/altinn-rettigheter-proxy/v2/organisasjoner")
+                                        .addParameter("serviceCode", "3403")
+                                        .addParameter("serviceEdition", "1")
+                                        .addParameter("top", "500")
+                                        .addParameter("skip", "0")
+                                        .build()
+                        )
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + JwtTokenGenerator.signedJWTAsString("01065500791")
+                        )
+                        .header("X-Correlation-ID", "cn39rh9eawhd93rh974")
+                        .header("X-Consumer-ID", "klient-applikasjon")
+                        .GET()
+                        .build(),
+                BodyHandlers.ofString()
+        )
+
+        Assertions.assertThat(response.statusCode()).isEqualTo(200)
+    }
 
     /*
       Tester på endepunkt: /ekstern/altinn/api/serviceowner/reportees
      */
 
     @Test
-    fun `Request med gyldig token får et svar`() {
-
+    fun `Request med gyldig token får et svar, selv med + i filter`() {
 
         val response = HttpClient.newBuilder().build().send(
                 HttpRequest.newBuilder()
