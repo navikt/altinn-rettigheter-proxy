@@ -32,7 +32,7 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
                         "ForceEIAuthentication" to "",
                         "serviceCode" to serviceCode,
                         "serviceEdition" to serviceEdition,
-                        "\$filter" to "Type ne 'Person' and Status eq 'Active'",
+                        "\$filter" to "Type+ne+'Person'+and+Status+eq+'Active'",
                         "\$top" to "500",
                         "\$skip" to "0"
                 )
