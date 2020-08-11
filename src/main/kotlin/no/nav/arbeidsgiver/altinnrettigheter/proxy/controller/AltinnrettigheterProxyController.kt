@@ -42,21 +42,29 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
     @GetMapping("/v2/organisasjoner")
     fun proxyOrganisasjonerV2(
             @RequestHeader(value = "X-Consumer-ID") consumerId: String,
-            @RequestParam serviceCode: String,
-            @RequestParam serviceEdition: String,
+            @RequestParam(required = false) serviceCode: String?,
+            @RequestParam(required = false) serviceEdition: String?,
             @RequestParam top: Number,
             @RequestParam skip: Number
     ): List<AltinnOrganisasjon> {
+        var queryParametre = mapOf(
+                "ForceEIAuthentication" to "",
+                "\$filter" to "Type ne 'Person' and Status eq 'Active'",
+                "\$top" to "$top",
+                "\$skip" to "$skip"
+        )
+
+        if (serviceCode != null) {
+            queryParametre += ("serviceCode" to serviceCode)
+        }
+
+        if (serviceEdition != null) {
+            queryParametre += ("serviceEdition" to serviceEdition)
+        }
+
         return proxyOrganisasjoner(
                 consumerId,
-                mapOf(
-                        "ForceEIAuthentication" to "",
-                        "serviceCode" to serviceCode,
-                        "serviceEdition" to serviceEdition,
-                        "\$filter" to "Type ne 'Person' and Status eq 'Active'",
-                        "\$top" to "$top",
-                        "\$skip" to "$skip"
-                )
+                queryParametre
         )
     }
 
@@ -70,12 +78,10 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
         val validertQuery = validerOgFiltrerQuery(query)
 
         val responsetidPerKlient: Timer = MetricsFactory
-                .createTimer(
-                "altinn-rettigheter-proxy.reportees.responsetid.${consumerId?:"UKJENT_KLIENT_APP"}")
+                .createTimer("altinn-rettigheter-proxy.reportees.responsetid.${consumerId?:"UKJENT_KLIENT_APP"}")
                 .start()
         val responsetidAlleKlienter: Timer = MetricsFactory
-                .createTimer(
-                        "altinn-rettigheter-proxy.reportees.responsetid.alle")
+                .createTimer("altinn-rettigheter-proxy.reportees.responsetid.alle")
                 .start()
 
 
