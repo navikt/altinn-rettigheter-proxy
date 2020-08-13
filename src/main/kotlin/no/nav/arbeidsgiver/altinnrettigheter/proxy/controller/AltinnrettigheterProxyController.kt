@@ -45,14 +45,20 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
             @RequestParam(required = false) serviceCode: String?,
             @RequestParam(required = false) serviceEdition: String?,
             @RequestParam top: Number,
-            @RequestParam skip: Number
+            @RequestParam skip: Number,
+            @RequestParam(required = false, defaultValue = "true") filterPaaAktiveOrganisasjoner: String
     ): List<AltinnOrganisasjon> {
+        var isAktiveOrganisasjonerFilterPå = filterPaaAktiveOrganisasjoner == "true"
+
         var queryParametre = mapOf(
                 "ForceEIAuthentication" to "",
-                "\$filter" to "Type ne 'Person' and Status eq 'Active'",
                 "\$top" to "$top",
                 "\$skip" to "$skip"
         )
+
+        if (isAktiveOrganisasjonerFilterPå) {
+            queryParametre += "\$filter" to "Type ne 'Person' and Status eq 'Active'"
+        }
 
         if (serviceCode != null) {
             queryParametre += ("serviceCode" to serviceCode)

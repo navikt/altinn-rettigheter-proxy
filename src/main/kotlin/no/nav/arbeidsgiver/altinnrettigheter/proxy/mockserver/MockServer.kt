@@ -39,6 +39,22 @@ class MockServer @Autowired constructor(
         )
         val altinnPathToReportees = URL(altinnUrl).path + "ekstern/altinn/api/serviceowner/reportees"
 
+        // Mock kall til Altinn uten filter på aktive organisasjoner med serviceCode 3403 --> returnerer 5 organisasjoner
+        mockWithParameters(
+                server,
+                "$altinnPathToReportees",
+                mapOf(
+                        "ForceEIAuthentication" to WireMock.equalTo(""),
+                        "serviceCode" to WireMock.equalTo("3403"),
+                        "serviceEdition" to WireMock.equalTo("1"),
+                        "\$top" to WireMock.equalTo("500"),
+                        "\$skip" to WireMock.equalTo("0"),
+                        "subject" to WireMock.equalTo("01065500791")
+                ),
+                "altinnReporteesAlleOrganisasjonerForServiceCode3403.json"
+        )
+
+        // Mock kall til Altinn MED filter på aktive organiasjoner og serviceCode 3403  --> returnerer 4 organisasjoner
         mockWithParameters(
                 server,
                 "$altinnPathToReportees",
@@ -51,8 +67,10 @@ class MockServer @Autowired constructor(
                         "\$filter" to WireMock.equalTo("Type ne 'Person' and Status eq 'Active'"),
                         "subject" to WireMock.equalTo("01065500791")
                 ),
-                "altinnReportees.json"
+                "altinnReporteesAktiveOrganisasjonerForServiceCode3403.json"
         )
+
+        // Mock kall til Altinn MED filter på aktive organiasjoner (alle rettigheter)  --> returnerer 6 organisasjoner
         mockWithParameters(
                 server,
                 "$altinnPathToReportees",
@@ -63,7 +81,7 @@ class MockServer @Autowired constructor(
                         "\$filter" to WireMock.equalTo("Type ne 'Person' and Status eq 'Active'"),
                         "subject" to WireMock.equalTo("01020300123")
                 ),
-                "altinnReportees.json"
+                "altinnReporteesAktiveOrganisasjoner.json"
         )
         server.start()
     }
