@@ -112,6 +112,35 @@ class ApiTest {
      */
 
     @Test
+    fun `Endepunkt _organisasjonerV2_ sjekker at serviceCode og serviceEdition bare inneholder tall`() {
+        val response = HttpClient.newBuilder().build().send(
+                HttpRequest.newBuilder()
+                        .uri(
+                                URIBuilder()
+                                        .setScheme("http")
+                                        .setHost("localhost:$port")
+                                        .setPath("/altinn-rettigheter-proxy/v2/organisasjoner")
+                                        .addParameter("serviceCode", "malicious serviceCode")
+                                        .addParameter("serviceEdition", "1")
+                                        .addParameter("top", "500")
+                                        .addParameter("skip", "0")
+                                        .build()
+                        )
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + JwtTokenGenerator.signedJWTAsString("01065500791")
+                        )
+                        .header("X-Correlation-ID", "cn39rh9eawhd93rh974")
+                        .header("X-Consumer-ID", "klient-applikasjon")
+                        .GET()
+                        .build(),
+                BodyHandlers.ofString()
+        )
+
+        Assertions.assertThat(response.statusCode()).isEqualTo(400)
+    }
+
+    @Test
     fun `Endepunkt _organisasjonerV2_ returnerer en liste av aktive organisasjoner innlogget bruker har rettigheter i`() {
         val response = HttpClient.newBuilder().build().send(
                 HttpRequest.newBuilder()

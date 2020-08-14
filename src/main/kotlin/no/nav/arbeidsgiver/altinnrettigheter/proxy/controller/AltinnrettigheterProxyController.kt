@@ -48,6 +48,14 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
             @RequestParam skip: Number,
             @RequestParam(required = false, defaultValue = "true") filterPaaAktiveOrganisasjoner: String
     ): List<AltinnOrganisasjon> {
+        sjekkParametreInneholderSifre(
+                mapOf(
+                        "serviceCode" to serviceCode,
+                        "serviceEdition" to serviceEdition
+
+                )
+        )
+
         var isAktiveOrganisasjonerFilterPå = filterPaaAktiveOrganisasjoner == "true"
 
         var queryParametre = mapOf(
@@ -124,6 +132,14 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
                     HttpStatus.BAD_REQUEST,
                     "Obligatoriske parametre ble ikke sendt med: $parametreSomIkkeErMed"
             )
+        }
+    }
+
+    private fun sjekkParametreInneholderSifre(parametre: Map<String, String?>) {
+        parametre.forEach {
+            if ((it.value?.matches(Regex("[0-9]+")) == false)) {
+                throw UgyldigParameterException(it.key, it.value!!)
+            }
         }
     }
 
