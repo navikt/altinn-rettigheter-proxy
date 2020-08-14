@@ -5,7 +5,7 @@
     "OrganizationNumber": "811076732",
     "ParentOrganizationNumber": "811076112",
     "OrganizationForm": "BEDR",
-    "Status": "Active"
+    "Status": "Inactive"
   },
   {
     "Name": "BALLSTAD OG HORTEN",
@@ -38,41 +38,5 @@
     "ParentOrganizationNumber": "822565212",
     "OrganizationForm": "BEDR",
     "Status": "Active"
-  },
-  {
-    "Name": "NAV ENGERDAL",
-    "Type": "Business",
-    "ParentOrganizationNumber": "874652202",
-    "OrganizationNumber": "991378642",
-    "OrganizationForm": "BEDR",
-    "Status": "Active"
-  },
-  {
-    "Name": "NAV HAMAR",
-    "Type": "Business",
-    "ParentOrganizationNumber": "874652202",
-    "OrganizationNumber": "990229023",
-    "OrganizationForm": "BEDR",
-    "Status": "Active"
-  },
-  {
-    "Name": "NAV HAMAR 2",
-    "Type": "Business",
-    "ParentOrganizationNumber": "874652202",
-    "OrganizationNumber": "910969439",
-    "OrganizationForm": "BEDR",
-    "Status": "Active"
-  },
-  {
-    "Name": "NAV HAMAR 3",
-    "Type": "Business",
-    "ParentOrganizationNumber": "874652202",
-    "OrganizationNumber": "444444444",
-    "OrganizationForm": "BEDR",
-    "Status": "Active"
-  },
-  {
-    "Name": "NAV HAMAR 4",
-    "Type": "Business"
   }
 ]
