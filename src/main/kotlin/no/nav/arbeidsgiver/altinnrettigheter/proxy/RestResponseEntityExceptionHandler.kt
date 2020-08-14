@@ -2,6 +2,7 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.AltinnException
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.ProxyHttpStatusCodeException
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.controller.UgyldigParameterException
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollException
 import no.nav.security.spring.oidc.validation.interceptor.OIDCUnauthorizedException
 import org.slf4j.LoggerFactory
@@ -16,10 +17,20 @@ import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.nio.file.AccessDeniedException
 import java.util.*
+import javax.ws.rs.BadRequestException
 
 
 @ControllerAdvice
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
+
+    @ExceptionHandler(value = [UgyldigParameterException::class])
+    @ResponseBody
+    protected fun handleBadRequestException(e: UgyldigParameterException, webRequest: WebRequest?): ResponseEntity<Any> {
+        return getResponseEntity(
+                "Parameter '${e.parameterNavn}' har en ugyldig verdi '${e.parameterValue}'",
+                HttpStatus.BAD_REQUEST
+        )
+    }
 
     @ExceptionHandler(value = [TilgangskontrollException::class])
     @ResponseBody
@@ -87,6 +98,18 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         ))
         return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(body)
     }
+
+    private fun getResponseEntity(melding: String, status: HttpStatus): ResponseEntity<Any> {
+        val body = HashMap<String, String>(1)
+        body["message"] = melding
+        Companion.logger.info(String.format(
+                "Returnerer følgende HttpStatus '%s' med melding '%s'",
+                status.toString(),
+                melding
+        ))
+        return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(body)
+    }
+
 
     companion object {
         private val logger = LoggerFactory.getLogger(ResponseEntityExceptionHandler::class.java)

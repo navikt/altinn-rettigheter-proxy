@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
+import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -36,51 +37,78 @@ class MockServer @Autowired constructor(
                                 ConsoleNotifier(MOCK_SERVER_VERBOSE_CONSOLE_LOGGING_ENABLED)
                         )
         )
-        val altinnPathToReportees = URL(altinnUrl).path + "ekstern/altinn/api/serviceowner/reportees?"
+        val altinnPathToReportees = URL(altinnUrl).path + "ekstern/altinn/api/serviceowner/reportees"
 
-        mockForPath(
+        // Mock kall til Altinn uten filter på aktive organisasjoner med serviceCode 3403 --> returnerer 5 organisasjoner
+        mockWithParameters(
                 server,
-                "$altinnPathToReportees"
-                        + "ForceEIAuthentication"
-                        + "&serviceCode=3403"
-                        + "&serviceEdition=1"
-                        + "&\$filter=Type%20ne%20'Person'%20and%20Status%20eq%20'Active'"
-                        + "&\$top=500"
-                        + "&\$skip=0"
-                        + "&subject=01065500791",
-                "altinnReportees.json"
+                "$altinnPathToReportees",
+                mapOf(
+                        "ForceEIAuthentication" to WireMock.equalTo(""),
+                        "serviceCode" to WireMock.equalTo("3403"),
+                        "serviceEdition" to WireMock.equalTo("1"),
+                        "\$top" to WireMock.equalTo("500"),
+                        "\$skip" to WireMock.equalTo("0"),
+                        "subject" to WireMock.equalTo("01065500791")
+                ),
+                "altinnReporteesAlleOrganisasjonerForServiceCode3403.json"
         )
-        mockForPath(
+
+        // Mock kall til Altinn MED filter på aktive organiasjoner og serviceCode 3403  --> returnerer 4 organisasjoner
+        mockWithParameters(
                 server,
-                "$altinnPathToReportees"
-                        + "ForceEIAuthentication"
-                        + "&serviceCode=3403"
-                        + "&serviceEdition=1"
-                        + "&\$filter=Type+ne+'Person'+and+Status+eq+'Active'"
-                        + "&\$top=500"
-                        + "&\$skip=0"
-                        + "&subject=01065500791",
-                "altinnReportees.json"
+                "$altinnPathToReportees",
+                mapOf(
+                        "ForceEIAuthentication" to WireMock.equalTo(""),
+                        "serviceCode" to WireMock.equalTo("3403"),
+                        "serviceEdition" to WireMock.equalTo("1"),
+                        "\$top" to WireMock.equalTo("500"),
+                        "\$skip" to WireMock.equalTo("0"),
+                        "\$filter" to WireMock.equalTo("Type ne 'Person' and Status eq 'Active'"),
+                        "subject" to WireMock.equalTo("01065500791")
+                ),
+                "altinnReporteesAktiveOrganisasjonerForServiceCode3403.json"
+        )
+
+        // Mock kall til Altinn MED filter på aktive organiasjoner (alle rettigheter)  --> returnerer 6 organisasjoner
+        mockWithParameters(
+                server,
+                "$altinnPathToReportees",
+                mapOf(
+                        "ForceEIAuthentication" to WireMock.equalTo(""),
+                        "\$top" to WireMock.equalTo("500"),
+                        "\$skip" to WireMock.equalTo("0"),
+                        "\$filter" to WireMock.equalTo("Type ne 'Person' and Status eq 'Active'"),
+                        "subject" to WireMock.equalTo("01020300123")
+                ),
+                "altinnReporteesAktiveOrganisasjoner.json"
         )
         server.start()
     }
 
-    private fun mockForPath(server: WireMockServer, path: String, responseFile: String) {
+
+    private fun mockWithParameters(
+            server: WireMockServer,
+            basePath: String,
+            parameters: Map<String, StringValuePattern>,
+            responseFile: String
+    ) {
         server.stubFor(
-                WireMock.get(
-                        path
-                )
-                        .willReturn(
-                                WireMock.aResponse()
-                                        .withHeader("Content-Type", "application/json")
-                                        .withBody(
-                                                hentStringFraFil(responseFile)
-                                        )
+                WireMock.get(WireMock.urlPathEqualTo(basePath))
+                .withHeader("Accept", WireMock.containing("application/json"))
+                .withQueryParams(parameters)
+                .willReturn(WireMock.aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(
+                                hentStringFraFil(responseFile)
                         )
+                )
         )
     }
 
-    fun hentStringFraFil(filnavn: String):String{
+
+    private fun hentStringFraFil(filnavn: String):String{
         return IOUtils.toString(MockServer::class.java.classLoader.getResourceAsStream("mock/$filnavn"), StandardCharsets.UTF_8)
     }
 }
