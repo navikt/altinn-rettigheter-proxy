@@ -31,6 +31,8 @@ spec:
       value: altinn-rettigheter-proxy-redis.default.svc.nais.local
     - name: CACHE_TIME_TO_LIVE_MILLIS
       value: "600000"
+  envFrom:
+    - configmap: loginservice-idporten
   prometheus:
     enabled: true
     path: /altinn-rettigheter-proxy/internal/actuator/prometheus
