@@ -1,0 +1,33 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: altinn-rettigheter-proxy
+  namespace: arbeidsgiver
+  labels:
+    team: arbeidsgiver
+spec:
+  image: {{ image }}
+  team: arbeidsgiver
+  port: 8080
+  ingresses:
+    - https://altinn-rettigheter-proxy.dev.nav.no/
+  liveness:
+    path: /internal/healthcheck
+    initialDelay: 30
+  readiness:
+    path: /internal/healthcheck
+    initialDelay: 30
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: dev
+    - name: REDIS_HOST
+      value: altinn-rettigheter-proxy-redis.arbeidsgiver.svc.cluster.local
+    - name: CACHE_TIME_TO_LIVE_MILLIS
+      value: "600000"
+  envFrom:
+    - configmap: loginservice-idporten
+    - secret: altinn-rettigheter-proxy-redis-password
+  prometheus:
+    enabled: true
+    path: /internal/actuator/prometheus
+
