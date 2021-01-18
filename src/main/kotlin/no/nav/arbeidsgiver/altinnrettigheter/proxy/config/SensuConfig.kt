@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile
 
 
 @Configuration
-@Profile("dev", "prod")
+@Profile("dev-gcp", "dev", "prod")
 class SensuConfig() {
 
     private val logger = LoggerFactory.getLogger(javaClass)

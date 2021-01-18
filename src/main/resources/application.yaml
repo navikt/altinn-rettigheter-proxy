@@ -1,7 +1,5 @@
 server:
   port: 8080
-  servlet:
-    context-path: /altinn-rettigheter-proxy
 
 management.endpoints.web:
   exposure.include: info, health, metrics, prometheus
@@ -57,6 +55,27 @@ no.nav.security.oidc:
     selvbetjening:
       discoveryurl: http://metadata
       accepted_audience: aud-localhost
+---
+
+spring:
+  profiles: dev-gcp
+  redis:
+    host: ${REDIS_HOST}
+    port: 6379
+    password: ${REDIS_PASSWORD}
+    timeout: 500
+  cache:
+    redis:
+      time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
+
+altinn:
+  url: "https://api-gw-q1.adeo.no/"
+
+no.nav.security.oidc:
+  issuers: selvbetjening
+  issuer.selvbetjening:
+    discoveryurl: ${LOGINSERVICE_IDPORTEN_DISCOVERY_URL}
+    accepted_audience: ${LOGINSERVICE_IDPORTEN_AUDIENCE}
 
 ---
 
