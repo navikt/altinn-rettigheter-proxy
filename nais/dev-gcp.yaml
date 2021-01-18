@@ -6,7 +6,7 @@ metadata:
   labels:
     team: arbeidsgiver
 spec:
-  image: docker.pkg.github.com/navikt/altinn-rettigheter-proxy/altinn-rettigheter-proxy:c7d47b238df5937617cc0c6fea0feb778435ed57
+  image: {{image}}
   team: arbeidsgiver
   port: 8080
   ingresses:
