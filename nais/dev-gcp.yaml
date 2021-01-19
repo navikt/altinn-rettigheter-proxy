@@ -11,6 +11,7 @@ spec:
   port: 8080
   ingresses:
     - https://altinn-rettigheter-proxy.dev.nav.no/
+    - https://altinn-rettigheter-proxy.dev.intern.nav.no/ # nåes fra fss
   liveness:
     path: /internal/healthcheck
     initialDelay: 60
@@ -33,6 +34,11 @@ spec:
     - secret: altinn-rettigheter-proxy-redis-password
     - secret: altinn-rettigheter-proxy
   accessPolicy:
+    inbound:
+      rules:
+        - application: ditt-nav-arbeidsgiver-api
+          namespace: default
+          cluster: dev-ffs
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
