@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 @Unprotected
 @RestController
 class HealthcheckController {
-    @GetMapping("/altinn-rettigheter-proxy/internal/healthcheck", "/internal/healthcheck")
+    @GetMapping("/internal/healthcheck")
     fun healthcheck(): String {
         return "OK"
     }
