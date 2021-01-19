@@ -68,9 +68,6 @@ spring:
     redis:
       time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
 
-altinn:
-  url: "https://api-gw-q1.adeo.no/"
-
 no.nav.security.oidc:
   issuers: selvbetjening
   issuer.selvbetjening:

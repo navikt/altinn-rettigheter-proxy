@@ -26,6 +26,8 @@ spec:
       value: altinn-rettigheter-proxy-redis.arbeidsgiver.svc.cluster.local
     - name: CACHE_TIME_TO_LIVE_MILLIS
       value: "600000"
+    - name: ALTINN_URL
+      value: "https://api-gw-q1.oera.no/"
   envFrom:
     - configmap: loginservice-idporten
     - secret: altinn-rettigheter-proxy-redis-password
@@ -34,8 +36,6 @@ spec:
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
-      external:
-        - host: api-gw-q1.adeo.no
   prometheus:
     enabled: true
     path:  /internal/actuator/prometheus
