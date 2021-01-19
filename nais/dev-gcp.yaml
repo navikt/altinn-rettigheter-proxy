@@ -34,6 +34,8 @@ spec:
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
+      external:
+        - host: api-gw-q1.adeo.no
   prometheus:
     enabled: true
     path:  /internal/actuator/prometheus
