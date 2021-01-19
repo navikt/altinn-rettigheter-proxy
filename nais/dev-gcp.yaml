@@ -30,6 +30,10 @@ spec:
     - configmap: loginservice-idporten
     - secret: altinn-rettigheter-proxy-redis-password
     - secret: altinn-rettigheter-proxy
+  accessPolicy:
+    outbound:
+      rules:
+        - application: altinn-rettigheter-proxy-redis
   prometheus:
     enabled: true
     path:  /internal/actuator/prometheus
