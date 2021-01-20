@@ -20,7 +20,7 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    @GetMapping(value = ["organisasjoner"])
+    @GetMapping(value = ["/organisasjoner"])
     fun proxyOrganisasjonerNY(
             @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
             @RequestParam serviceCode: String, @RequestParam serviceEdition: String
@@ -82,7 +82,7 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
         )
     }
 
-    @GetMapping(value = ["ekstern/altinn/api/serviceowner/reportees"])
+    @GetMapping(value = ["/ekstern/altinn/api/serviceowner/reportees"])
     fun proxyOrganisasjoner(
             @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
             @RequestParam query: Map<String, String>

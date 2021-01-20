@@ -1,0 +1,30 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  labels:
+    team: arbeidsgiver
+  name: altinn-rettigheter-proxy-redis
+  namespace: arbeidsgiver
+spec:
+  image: bitnami/redis:latest
+  port: 6379
+  replicas:
+    min: 1
+    max: 1
+  resources:
+    limits:
+      cpu: 250m
+      memory: 256Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  service:
+    port: 6379
+    protocol: redis
+  accessPolicy: # for GCP
+    inbound:
+      rules:
+        - application: altinn-rettigheter-proxy-redisexporter
+        - application: altinn-rettigheter-proxy
+  envFrom:
+    - secret: altinn-rettigheter-proxy-redis-password
