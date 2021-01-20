@@ -22,15 +22,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Run tests
-        run: mvn test
+        run: mvn -B test
 
-  deploy-to-dev:
-    name: Deploy to dev
+  build:
+    name: Build
     needs: test
     #########################
     ### DEVELOPERS: Insert your feature branch name below (in addition to master) if you want to deploy it to dev
     #########################
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/oppsett-paa-gcp'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/oppsett-prod-gcp'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -44,7 +44,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Build jar with Maven
-        run: mvn package -DskipTests
+        run: mvn -B package -DskipTests
       - name: Build and publish Docker image
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -53,22 +53,40 @@ jobs:
           echo ${GITHUB_TOKEN} | docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} --password-stdin
           echo ${IMAGE}
           docker push ${IMAGE}
+
+  ### FSS deploy pipeline
+  ###### FSS DEV
+
+  deploy-redis-dev-fss:
+    name: Deploy redis dev-fss
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: action/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-fss
+          RESOURCE: nais/redis-fss.yaml
+
+  deploy-server-dev-fss:
+    name: Deploy server dev-fss
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
       - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
           VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/dev.yaml
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/dev-gcp.yaml
+          RESOURCE: nais/dev-fss.yaml
 
-  deploy-to-prod:
-    name: Deploy to prod
-    needs: deploy-to-dev
+  ###### FSS PROD
+
+  deploy-server-prod-fss:
+    name: Deploy server prod-fss
+    needs: [deploy-server-dev-fss, deploy-redis-dev-fss]
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
@@ -78,4 +96,74 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-fss
           VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/prod.yaml
+          RESOURCE: nais/prod-fss.yaml
+
+  deploy-redis-prod-fss:
+    name: Deploy redis prod-fss
+    needs: [ deploy-server-dev-fss, deploy-redis-dev-fss]
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: action/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-fss
+          RESOURCE: nais/redis-fss.yaml
+
+  ### GCP deploy pipeline
+  ###### GCP DEV
+
+  deploy-redis-dev-gcp:
+    name: Deploy redis dev-gcp
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: action/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: nais/redis-gcp.yaml
+
+  deploy-server-dev-gcp:
+    name: Deploy server dev-gcp
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          VAR: version=${{ env.IMAGE }}
+          RESOURCE: nais/dev-gcp.yaml
+
+  ###### GCP PROD
+
+  deploy-redis-prod-gcp:
+    name: Deploy redis prod-gcp
+    needs: [ deploy-server-dev-gcp, deploy-redis-dev-gcp ]
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: action/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: nais/redis-gcp.yaml
+
+  deploy-server-prod-gcp:
+    name: Deploy server prod-gcp
+    needs: [ deploy-server-dev-gcp, deploy-redis-dev-gcp ]
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          VAR: version=${{ env.IMAGE }}
+          RESOURCE: nais/prod-gcp.yaml

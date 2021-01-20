@@ -28,3 +28,44 @@ spec:
         - application: altinn-rettigheter-proxy
   envFrom:
     - secret: altinn-rettigheter-proxy-redis-password
+
+---
+
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  labels:
+    team: arbeidsgiver
+  name: altinn-rettigheter-proxy-redisexporter
+  namespace: arbeidsgiver
+spec:
+  image: oliver006/redis_exporter:latest
+  port: 9121
+  prometheus:
+    enabled: true
+  replicas:
+    min: 1
+    max: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 100Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+  liveness:
+    path: /health
+  accessPolicy: # for GCP
+    outbound:
+      rules:
+        - application: altinn-rettigheter-proxy-redis
+    inbound:
+      rules:
+        - application: altinn-rettigheter-proxy
+  env:
+    - name: REDIS_ADDR
+      value: altinn-rettigheter-proxy-redis:6379
+    - name: REDIS_EXPORTER_LOG_FORMAT
+      value: json
+  envFrom:
+    - secret: altinn-rettigheter-proxy-redis-password

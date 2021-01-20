@@ -1,0 +1,47 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: altinn-rettigheter-proxy
+  namespace: arbeidsgiver
+  labels:
+    team: arbeidsgiver
+spec:
+  image: {{ image }}
+  team: arbeidsgiver
+  port: 8080
+  liveness:
+    path: /altinn-rettigheter-proxy/internal/healthcheck
+    initialDelay: 60
+    timeout: 15
+  readiness:
+    path: /altinn-rettigheter-proxy/internal/healthcheck
+    initialDelay: 60
+    timeout: 15
+  ingresses:
+    - https://arbeidsgiver.nav.no/altinn-rettigheter-proxy/
+    - https://arbeidsgiver.intern.nav.no/altinn-rettigheter-proxy/
+  accessPolicy:
+    inbound:
+      rules:
+        - application: ditt-nav-arbeidsgiver-api
+          namespace: default
+          cluster: prod-ffs
+    outbound:
+      rules:
+        - application: altinn-rettigheter-proxy-redis
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: prod
+    - name: REDIS_HOST
+      value: altinn-rettigheter-proxy-redis.arbeidsgiver.svc.cluster.local
+    - name: CACHE_TIME_TO_LIVE_MILLIS
+      value: "600000"
+    - name: ALTINN_URL
+      value: "https://api-gw.oera.no/"
+  envFrom:
+    - configmap: loginservice-idporten
+    - secret: altinn-rettigheter-proxy-redis-password
+    - secret: altinn-rettigheter-proxy
+  prometheus:
+    enabled: true
+    path: /altinn-rettigheter-proxy/internal/actuator/prometheus

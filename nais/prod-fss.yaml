@@ -31,6 +31,8 @@ spec:
       value: altinn-rettigheter-proxy-redis.default.svc.nais.local
     - name: CACHE_TIME_TO_LIVE_MILLIS
       value: "600000"
+    - name: ALTINN_URL
+      value: "https://api-gw.adeo.no/"
   envFrom:
     - configmap: loginservice-idporten
   prometheus:
