@@ -6,7 +6,7 @@ metadata:
   name: altinn-rettigheter-proxy-redis
   namespace: arbeidsgiver
 spec:
-  image: bitnami/redis:latest
+  image: bitnami/redis:5.0.10
   port: 6379
   replicas:
     min: 1
@@ -21,7 +21,7 @@ spec:
   service:
     port: 6379
     protocol: redis
-  accessPolicy: # for GCP
+  accessPolicy:
     inbound:
       rules:
         - application: altinn-rettigheter-proxy-redisexporter
@@ -39,7 +39,7 @@ metadata:
   name: altinn-rettigheter-proxy-redisexporter
   namespace: arbeidsgiver
 spec:
-  image: oliver006/redis_exporter:latest
+  image: oliver006/redis_exporter:1.15.1
   port: 9121
   prometheus:
     enabled: true
@@ -55,7 +55,7 @@ spec:
       memory: 100Mi
   liveness:
     path: /health
-  accessPolicy: # for GCP
+  accessPolicy:
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
