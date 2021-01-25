@@ -39,7 +39,7 @@ metadata:
   name: altinn-rettigheter-proxy-redisexporter
   namespace: arbeidsgiver
 spec:
-  image: oliver006/redis_exporter:1.15.1
+  image: oliver006/redis_exporter:v1.15.1
   port: 9121
   prometheus:
     enabled: true
