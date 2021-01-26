@@ -41,12 +41,6 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
             <version>1.5.3</version>
         </dependency>
-        <!-- NAV metrics -->
-        <dependency>
-            <groupId>no.nav.common</groupId>
-            <artifactId>metrics</artifactId>
-            <version>1.2020.05.06_16.29-028d26fc1c42</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

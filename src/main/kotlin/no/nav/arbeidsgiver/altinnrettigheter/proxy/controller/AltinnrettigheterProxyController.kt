@@ -1,10 +1,10 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.controller
 
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Timer
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.service.AltinnrettigheterService
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollService
-import no.nav.metrics.MetricsFactory
-import no.nav.metrics.Timer
 import no.nav.security.oidc.api.Protected
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException
 
 @Protected
 @RestController
-class AltinnrettigheterProxyController(val altinnrettigheterService: AltinnrettigheterService, var tilgangskontrollService: TilgangskontrollService) {
+class AltinnrettigheterProxyController(val altinnrettigheterService: AltinnrettigheterService, var tilgangskontrollService: TilgangskontrollService, val meterRegistry: MeterRegistry) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -56,24 +56,23 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
                 )
         )
 
-        var isAktiveOrganisasjonerFilterPå = filterPaaAktiveOrganisasjoner == "true"
 
-        var queryParametre = mapOf(
+        val queryParametre = mutableMapOf(
                 "ForceEIAuthentication" to "",
                 "\$top" to "$top",
                 "\$skip" to "$skip"
         )
 
-        if (isAktiveOrganisasjonerFilterPå) {
-            queryParametre += "\$filter" to "Type ne 'Person' and Status eq 'Active'"
+        if (filterPaaAktiveOrganisasjoner == "true") {
+            queryParametre["\$filter"] = "Type ne 'Person' and Status eq 'Active'"
         }
 
         if (serviceCode != null) {
-            queryParametre += ("serviceCode" to serviceCode)
+            queryParametre["serviceCode"] = serviceCode
         }
 
         if (serviceEdition != null) {
-            queryParametre += ("serviceEdition" to serviceEdition)
+            queryParametre["serviceEdition"] = serviceEdition
         }
 
         return proxyOrganisasjoner(
@@ -91,26 +90,12 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
 
         val validertQuery = validerOgFiltrerQuery(query)
 
-        val responsetidPerKlient: Timer = MetricsFactory
-                .createTimer("altinn-rettigheter-proxy.reportees.responsetid.${consumerId?:"UKJENT_KLIENT_APP"}")
-                .start()
-        val responsetidAlleKlienter: Timer = MetricsFactory
-                .createTimer("altinn-rettigheter-proxy.reportees.responsetid.alle")
-                .start()
-
-
-        val organisasjoner = altinnrettigheterService.hentOrganisasjoner(
+        return withTimer(consumerId ?: "UKJENT_KLIENT_APP") {
+            altinnrettigheterService.hentOrganisasjoner(
                 validertQuery,
                 tilgangskontrollService.hentInnloggetBruker().fnr
-        )
-        responsetidPerKlient.stop().report()
-        responsetidAlleKlienter.stop().report()
-
-        MetricsFactory.createEvent("altinn-rettigheter-proxy.reportees")
-                .addTagToReport("klientapp", consumerId?:"UKJENT_KLIENT_APP")
-                .report()
-
-        return organisasjoner
+            )
+        }
     }
 
 
@@ -143,4 +128,12 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
         }
     }
 
+    private val reporteesTimer = mutableMapOf<String, Timer>()
+    private fun <T>withTimer(consumerId: String, body: () -> T): T =
+        reporteesTimer.computeIfAbsent(consumerId) {
+            Timer.builder("altinn_rettigheter_proxy_reportees_responsetid")
+                .tag("klientapp", it)
+                .publishPercentileHistogram()
+                .register(meterRegistry)
+        }.recordCallable(body)
 }
