@@ -96,7 +96,7 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-fss
           VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/prod-fss.yaml
+          RESOURCE: nais/prod-fss.yaml,nais/alerterator.yaml
 
   deploy-redis-prod-fss:
     name: Deploy redis prod-fss

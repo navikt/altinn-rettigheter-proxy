@@ -1,13 +1,14 @@
-apiVersion: "nais.io/v1"
-kind: "Alert"
+apiVersion: nais.io/v1
+kind: Alert
 metadata:
   name: altinn-rettigheter-proxy-alert
+  namespace: arbeidsgiver
   labels:
     team: arbeidsgiver
 spec:
   receivers:
     slack:
-      channel: 'arbeidsgiver-teamia-utvikling'
+      channel: arbeidsgiver-msa-alerts
       prependText: '<!here> | '
   alerts:
     - alert: applikasjon nede
