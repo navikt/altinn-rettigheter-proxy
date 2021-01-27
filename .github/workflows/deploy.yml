@@ -96,7 +96,7 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-fss
           VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/prod-fss.yaml,nais/alerterator.yaml
+          RESOURCE: nais/prod-fss.yaml
 
   deploy-redis-prod-fss:
     name: Deploy redis prod-fss
@@ -137,7 +137,7 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/dev-gcp.yaml
+          RESOURCE: nais/dev-gcp.yaml,nais/alerterator.yaml
 
   ###### GCP PROD
 
@@ -166,4 +166,4 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/prod-gcp.yaml
+          RESOURCE: nais/prod-gcp.yaml,nais/alerterator.yaml
