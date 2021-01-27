@@ -29,6 +29,8 @@ spec:
         - application: arbeidsgiver-arbeidsforhold-api
           namespace: default
           cluster: prod-ffs
+        - application: ditt-nav-arbeidsgiver-api
+        - application: arbeidsgiver-arbeidsforhold-api
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
