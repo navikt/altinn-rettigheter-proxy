@@ -26,10 +26,21 @@ spec:
         - application: ditt-nav-arbeidsgiver-api
           namespace: default
           cluster: prod-ffs
+
         - application: arbeidsgiver-arbeidsforhold-api
           namespace: default
           cluster: prod-ffs
+
+        - application: sykefravarsstatistikk-api
+          namespace: arbeidsgiver
+          cluster: prod-fss
+
+        - application: tiltaksgjennomforing-api
+          namespace: arbeidsgiver
+          cluster: prod-fss
+
         - application: ditt-nav-arbeidsgiver-api
+
         - application: arbeidsgiver-arbeidsforhold-api
     outbound:
       rules:

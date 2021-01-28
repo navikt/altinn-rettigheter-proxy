@@ -39,10 +39,21 @@ spec:
         - application: ditt-nav-arbeidsgiver-api
           namespace: default
           cluster: dev-ffs
+
         - application: arbeidsgiver-arbeidsforhold-api
           namespace: default
           cluster: dev-ffs
+
+        - application: sykefravarsstatistikk-api
+          namespace: arbeidsgiver
+          cluster: dev-fss
+
+        - application: tiltaksgjennomforing-api
+          namespace: arbeidsgiver
+          cluster: dev-fss
+
         - application: ditt-nav-arbeidsgiver-api
+
         - application: arbeidsgiver-arbeidsforhold-api
     outbound:
       rules:
