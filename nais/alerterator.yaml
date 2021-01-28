@@ -12,7 +12,7 @@ spec:
       prependText: '<!here> | '
   alerts:
     - alert: applikasjon nede
-      expr: sum(up{app="altinn-rettigheter-proxy", job="kubernetes-pods"}) == 0
+      expr: absent(up{app="altinn-rettigheter-proxy", job="kubernetes-pods"})
       for: 1m
       description: "altinn-rettigheter-proxy er nede"
       action: "Sjekk logs.adeo.no for logger, og Grafana-dashboardet vårt: https://grafana.adeo.no/d/MwhvlzSMz/team-ia-samledashboard"
