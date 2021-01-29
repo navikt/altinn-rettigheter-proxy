@@ -48,6 +48,14 @@ spec:
           namespace: default
           cluster: dev-ffs
 
+        - application: permittering-refusjon-api
+          namespace: default
+          cluster: dev-ffs
+
+        - application: permitteringsskjema-api
+          namespace: default
+          cluster: dev-ffs
+
         - application: sykefravarsstatistikk-api
           namespace: arbeidsgiver
           cluster: dev-fss

@@ -35,6 +35,14 @@ spec:
           namespace: default
           cluster: prod-ffs
 
+        - application: permittering-refusjon-api
+          namespace: default
+          cluster: prod-ffs
+
+        - application: permitteringsskjema-api
+          namespace: default
+          cluster: prod-ffs
+
         - application: sykefravarsstatistikk-api
           namespace: arbeidsgiver
           cluster: prod-fss
