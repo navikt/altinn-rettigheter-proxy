@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
+import java.util.concurrent.ConcurrentHashMap
 
 @Protected
 @RestController
@@ -128,7 +129,7 @@ class AltinnrettigheterProxyController(val altinnrettigheterService: Altinnretti
         }
     }
 
-    private val reporteesTimer = mutableMapOf<String, Timer>()
+    private val reporteesTimer = ConcurrentHashMap<String, Timer>()
     private fun <T>withTimer(consumerId: String, body: () -> T): T =
         reporteesTimer.computeIfAbsent(consumerId) {
             Timer.builder("altinn_rettigheter_proxy_reportees_responsetid")
