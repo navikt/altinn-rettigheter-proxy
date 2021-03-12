@@ -44,6 +44,10 @@ spec:
           namespace: default
           cluster: dev-ffs
 
+        - application: arbeidsgiver-arbeidsforhold-api
+          namespace: arbeidsgiver
+          cluster: dev-ffs
+
         - application: klage-permittering-refusjon-api
           namespace: default
           cluster: dev-ffs
