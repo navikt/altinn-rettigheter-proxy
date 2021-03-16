@@ -31,6 +31,10 @@ spec:
           namespace: default
           cluster: prod-ffs
 
+        - application: arbeidsgiver-arbeidsforhold-api
+          namespace: arbeidsgiver
+          cluster: prod-ffs
+
         - application: klage-permittering-refusjon-api
           namespace: default
           cluster: prod-ffs
