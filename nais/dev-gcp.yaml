@@ -71,6 +71,8 @@ spec:
         - application: ditt-nav-arbeidsgiver-api
 
         - application: arbeidsgiver-arbeidsforhold-api
+
+        - application: ia-tjenester-metrikker
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
