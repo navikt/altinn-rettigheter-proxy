@@ -73,6 +73,8 @@ spec:
         - application: arbeidsgiver-arbeidsforhold-api
 
         - application: ia-tjenester-metrikker
+        
+        - application: notifikasjon-produsent-api
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
