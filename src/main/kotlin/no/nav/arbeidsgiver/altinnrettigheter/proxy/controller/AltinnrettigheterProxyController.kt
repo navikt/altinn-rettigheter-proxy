@@ -5,7 +5,7 @@ import io.micrometer.core.instrument.Timer
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.service.AltinnrettigheterService
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollService
-import no.nav.security.oidc.api.Protected
+import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
