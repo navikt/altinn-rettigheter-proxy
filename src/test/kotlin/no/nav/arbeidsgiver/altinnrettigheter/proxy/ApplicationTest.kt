@@ -15,9 +15,9 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
 @ActiveProfiles("test")
+@EnableMockOAuth2Server
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = ["wiremock.mock.port=8083"])
-@EnableMockOAuth2Server
 class ApplicationTest {
 
     @Autowired

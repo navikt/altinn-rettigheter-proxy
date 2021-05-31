@@ -1,3 +1,15 @@
+spring:
+  profiles:
+    active: local
+  redis:
+    host: ${REDIS_HOST}
+    port: 6379
+    password: ${REDIS_PASSWORD}
+    timeout: 500
+  cache:
+    redis:
+      time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
+
 server:
   port: 8080
   servlet:
@@ -7,70 +19,6 @@ management.endpoints.web:
   exposure.include: info, health, metrics, prometheus
   base-path: /internal/actuator
 
-spring:
-  profiles:
-    active: local
-
----
-
-spring:
-  profiles: test
-
-altinn:
-  url: "http://local.test"
-  apikey: "test"
-  apigw.apikey: "test"
-
-no.nav.security.jwt:
-  issuer:
-    loginservice:
-      discoveryurl: http://localhost:${mock-oauth2-server.port}/loginservice/.well-known/openid-configuration
-      acceptedaudience: someaudience
----
-
-spring:
-  profiles: local
-
-  redis:
-    host: 127.0.0.1
-    port: 6379
-    password: foobared # default passord lokalt i /usr/local/etc/redis.conf
-    timeout: 500
-  cache:
-    redis:
-      time-to-live: 30000 # 30 sek i millis
-
-server:
-  port: 9090
-
-mock:
-  enabled: true
-  port: 9091
-  aktorPort: 9092
-
-altinn:
-  url: "http://localhost:${mock.port}/altinn/"
-  apikey: "test"
-  apigw.apikey: "test"
-
-no.nav.security.jwt:
-  issuer:
-    loginservice:
-      discoveryurl: http://localhost:${mock-oauth2-server.port}/loginservice/.well-known/openid-configuration
-      acceptedaudience: someaudience
----
-
-spring:
-  profiles: dev
-  redis:
-    host: ${REDIS_HOST}
-    port: 6379
-    password: ${REDIS_PASSWORD}
-    timeout: 500
-  cache:
-    redis:
-      time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
-
 no.nav.security.jwt:
   issuer:
     loginservice:
@@ -80,27 +28,3 @@ no.nav.security.jwt:
       discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
       accepted_audience: ${TOKEN_X_CLIENT_ID}
 
----
-
-spring:
-  profiles: prod
-  redis:
-    host: ${REDIS_HOST}
-    port: 6379
-    password: ${REDIS_PASSWORD}
-    timeout: 500
-  cache:
-    redis:
-      time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
-
-altinn:
-  url: "https://api-gw.adeo.no/"
-
-no.nav.security.jwt:
-  issuer:
-    loginservice:
-      discoveryurl: ${LOGINSERVICE_IDPORTEN_DISCOVERY_URL}
-      accepted_audience: ${LOGINSERVICE_IDPORTEN_AUDIENCE}
-    tokenx:
-      discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
-      accepted_audience: ${TOKEN_X_CLIENT_ID}

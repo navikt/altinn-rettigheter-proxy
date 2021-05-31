@@ -1,0 +1,13 @@
+altinn:
+  url: "http://local.test/"
+  apikey: "test"
+  apigw.apikey: "test"
+
+no.nav.security.jwt:
+  issuer:
+    loginservice:
+      discoveryurl: http://localhost:${mock-oauth2-server.port}/loginservice/.well-known/openid-configuration
+      acceptedaudience: someaudience
+    tokenx:
+      discoveryurl: http://localhost:${mock-oauth2-server.port}/tokenx/.well-known/openid-configuration
+      accepted_audience: someaudience

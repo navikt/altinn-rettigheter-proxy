@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.core.env.Environment
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import java.net.http.HttpClient
@@ -24,7 +25,7 @@ import java.net.http.HttpResponse.BodyHandlers
 
 
 @RunWith(SpringRunner::class)
-@ActiveProfiles("test")
+@ActiveProfiles("local")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = ["wiremock.mock.port=8083"])
 @EnableMockOAuth2Server

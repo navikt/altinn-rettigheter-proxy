@@ -17,7 +17,11 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Protected
 @RestController
-class AltinnrettigheterProxyController(val altinnrettigheterService: AltinnrettigheterService, var tilgangskontrollService: TilgangskontrollService, val meterRegistry: MeterRegistry) {
+class AltinnrettigheterProxyController(
+    val altinnrettigheterService: AltinnrettigheterService,
+    var tilgangskontrollService: TilgangskontrollService,
+    val meterRegistry: MeterRegistry
+) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
