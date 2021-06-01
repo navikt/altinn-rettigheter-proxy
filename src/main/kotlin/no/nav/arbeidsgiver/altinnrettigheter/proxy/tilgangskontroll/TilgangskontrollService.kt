@@ -56,7 +56,7 @@ class TilgangskontrollService(
          * original issuers to extract the fnr. */
         val idp = this.getStringClaim("idp")
         return when {
-            idp.matches(idportenIssuer) -> this.getStringClaim("pin")
+            idp.matches(idportenIssuer) -> this.getStringClaim("pid")
             idp.matches(loginserviceIssuer) -> this.subject
             else -> throw TilgangskontrollException("Ukjent idp fra tokendings")
         }

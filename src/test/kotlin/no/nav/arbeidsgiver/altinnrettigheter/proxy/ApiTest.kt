@@ -56,7 +56,7 @@ class ApiTest {
                         )
                         .header(
                                 HttpHeaders.AUTHORIZATION,
-                                "Bearer " + testTokenUtil.createToken("01065500791")
+                                "Bearer " + testTokenUtil.createToken(issuerId = "loginservice", sub = "01065500791")
                         )
                         .header("X-Correlation-ID", "klient-applikasjon")
                         .GET()
@@ -68,11 +68,107 @@ class ApiTest {
         assertAntallOrganisasjonerEr(response, 4)
     }
 
-    //@Test
+    @Test
+    fun `Endepunkt _organisasjoner_ returnerer en liste av organisasjoner innlogget bruker har rettigheter i (tokenx, idp loginservice)`() {
+        val response = HttpClient.newBuilder().build().send(
+            HttpRequest.newBuilder()
+                .uri(
+                    URIBuilder()
+                        .setScheme("http")
+                        .setHost("localhost:$port")
+                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
+                        .addParameter("serviceCode", "3403")
+                        .addParameter("serviceEdition", "1")
+                        .build()
+                )
+                .header(
+                    HttpHeaders.AUTHORIZATION,
+                    "Bearer " + testTokenUtil.createToken(
+                        issuerId = "tokenx",
+                        sub = "01065500791",
+                        idp = "https://navtestb2c.b2clogin.com/1234"
+                    )
+                )
+                .header("X-Correlation-ID", "klient-applikasjon")
+                .GET()
+                .build(),
+            BodyHandlers.ofString()
+        )
+
+        Assertions.assertThat(response.statusCode()).isEqualTo(200)
+        assertAntallOrganisasjonerEr(response, 4)
+    }
+
+
+    @Test
+    fun `Endepunkt _organisasjoner_ returnerer en liste av organisasjoner innlogget bruker har rettigheter i (tokenx, idp idporten)`() {
+        val response = HttpClient.newBuilder().build().send(
+            HttpRequest.newBuilder()
+                .uri(
+                    URIBuilder()
+                        .setScheme("http")
+                        .setHost("localhost:$port")
+                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
+                        .addParameter("serviceCode", "3403")
+                        .addParameter("serviceEdition", "1")
+                        .build()
+                )
+                .header(
+                    HttpHeaders.AUTHORIZATION,
+                    "Bearer " + testTokenUtil.createToken(
+                        issuerId = "tokenx",
+                        sub = "dette-er-ikke-et-fnr",
+                        idp = "https://oidc.difi.no/idporten-oidc-provider/",
+                        pid = "01065500791",
+                    )
+                )
+                .header("X-Correlation-ID", "klient-applikasjon")
+                .GET()
+                .build(),
+            BodyHandlers.ofString()
+        )
+
+        Assertions.assertThat(response.statusCode()).isEqualTo(200)
+        assertAntallOrganisasjonerEr(response, 4)
+    }
+
+    @Test
+    fun `Endepunkt _organisasjoner_ returnerer en liste av organisasjoner innlogget bruker har rettigheter i (tokenx, idp ukjent)`() {
+        val response = HttpClient.newBuilder().build().send(
+            HttpRequest.newBuilder()
+                .uri(
+                    URIBuilder()
+                        .setScheme("http")
+                        .setHost("localhost:$port")
+                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
+                        .addParameter("serviceCode", "3403")
+                        .addParameter("serviceEdition", "1")
+                        .build()
+                )
+                .header(
+                    HttpHeaders.AUTHORIZATION,
+                    "Bearer " + testTokenUtil.createToken(
+                        issuerId = "tokenx",
+                        sub = "01065500791",
+                        idp = "hverken idporten eller loginservice",
+                        pid = "01065500791",
+                    )
+                )
+                .header("X-Correlation-ID", "klient-applikasjon")
+                .GET()
+                .build(),
+            BodyHandlers.ofString()
+        )
+
+        Assertions.assertThat(response.statusCode()).isEqualTo(403)
+        Assertions.assertThat(response.body()).isEqualTo("{\"message\":\"You don't have access to this ressource\"}")
+    }
+
+    @Test
     fun `Endepunkt _organisasjoner_ krever AUTH header med gyldig token`() {
         val response = HttpClient.newBuilder().build().send(
-                HttpRequest.newBuilder()
-                        .uri(
+            HttpRequest.newBuilder()
+                .uri(
                                 URIBuilder()
                                         .setScheme("http")
                                         .setHost("localhost:$port")
