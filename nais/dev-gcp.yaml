@@ -20,6 +20,8 @@ spec:
     path: /altinn-rettigheter-proxy/internal/healthcheck
     initialDelay: 60
     timeout: 15
+  tokenx:
+    enabled: true
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev

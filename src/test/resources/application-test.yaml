@@ -1,0 +1,21 @@
+spring:
+  redis:
+    host: 127.0.0.1
+    password: abcd
+  cache:
+    redis:
+      time-to-live: 30000 # 30 sek i millis
+
+altinn:
+  url: "http://local.test/"
+  apikey: "test"
+  apigw.apikey: "test"
+
+no.nav.security.jwt:
+  issuer:
+    loginservice:
+      discoveryurl: http://localhost:${mock-oauth2-server.port}/loginservice/.well-known/openid-configuration
+      acceptedaudience: someaudience
+    tokenx:
+      discoveryurl: http://localhost:${mock-oauth2-server.port}/tokenx/.well-known/openid-configuration
+      accepted_audience: someaudience
