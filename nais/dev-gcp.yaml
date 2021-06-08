@@ -70,7 +70,7 @@ spec:
           namespace: arbeidsgiver
           cluster: dev-fss
 
-        - application: ditt-nav-arbeidsgiver-api
+        - application: min-side-arbeidsgiver-api
 
         - application: arbeidsgiver-arbeidsforhold-api
 

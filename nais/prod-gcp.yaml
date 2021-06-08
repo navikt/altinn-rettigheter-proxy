@@ -57,7 +57,7 @@ spec:
           namespace: arbeidsgiver
           cluster: prod-fss
 
-        - application: ditt-nav-arbeidsgiver-api
+        - application: min-side-arbeidsgiver-api
 
         - application: arbeidsgiver-arbeidsforhold-api
 
