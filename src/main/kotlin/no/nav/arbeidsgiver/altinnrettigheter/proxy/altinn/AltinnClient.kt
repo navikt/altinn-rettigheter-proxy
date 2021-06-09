@@ -14,7 +14,6 @@ import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
-import java.net.URI
 
 @Component
 class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
@@ -27,17 +26,44 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
     lateinit var altinnAPIGWApikey: String
     @Value("\${altinn.apikey}")
     lateinit var altinnApikey: String
+    val apiUrl : String by lazy {
+        UriComponentsBuilder
+            .fromUriString(altinnUrl)
+            .pathSegment()
+            .pathSegment(
+                "ekstern",
+                "altinn",
+                "api",
+                "serviceowner",
+                "reportees"
+            ).build().toUriString()
+    }
+    val header : HttpEntity<Any?> by lazy {
+        val headers = HttpHeaders()
+        headers["X-NAV-APIKEY"] = altinnAPIGWApikey
+        headers["APIKEY"] = altinnApikey
+        HttpEntity(headers)
+    }
 
     fun hentOrganisasjoner(
-            query: Map<String, String>,
-            fnr: Fnr
+        queryParametere: Map<String, String>,
+        fnr: Fnr
     ): List<AltinnOrganisasjon> {
         return try {
+            val queryParametereMedSubject = (queryParametere + mapOf("subject" to fnr.verdi))
+            val query = queryParametereMedSubject.map { (key, value) ->
+                if (value == "") {
+                    key
+                } else {
+                    "$key={$key}"
+                }
+            }.joinToString("&")
             val respons = restTemplate.exchange(
-                    getURI(query, fnr),
-                    HttpMethod.GET,
-                    getHeaderEntity(),
-                    object : ParameterizedTypeReference<List<AltinnOrganisasjon>>() {}
+                "$apiUrl?$query",
+                HttpMethod.GET,
+                header,
+                object : ParameterizedTypeReference<List<AltinnOrganisasjon>>() {},
+                queryParametereMedSubject
             )
 
             if (respons.statusCode != HttpStatus.OK) {
@@ -49,52 +75,19 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
         } catch (exception: HttpStatusCodeException) {
             if (exception.statusCode.isError) {
                 throw ProxyHttpStatusCodeException(
-                        exception.statusCode,
-                        exception.statusText,
-                        exception.responseBodyAsString,
-                        exception
+                    exception.statusCode,
+                    exception.statusText,
+                    exception.responseBodyAsString,
+                    exception
                 )
             }
             throw AltinnException(
-                    "Feil ved kall til Altinn med returkode '${exception.statusCode}' " +
-                    "og tekst '${exception.statusText}' ",
-                    exception
+                "Feil ved kall til Altinn med returkode '${exception.statusCode}' " +
+                        "og tekst '${exception.statusText}' ",
+                exception
             )
         } catch (exception: RestClientException) {
             throw AltinnException("Feil ved kall til Altinn", exception)
         }
-    }
-
-    private fun getURI(query: Map<String, String>, fnr: Fnr): URI {
-        val uriBuilder = UriComponentsBuilder
-                .fromUriString(altinnUrl)
-                .pathSegment()
-                .pathSegment(
-                        "ekstern",
-                        "altinn",
-                        "api",
-                        "serviceowner",
-                        "reportees"
-                )
-
-        query.forEach { (key, value) ->
-            run {
-                if (value == "") {
-                    uriBuilder.queryParam(key)
-                } else {
-                    uriBuilder.queryParam(key, value)
-                }
-            }
-        }
-        uriBuilder.queryParam("subject", fnr.verdi)
-
-        return uriBuilder.build().toUri()
-    }
-
-    private fun getHeaderEntity(): HttpEntity<Any?>? {
-        val headers = HttpHeaders()
-        headers["X-NAV-APIKEY"] = altinnAPIGWApikey
-        headers["APIKEY"] = altinnApikey
-        return HttpEntity(headers)
     }
 }
