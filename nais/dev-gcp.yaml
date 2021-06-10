@@ -38,10 +38,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: ditt-nav-arbeidsgiver-api
-          namespace: default
-          cluster: dev-ffs
-
         - application: arbeidsgiver-arbeidsforhold-api
           namespace: default
           cluster: dev-ffs
@@ -77,6 +73,7 @@ spec:
         - application: ia-tjenester-metrikker
         
         - application: notifikasjon-produsent-api
+          namespace: fager
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
