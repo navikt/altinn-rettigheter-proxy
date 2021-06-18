@@ -16,7 +16,6 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.nio.file.AccessDeniedException
-import java.util.*
 
 
 @ControllerAdvice
@@ -24,28 +23,38 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [UgyldigParameterException::class])
     @ResponseBody
-    protected fun handleBadRequestException(e: UgyldigParameterException, webRequest: WebRequest?): ResponseEntity<Any> {
+    protected fun handleBadRequestException(
+        e: UgyldigParameterException,
+        webRequest: WebRequest?
+    ): ResponseEntity<FeilRespons> {
         return getResponseEntity(
-                "Parameter '${e.parameterNavn}' har en ugyldig verdi '${e.parameterValue}'",
-                HttpStatus.BAD_REQUEST
+            e,
+            "Parameter '${e.parameterNavn}' har en ugyldig verdi '${e.parameterValue}'",
+            HttpStatus.BAD_REQUEST
         )
     }
 
     @ExceptionHandler(value = [TilgangskontrollException::class])
     @ResponseBody
-    protected fun handleTilgangskontrollException(e: RuntimeException, webRequest: WebRequest?): ResponseEntity<Any> {
+    protected fun handleTilgangskontrollException(
+        e: RuntimeException,
+        webRequest: WebRequest?
+    ): ResponseEntity<FeilRespons> {
         return getResponseEntity(e, "You don't have access to this ressource", HttpStatus.FORBIDDEN)
     }
 
     @ExceptionHandler(value = [JwtTokenUnauthorizedException::class, AccessDeniedException::class])
     @ResponseBody
-    protected fun handleUnauthorizedException(e: RuntimeException, webRequest: WebRequest?): ResponseEntity<Any> {
+    protected fun handleUnauthorizedException(
+        e: RuntimeException,
+        webRequest: WebRequest?
+    ): ResponseEntity<FeilRespons> {
         return getResponseEntity(e, "You are not authorized to access this ressource", HttpStatus.UNAUTHORIZED)
     }
 
     @ExceptionHandler(value = [AltinnException::class])
     @ResponseBody
-    protected fun handleAltinnException(e: RuntimeException, webRequest: WebRequest?): ResponseEntity<Any> {
+    protected fun handleAltinnException(e: RuntimeException, webRequest: WebRequest?): ResponseEntity<FeilRespons> {
         log.error("Feil ved Altinn integrasjon", e)
         return getResponseEntity(e, "Internal error", HttpStatus.INTERNAL_SERVER_ERROR)
     }
@@ -53,63 +62,63 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(value = [ProxyHttpStatusCodeException::class])
     @ResponseBody
     protected fun handleProxyHttpStatusCodeException(
-            e: ProxyHttpStatusCodeException,
-            webRequest: WebRequest?
-    ): ResponseEntity<Any> {
-        log.warn("Feil ved Altinn integrasjon, " +
-                "med status '${e.httpStatus}' " +
-                ", statusText '${e.statusText}'" +
-                " og responseBody '${e.responseBodyAsString}'",
-                e
+        e: ProxyHttpStatusCodeException,
+        webRequest: WebRequest?
+    ): ResponseEntity<FeilRespons> {
+        log.warn(
+            "Feil ved Altinn integrasjon, med status '${e.httpStatus}' , statusText '${e.statusText}' og responseBody '${e.responseBodyAsString}'",
+            e
         )
 
         return ResponseEntity
-                .status(e.httpStatus)
-                .body(
-                        mapOf(
-                                "responseBody" to e.responseBodyAsString,
-                                "statusText" to e.statusText)
+            .status(e.httpStatus)
+            .body(
+                FeilRespons(
+                    responseBody = e.responseBodyAsString,
+                    statusText = e.statusText,
+                    cause = e.message
                 )
+            )
     }
 
     @ExceptionHandler(value = [ResponseStatusException::class])
     @ResponseBody
-    protected fun handleResponseStatusException(e: ResponseStatusException, webRequest: WebRequest?): ResponseEntity<Any> {
+    protected fun handleResponseStatusException(
+        e: ResponseStatusException,
+        webRequest: WebRequest?
+    ): ResponseEntity<FeilRespons> {
         log.warn(e.message, e)
         return getResponseEntity(e, e.message, e.status)
     }
 
     @ExceptionHandler(value = [Exception::class])
     @ResponseBody
-    protected fun handleGenerellException(e: RuntimeException, webRequest: WebRequest?): ResponseEntity<Any> {
+    protected fun handleGenerellException(e: RuntimeException, webRequest: WebRequest?): ResponseEntity<FeilRespons> {
         log.error("Uhåndtert feil", e)
         return getResponseEntity(e, "Internal error", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
-    private fun getResponseEntity(e: RuntimeException, melding: String, status: HttpStatus): ResponseEntity<Any> {
-        val body = HashMap<String, String>(1)
-        body["message"] = melding
-        log.info("Returnerer følgende HttpStatus '{}' med melding '{}' pga exception '{}'",
-            status.toString(),
-            melding,
-            e.message,
+    private fun getResponseEntity(
+        e: RuntimeException,
+        melding: String,
+        status: HttpStatus
+    ): ResponseEntity<FeilRespons> {
+        val body = FeilRespons(message = melding, cause = e.message)
+        log.info(
+            "Returnerer følgende HttpStatus '${status.toString()}' med melding '${melding}' pga exception '${e.message}'",
             e
         )
         return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(body)
     }
 
-    private fun getResponseEntity(melding: String, status: HttpStatus): ResponseEntity<Any> {
-        val body = HashMap<String, String>(1)
-        body["message"] = melding
-        log.info("Returnerer følgende HttpStatus '{}' med melding '{}'",
-            status.toString(),
-            melding
-        )
-        return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(body)
-    }
-
-
     companion object {
         private val log = LoggerFactory.getLogger(ResponseEntityExceptionHandler::class.java)
     }
 }
+
+data class FeilRespons(
+    val message: String? = null,
+    val responseBody: String? = null,
+    val statusText: String? = null,
+    val cause: String? = null,
+)

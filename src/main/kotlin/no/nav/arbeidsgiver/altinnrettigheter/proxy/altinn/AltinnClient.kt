@@ -58,35 +58,21 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
                     "$key={$key}"
                 }
             }.joinToString("&")
-            val respons = restTemplate.exchange(
+            restTemplate.exchange(
                 "$apiUrl?$query",
                 HttpMethod.GET,
                 header,
                 object : ParameterizedTypeReference<List<AltinnOrganisasjon>>() {},
                 queryParametereMedSubject
-            )
-
-            if (respons.statusCode != HttpStatus.OK) {
-                val message = "Kall mot aareg feiler med HTTP-" + respons.statusCode
-
-                throw RuntimeException(message)
-            }
-            respons.body!!
+            ).body!!
         } catch (exception: HttpStatusCodeException) {
-            if (exception.statusCode.isError) {
-                throw ProxyHttpStatusCodeException(
-                    exception.statusCode,
-                    exception.statusText,
-                    exception.responseBodyAsString,
-                    exception
-                )
-            }
-            throw AltinnException(
-                "Feil ved kall til Altinn med returkode '${exception.statusCode}' " +
-                        "og tekst '${exception.statusText}' ",
+            throw ProxyHttpStatusCodeException(
+                exception.statusCode,
+                exception.statusText,
+                exception.responseBodyAsString,
                 exception
             )
-        } catch (exception: RestClientException) {
+        } catch (exception: RuntimeException) {
             throw AltinnException("Feil ved kall til Altinn", exception)
         }
     }
