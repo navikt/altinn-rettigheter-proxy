@@ -27,27 +27,27 @@ spec:
       rules:
         - application: ditt-nav-arbeidsgiver-api
           namespace: default
-          cluster: prod-ffs
+          cluster: prod-fss
 
         - application: arbeidsgiver-arbeidsforhold-api
           namespace: default
-          cluster: prod-ffs
+          cluster: prod-fss
 
         - application: arbeidsgiver-arbeidsforhold-api
           namespace: arbeidsgiver
-          cluster: prod-ffs
+          cluster: prod-fss
 
         - application: klage-permittering-refusjon-api
           namespace: default
-          cluster: prod-ffs
+          cluster: prod-fss
 
         - application: permittering-refusjon-api
           namespace: default
-          cluster: prod-ffs
+          cluster: prod-fss
 
         - application: permitteringsskjema-api
           namespace: default
-          cluster: prod-ffs
+          cluster: prod-fss
 
         - application: sykefravarsstatistikk-api
           namespace: arbeidsgiver
@@ -62,6 +62,9 @@ spec:
         - application: arbeidsgiver-arbeidsforhold-api
 
         - application: ia-tjenester-metrikker
+
+        - application: tiltak-refusjon-api
+
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
