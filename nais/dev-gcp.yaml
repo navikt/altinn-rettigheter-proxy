@@ -40,23 +40,23 @@ spec:
       rules:
         - application: arbeidsgiver-arbeidsforhold-api
           namespace: default
-          cluster: dev-ffs
+          cluster: dev-fss
 
         - application: arbeidsgiver-arbeidsforhold-api
           namespace: arbeidsgiver
-          cluster: dev-ffs
+          cluster: dev-fss
 
         - application: klage-permittering-refusjon-api
           namespace: default
-          cluster: dev-ffs
+          cluster: dev-fss
 
         - application: permittering-refusjon-api
           namespace: default
-          cluster: dev-ffs
+          cluster: dev-fss
 
         - application: permitteringsskjema-api
           namespace: default
-          cluster: dev-ffs
+          cluster: dev-fss
 
         - application: sykefravarsstatistikk-api
           namespace: arbeidsgiver
@@ -74,6 +74,9 @@ spec:
         
         - application: notifikasjon-bruker-api
           namespace: fager
+
+        - application: tiltak-refusjon-api
+
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
