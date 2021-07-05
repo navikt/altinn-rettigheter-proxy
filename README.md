@@ -21,12 +21,14 @@ Kjør container
 
 # Henvendelser
 
-Spørsmål knyttet til koden eller prosjektet kan rettes mot:
+## For Nav-ansatte
+* Dette Git-repositoriet eies av [Team Fellestjenester for Arbeidsgivere (tidl. Min side – arbeidsgiver)  i Produktområde arbeidsgiver](https://navno.sharepoint.com/sites/intranett-prosjekter-og-utvikling/SitePages/Produktomr%C3%A5de-arbeidsgiver.aspx).
+* Slack-kanaler:
+ * [#arbeidsgiver-min-side-arbeidsgiver](https://nav-it.slack.com/archives/CCNAY9FGF)
+ * [#arbeidsgiver-utvikling](https://nav-it.slack.com/archives/CD4MES6BB)
+ * [#arbeidsgiver-general](https://nav-it.slack.com/archives/CCM649PDH)
 
-* Lars Andreas Tveiten, lars.andreas.van.woensel.kooy.tveiten@nav.no
-* Malaz Alkoj, malaz.alkoj@nav.no
-* Thomas Dufourd, thomas.dufourd@nav.no
-
-## For NAV-ansatte
-
-Interne henvendelser kan sendes via Slack i kanalen #arbeidsgiver-teamia.
+## For folk utenfor Nav
+* Opprett gjerne en issue i Github for alle typer spørsmål
+* IT-utviklerne i Github-teamet https://github.com/orgs/navikt/teams/arbeidsgiver
+* IT-avdelingen i [Arbeids- og velferdsdirektoratet](https://www.nav.no/no/NAV+og+samfunn/Kontakt+NAV/Relatert+informasjon/arbeids-og-velferdsdirektoratet-kontorinformasjon)
