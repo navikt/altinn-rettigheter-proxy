@@ -67,6 +67,7 @@ spec:
           cluster: dev-fss
 
         - application: min-side-arbeidsgiver-api
+          namespace: fager
 
         - application: arbeidsgiver-arbeidsforhold-api
 
