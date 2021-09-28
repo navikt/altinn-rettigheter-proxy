@@ -41,6 +41,10 @@ spec:
           namespace: default
           cluster: prod-fss
 
+        - application: klage-permittering-refusjon-api
+          namespace: arbeidsgiver
+          cluster: prod-fss
+
         - application: permittering-refusjon-api
           namespace: default
           cluster: prod-fss

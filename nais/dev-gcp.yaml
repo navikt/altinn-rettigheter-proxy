@@ -50,6 +50,10 @@ spec:
           namespace: default
           cluster: dev-fss
 
+        - application: klage-permittering-refusjon-api
+          namespace: arbeidsgiver
+          cluster: dev-fss
+
         - application: permittering-refusjon-api
           namespace: default
           cluster: dev-fss
