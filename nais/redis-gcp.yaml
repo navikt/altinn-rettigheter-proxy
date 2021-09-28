@@ -5,6 +5,9 @@ metadata:
     team: arbeidsgiver
   name: altinn-rettigheter-proxy-redis
   namespace: arbeidsgiver
+  annotations:
+    nais.io/run-as-group: "0" # Fix permissions for bitnami/redis
+    nais.io/read-only-file-system: "false" # Fix permissions for bitnami/redis
 spec:
   image: bitnami/redis:5.0.10
   port: 6379
