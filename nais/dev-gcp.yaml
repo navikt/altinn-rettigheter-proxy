@@ -51,11 +51,11 @@ spec:
           cluster: dev-fss
 
         - application: klage-permittering-refusjon-api
-          namespace: arbeidsgiver
+          namespace: teamloennskomp
           cluster: dev-fss
 
         - application: permittering-refusjon-api
-          namespace: default
+          namespace: teamloennskomp
           cluster: dev-fss
 
         - application: permitteringsskjema-api

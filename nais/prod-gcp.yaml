@@ -42,11 +42,11 @@ spec:
           cluster: prod-fss
 
         - application: klage-permittering-refusjon-api
-          namespace: arbeidsgiver
+          namespace: teamloennskomp
           cluster: prod-fss
 
         - application: permittering-refusjon-api
-          namespace: default
+          namespace: teamloennskomp
           cluster: prod-fss
 
         - application: permitteringsskjema-api
