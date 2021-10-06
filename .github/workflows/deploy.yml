@@ -79,7 +79,7 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/dev-gcp.yaml,nais/alerterator.yaml
+          RESOURCE: nais/dev-gcp.yaml
 
   ###### GCP PROD
 
@@ -108,4 +108,4 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/prod-gcp.yaml,nais/alerterator.yaml
+          RESOURCE: nais/prod-gcp.yaml
