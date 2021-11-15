@@ -9,6 +9,7 @@ spring:
   cache:
     redis:
       time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
+    cache-names: reportees
 
 server:
   port: 8080
