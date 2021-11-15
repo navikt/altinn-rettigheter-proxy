@@ -10,11 +10,11 @@ spec:
   team: arbeidsgiver
   port: 8080
   liveness:
-    path: /altinn-rettigheter-proxy/internal/healthcheck
+    path: /altinn-rettigheter-proxy/internal/alive
     initialDelay: 60
     timeout: 15
   readiness:
-    path: /altinn-rettigheter-proxy/internal/healthcheck
+    path: /altinn-rettigheter-proxy/internal/ready
     initialDelay: 60
     timeout: 15
   ingresses:
