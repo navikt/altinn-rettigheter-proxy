@@ -5,10 +5,11 @@ spring:
     host: ${REDIS_HOST}
     port: 6379
     password: ${REDIS_PASSWORD}
-    timeout: 500
+    timeout: 1000
   cache:
     redis:
       time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
+    cache-names: reportees
 
 server:
   port: 8080
