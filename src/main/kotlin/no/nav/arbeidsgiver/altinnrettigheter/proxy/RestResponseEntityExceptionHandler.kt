@@ -7,6 +7,7 @@ import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.Tilgangskont
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -19,6 +20,13 @@ import java.nio.file.AccessDeniedException
 
 @ControllerAdvice
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
+    private val infoStatuses = listOf(
+        FORBIDDEN,
+        UNAUTHORIZED,
+        BAD_GATEWAY,
+        SERVICE_UNAVAILABLE,
+        GATEWAY_TIMEOUT,
+    )
 
     @ExceptionHandler(value = [UgyldigParameterException::class])
     @ResponseBody
@@ -29,7 +37,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         return getResponseEntity(
             e,
             "Parameter '${e.parameterNavn}' har en ugyldig verdi '${e.parameterValue}'",
-            HttpStatus.BAD_REQUEST
+            BAD_REQUEST
         )
     }
 
@@ -39,7 +47,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         e: TilgangskontrollException,
         webRequest: WebRequest?
     ): ResponseEntity<FeilRespons> {
-        return getResponseEntity(e, e.message!!, HttpStatus.FORBIDDEN)
+        return getResponseEntity(e, e.message!!, FORBIDDEN)
     }
 
     @ExceptionHandler(value = [JwtTokenUnauthorizedException::class, AccessDeniedException::class])
@@ -48,7 +56,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         e: RuntimeException,
         webRequest: WebRequest?
     ): ResponseEntity<FeilRespons> {
-        return getResponseEntity(e, "You are not authorized to access this resource", HttpStatus.UNAUTHORIZED)
+        return getResponseEntity(e, "You are not authorized to access this resource", UNAUTHORIZED)
     }
 
     @ExceptionHandler(value = [ProxyHttpStatusCodeException::class])
@@ -57,10 +65,17 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         e: ProxyHttpStatusCodeException,
         webRequest: WebRequest?
     ): ResponseEntity<FeilRespons> {
-        log.warn(
-            "Feil ved Altinn integrasjon, med status '${e.httpStatus}' , statusText '${e.statusText}' og responseBody '${e.responseBodyAsString}'",
-            e
-        )
+        if (e.httpStatus in infoStatuses) {
+            log.info(
+                "Feil ved Altinn integrasjon, med status '${e.httpStatus}' , statusText '${e.statusText}' og responseBody '${e.responseBodyAsString}'",
+                e
+            )
+        } else {
+            log.warn(
+                "Feil ved Altinn integrasjon, med status '${e.httpStatus}' , statusText '${e.statusText}' og responseBody '${e.responseBodyAsString}'",
+                e
+            )
+        }
 
         return getResponseEntity(e, e.responseBodyAsString, e.httpStatus)
     }
@@ -69,14 +84,14 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
     @ResponseBody
     protected fun handleAltinnException(e: AltinnException, webRequest: WebRequest?): ResponseEntity<FeilRespons> {
         log.error("Feil ved Altinn integrasjon", e)
-        return getResponseEntity(e.cause!!, e.message!!, HttpStatus.INTERNAL_SERVER_ERROR)
+        return getResponseEntity(e.cause!!, e.message!!, INTERNAL_SERVER_ERROR)
     }
 
     @ExceptionHandler(value = [RuntimeException::class])
     @ResponseBody
     protected fun handleGenerellException(e: RuntimeException, webRequest: WebRequest?): ResponseEntity<FeilRespons> {
         log.error("Uhåndtert feil", e)
-        return getResponseEntity(e, "Internal error", HttpStatus.INTERNAL_SERVER_ERROR)
+        return getResponseEntity(e, "Internal error", INTERNAL_SERVER_ERROR)
     }
 
     private fun getResponseEntity(
