@@ -22,6 +22,11 @@ spec:
     timeout: 15
   tokenx:
     enabled: true
+  maskinporten:
+    enabled: true
+    scopes:
+      consumes:
+        - name: "altinn:serviceowner/reportees"
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev

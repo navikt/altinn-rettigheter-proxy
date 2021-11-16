@@ -19,3 +19,9 @@ no.nav.security.jwt:
     tokenx:
       discoveryurl: http://localhost:${mock-oauth2-server.port}/tokenx/.well-known/openid-configuration
       accepted_audience: someaudience
+
+maskinporten:
+  clientId: foo
+  scopes: bar
+  wellKnownUrl: nav.no
+  clientJwk: yas

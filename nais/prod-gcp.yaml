@@ -22,6 +22,11 @@ spec:
     - https://arbeidsgiver.intern.nav.no/altinn-rettigheter-proxy/
   tokenx:
     enabled: true
+  maskinporten:
+    enabled: true
+    scopes:
+      consumes:
+        - name: "altinn:serviceowner/reportees"
   accessPolicy:
     inbound:
       rules:
