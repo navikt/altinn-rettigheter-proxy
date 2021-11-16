@@ -4,6 +4,7 @@ import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
+import org.slf4j.LoggerFactory
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
@@ -11,16 +12,17 @@ import org.springframework.http.RequestEntity
 import org.springframework.stereotype.Component
 import java.time.Duration
 import java.util.*
-
+import java.util.concurrent.atomic.AtomicReference
 
 @Component
 class AccessTokenClient(
     val config: MaskinportenConfig,
     restTemplateBuilder: RestTemplateBuilder,
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
     private val restTemplate = restTemplateBuilder.build()
 
-    private val wellKnownResponse: WellKnownResponse by lazy {
+    private val wellKnownResponse: WellKnownResponse by lazy { // TODO: no lazy!
         restTemplate.getForObject(config.wellKnownUrl, WellKnownResponse::class.java)!!
     }
 
@@ -46,36 +48,35 @@ class AccessTokenClient(
     }
 
     fun fetchNewAccessToken(): TokenResponse {
-        val request = RequestEntity
+        logger.info("henter ny accesstoken")
+        return restTemplate.exchange(RequestEntity
             .method(HttpMethod.POST, wellKnownResponse.tokenEndpoint)
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(mapOf(
                 "grant_type" to "urn:ietf:params:oauth:grant-type:jwt-bearer",
                 "assertion" to createClientAssertion()
-            ))
-        return restTemplate.exchange(request, TokenResponse::class.java).body!!
+            )), TokenResponse::class.java).body!!
     }
 
-    private var token: TokenResponse? = null
+    private val token = AtomicReference<TokenResponse?>()
 
-    @Suppress("LocalVariableName")
     fun getAccessToken(): TokenResponse {
-        var _token = token
-        return if (_token != null && _token.isValid()) {
-            _token
+        val value = token.get()
+        return if (value != null && value.isValid()) {
+            value
         } else {
-            _token = fetchNewAccessToken()
-            token = _token
-            _token
+            fetchNewAccessToken().also {
+                token.set(it)
+            }
         }
     }
 
     init {
         Thread {
             while (true) {
-                // TODO: thread safety
-                var _token = token
-                if (_token != null && _token!!.expiresIn() < Duration.ofMinutes(2)) {
+                logger.info("sjekker om accesstoken er i ferd med å utløpe..")
+                val value = token.get()
+                if (value != null && value.expiresIn() < Duration.ofMinutes(2)) {
                    getAccessToken()
                 }
                 Thread.sleep(Duration.ofMinutes(1).toMillis())
