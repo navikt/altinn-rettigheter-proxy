@@ -4,6 +4,7 @@ import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.basedOnEnv
 import org.slf4j.LoggerFactory
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpMethod
@@ -28,12 +29,13 @@ class AccessTokenClient(
 
     fun createClientAssertion(): String {
         val claimsSet: JWTClaimsSet = JWTClaimsSet.Builder()
-            .subject(config.clientId)
-            .issuer(config.clientId)
             .audience(wellKnownResponse.issuer)
+            .issuer(config.clientId)
             .issueTime(Date())
-            .notBeforeTime(Date())
             .expirationTime(Date(Date().time + 120 * 1000))
+            .notBeforeTime(Date())
+//            .subject(config.clientId) // kan ikke se denne nevnt i doken her https://docs.digdir.no/maskinporten_protocol_jwtgrant.html eller her https://altinn.github.io/docs/api/rest/kom-i-gang/virksomhet/#autentisering-med-virksomhetsbruker-og-maskinporten
+            .claim("resource", basedOnEnv(prod = {"https://www.altinn.no/"}, other = {"https://tt02.altinn.no/"}))
             .jwtID(UUID.randomUUID().toString())
             .build()
 

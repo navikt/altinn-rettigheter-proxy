@@ -12,18 +12,7 @@ data class MaskinportenConfig(
     val scopes: String,
     val wellKnownUrl: String,
     val clientJwk: String,
-
-//    val tokenEndpoint: String,
-//    val issuer: String,
-//    val validInSeconds: Int,
-//    val jti: String? = null,
-//    val resource: String? = null
 ) {
     val privateJwkRsa = RSAKey.parse(clientJwk)
     val jwsSigner = RSASSASigner(privateJwkRsa)
-
-    val scopesList: List<String>
-        get() = this.scopes.split(" ")
-
-
 }
