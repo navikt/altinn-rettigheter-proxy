@@ -82,6 +82,9 @@ spec:
 
         - application: tiltak-refusjon-api
 
+        - application: permitteringsskjema-api
+          namespace: permittering-og-nedbemanning
+
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
