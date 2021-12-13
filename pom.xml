@@ -23,7 +23,7 @@
         <okhttp3.version>4.9.1</okhttp3.version>
 
         <!-- vi kan ta bort denne override når token-support lager ny release: navikt/token-support#362 -->
-        <nimbus-jose-jwt.version>8.20</nimbus-jose-jwt.version>
+        <nimbus-jose-jwt.version>8.23</nimbus-jose-jwt.version>
     </properties>
 
     <dependencyManagement>
