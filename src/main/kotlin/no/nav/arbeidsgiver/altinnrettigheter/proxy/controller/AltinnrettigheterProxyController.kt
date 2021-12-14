@@ -134,11 +134,11 @@ class AltinnrettigheterProxyController(
     }
 
     private val reporteesTimer = ConcurrentHashMap<String, Timer>()
-    private fun <T>withTimer(consumerId: String, body: () -> T): T =
+    private fun <T : Any> withTimer(consumerId: String, body: () -> T): T =
         reporteesTimer.computeIfAbsent(consumerId) {
             Timer.builder("altinn_rettigheter_proxy_reportees_responsetid")
                 .tag("klientapp", it)
                 .publishPercentileHistogram()
                 .register(meterRegistry)
-        }.recordCallable(body)
+        }.recordCallable(body)!!
 }
