@@ -30,7 +30,7 @@ jobs:
     #########################
     ### DEVELOPERS: Insert your feature branch name below (in addition to master) if you want to deploy it to dev
     #########################
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/oppdater-dependencies-snyk-samlet'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/snyk-upgrade-f19319a4293a89ebf7c91a1eb0180750'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
