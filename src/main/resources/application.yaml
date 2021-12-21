@@ -8,11 +8,19 @@ spring:
     timeout: 1000
     lettuce:
       pool:
-        max-active: 8
+        max-active: 16
+        min-idle: 8
+        enabled: true
+        time-between-eviction-runs: 10000
   cache:
     redis:
       time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
     cache-names: reportees
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  packagesToScan: no.nav.arbeidsgiver.altinnrettigheter.proxy
 
 server:
   port: 8080
