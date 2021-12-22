@@ -18,8 +18,8 @@ import java.time.Duration
 class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
 
     private val restTemplate: RestTemplate = restTemplateBuilder
-        .setConnectTimeout(Duration.ofSeconds(10))
-        .setReadTimeout(Duration.ofSeconds(30))
+        .setConnectTimeout(Duration.ofSeconds(60))
+        .setReadTimeout(Duration.ofSeconds(120))
         .build()
 
     @Value("\${altinn.url}")
