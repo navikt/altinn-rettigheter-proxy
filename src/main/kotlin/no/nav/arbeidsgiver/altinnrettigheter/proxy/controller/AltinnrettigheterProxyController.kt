@@ -51,7 +51,8 @@ class AltinnrettigheterProxyController(
             @RequestParam(required = false) serviceEdition: String?,
             @RequestParam top: Number,
             @RequestParam skip: Number,
-            @RequestParam(required = false, defaultValue = "true") filterPaaAktiveOrganisasjoner: String
+            @RequestParam(required = false, defaultValue = "true") filterPaaAktiveOrganisasjoner: String,
+            @RequestParam(required = false) filter: String?
     ): List<AltinnOrganisasjon> {
         sjekkParametreInneholderSifre(
                 mapOf(
@@ -68,7 +69,9 @@ class AltinnrettigheterProxyController(
                 "\$skip" to "$skip"
         )
 
-        if (filterPaaAktiveOrganisasjoner == "true") {
+        if (filter != null && filter.isNotEmpty()) {
+            queryParametre["\$filter"] = filter
+        } else if (filterPaaAktiveOrganisasjoner == "true") {
             queryParametre["\$filter"] = "Type ne 'Person' and Status eq 'Active'"
         }
 
