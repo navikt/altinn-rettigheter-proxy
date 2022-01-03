@@ -1,6 +1,8 @@
 spring:
   profiles:
     active: local
+  main:
+    banner-mode: log
   redis:
     host: ${REDIS_HOST}
     port: 6379
