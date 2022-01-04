@@ -75,6 +75,10 @@ spec:
 
         - application: permitteringsskjema-api
           namespace: permittering-og-nedbemanning
+          
+        - application: innsyn-aareg-api
+          namespace: fager
+          cluster: prod-fss
 
     outbound:
       rules:
