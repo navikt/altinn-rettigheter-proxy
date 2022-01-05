@@ -1,9 +1,55 @@
 Altinn-proxy
 ============
 
-Denne appen er en proxy mot Altinn sine tjenester til arbeidsgiver.
+Denne appen er en proxy mot Altinn sine tjenester til arbeidsgiver. 
+Vi har et java/kotlin bibliotek [altinn-rettigheter-proxy-klient](https://github.com/navikt/altinn-rettigheter-proxy-klient) som gjør det lettere å bruke denne proxyen. Den har
+bl.a. støtte for fall-back til Altinns API.
 
-# Komme i gang
+# Hvordan ta i bruk proxyen (GCP)
+Dere bruker [service discovery](https://doc.nais.io/clusters/service-discovery/) for å snakke med altinn-rettigheter-proxy. 
+
+Den fulle URLen er `http://altinn-rettigheter-proxy.fager.svc.cluster.local`. For å bruke denne, så kreves
+det at deres app har satt outbound access policy:
+```yaml
+accessPolicy:
+  outbound:
+    rules:
+      - application: altinn-rettigheter-proxy
+        namespace: fager
+        cluster: dev-gcp/prod-gcp
+```
+og tilsvarende, må vi legge til dere i vår inbound access policy i [nais/prod-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/prod-gcp.yaml) og [nais/dev-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/dev-gcp.yaml)
+```yaml
+accessPolicy:
+  outbound:
+    rules:
+      - application: DERES_APPLIKASJON
+        namespace: DERES_NAMESPACE
+        cluster: dev-gcp/prod-gcp
+```
+
+Vi anbefaler på det sterkeste å bruke TokenX, da vi ønsker å fjerne støtten for å bruke loginservice direkte.
+
+I dev, så er det også en vanlig ingress tilgjengelig, `https://altinn-rettigheter-proxy.dev.nav.no/altinn-rettigheter-proxy`, som dere kan bruke uten å måtte oppdatere vår access policy.
+
+# Hvordan ta i bruk proxyen (FSS)
+Fra FSS kan dere nå oss med ingressen `https://altinn-rettigheter-proxy.intern.nav.no/altinn-rettigheter-proxy/`. I dev er URL-en `https://altinn-rettigheter-proxy.dev.intern.nav.no/altinn-rettigheter-proxy`.
+For at den skal fungere, må dere være lagt inn i access policy-en vår i [nais/prod-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/prod-gcp.yaml) og [nais/dev-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/dev-gcp.yaml), slik:
+```yaml
+accessPolicy:
+  outbound:
+    rules:
+      - application: DERES_APPLIKASJON
+        namespace: DERES_NAMESPACE
+        cluster: dev-gcp/prod-gcp
+```
+
+Vi anbefaler på det sterkeste å bruke TokenX, da vi ønsker å fjerne støtten for å bruke loginservice direkte.
+
+
+
+
+# Kjøre lokalt: komme i gang
 
 Koden kan kjøres som en vanlig Spring Boot-applikasjon fra AltinnrettigheterproxyApplication.
  Åpnes i browser: [http://localhost:9090/altinn-rettigheter-proxy/internal/healthcheck](http://localhost:9090/altinn-rettigheter-proxy/internal/healthcheck)
