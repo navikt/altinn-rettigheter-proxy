@@ -21,7 +21,7 @@ accessPolicy:
 og tilsvarende, må vi legge til dere i vår inbound access policy i [nais/prod-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/prod-gcp.yaml) og [nais/dev-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/dev-gcp.yaml)
 ```yaml
 accessPolicy:
-  outbound:
+  inbound:
     rules:
       - application: DERES_APPLIKASJON
         namespace: DERES_NAMESPACE
@@ -37,10 +37,19 @@ Fra FSS kan dere nå oss med ingressen `https://altinn-rettigheter-proxy.intern.
 For at den skal fungere, må dere være lagt inn i access policy-en vår i [nais/prod-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/prod-gcp.yaml) og [nais/dev-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/dev-gcp.yaml), slik:
 ```yaml
 accessPolicy:
-  outbound:
+  inbound:
     rules:
       - application: DERES_APPLIKASJON
         namespace: DERES_NAMESPACE
+        cluster: dev-gcp/prod-gcp
+```
+Dere burde også legge på outbound i deres app, så kan dere bruke TokenX og er klare for når dere migrerer ut av FSS over til GCP.
+```yaml
+accessPolicy:
+  outbound:
+    rules:
+      - application: altinn-rettigheter-proxy
+        namespace: fager
         cluster: dev-gcp/prod-gcp
 ```
 
