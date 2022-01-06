@@ -96,7 +96,7 @@ spec:
     - name: CACHE_TIME_TO_LIVE_MILLIS
       value: "1200000"
     - name: ALTINN_URL
-      value: "https://altinn.no/"
+      value: "https://www.altinn.no/"
   envFrom:
     - configmap: loginservice-idporten
     - secret: altinn-rettigheter-proxy-redis-password
