@@ -31,8 +31,8 @@ class MaskinportenClientImpl(
 ): MaskinportenClient, InitializingBean {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val restTemplate = restTemplateBuilder.build()
-
     private lateinit var wellKnownResponse: WellKnownResponse
+    private val token = AtomicReference<TokenResponse?>()
 
     override fun afterPropertiesSet() {
         wellKnownResponse = restTemplate.getForObject(config.wellKnownUrl, WellKnownResponse::class.java)!!
@@ -42,14 +42,16 @@ class MaskinportenClientImpl(
                 logger.info("sjekker om accesstoken er i ferd med å utløpe..")
                 val value = token.get()
                 if (value == null || value.expiresIn() < Duration.ofSeconds(40)) {
-                    getAccessToken()
+                    val newToken = fetchNewAccessToken()
+                    token.set(newToken)
+                    logger.info("Fetched new access token. Expires in {} seconds.", newToken.expiresIn().toSeconds())
                 }
                 Thread.sleep(Duration.ofSeconds(30).toMillis())
             }
         }
     }
 
-    fun createClientAssertion(): String {
+    private fun createClientAssertion(): String {
         val now = Instant.now()
         val expire = now + Duration.ofSeconds(120)
 
@@ -74,7 +76,7 @@ class MaskinportenClientImpl(
         return signedJWT.serialize()
     }
 
-    fun fetchNewAccessToken(): TokenResponse {
+    private fun fetchNewAccessToken(): TokenResponse {
         logger.info("henter ny accesstoken")
         return restTemplate.exchange(RequestEntity
             .method(HttpMethod.POST, wellKnownResponse.tokenEndpoint)
@@ -85,13 +87,13 @@ class MaskinportenClientImpl(
             ))), TokenResponse::class.java).body!!
     }
 
-    private val token = AtomicReference<TokenResponse?>()
 
-    fun getAccessToken(): TokenResponse {
+    private fun fetchAccessTokenCached(): TokenResponse {
         val value = token.get()
         return if (value != null && value.isValid()) {
             value
         } else {
+            logger.error("maskinporten access token almost expired, trying to fetch new")
             /* this shouldn't happen, as refresh loop above refreshes often */
             fetchNewAccessToken().also {
                 token.set(it)
@@ -100,7 +102,7 @@ class MaskinportenClientImpl(
     }
 
     override fun fetchAccessToken(): String {
-        return getAccessToken().accessToken
+        return fetchAccessTokenCached().accessToken
     }
 }
 
