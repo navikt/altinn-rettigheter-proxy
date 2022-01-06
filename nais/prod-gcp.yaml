@@ -20,6 +20,7 @@ spec:
   ingresses:
     - https://arbeidsgiver.nav.no/altinn-rettigheter-proxy/
     - https://arbeidsgiver.intern.nav.no/altinn-rettigheter-proxy/
+    - https://altinn-rettigheter-proxy.intern.nav.no/altinn-rettigheter-proxy/
   tokenx:
     enabled: true
   maskinporten:
@@ -78,6 +79,13 @@ spec:
 
         - application: tiltak-refusjon-api
 
+        - application: permitteringsskjema-api
+          namespace: permittering-og-nedbemanning
+          
+        - application: innsyn-aareg-api
+          namespace: fager
+          cluster: prod-fss
+
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
@@ -87,7 +95,7 @@ spec:
     - name: REDIS_HOST
       value: altinn-rettigheter-proxy-redis.arbeidsgiver.svc.cluster.local
     - name: CACHE_TIME_TO_LIVE_MILLIS
-      value: "600000"
+      value: "1200000"
     - name: ALTINN_URL
       value: "https://api-gw.oera.no/"
   envFrom:

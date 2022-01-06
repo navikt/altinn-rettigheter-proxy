@@ -55,19 +55,6 @@ jobs:
           docker push ${IMAGE}
 
   ###### GCP DEV
-
-  deploy-redis-dev-gcp:
-    name: Deploy redis dev-gcp
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          RESOURCE: nais/redis-gcp.yaml
-
   deploy-server-dev-gcp:
     name: Deploy server dev-gcp
     needs: build
@@ -82,23 +69,9 @@ jobs:
           RESOURCE: nais/dev-gcp.yaml
 
   ###### GCP PROD
-
-  deploy-redis-prod-gcp:
-    name: Deploy redis prod-gcp
-    needs: [ deploy-server-dev-gcp, deploy-redis-dev-gcp ]
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-gcp
-          RESOURCE: nais/redis-gcp.yaml
-
   deploy-server-prod-gcp:
     name: Deploy server prod-gcp
-    needs: [ deploy-server-dev-gcp, deploy-redis-dev-gcp ]
+    needs: deploy-server-dev-gcp
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:

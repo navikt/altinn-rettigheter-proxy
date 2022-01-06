@@ -8,17 +8,19 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpStatusCodeException
-import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.Duration
 
 @Component
 class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
 
-    private val restTemplate: RestTemplate = restTemplateBuilder.build()
+    private val restTemplate: RestTemplate = restTemplateBuilder
+        .setConnectTimeout(Duration.ofSeconds(60))
+        .setReadTimeout(Duration.ofSeconds(120))
+        .build()
 
     @Value("\${altinn.url}")
     lateinit var altinnUrl: String

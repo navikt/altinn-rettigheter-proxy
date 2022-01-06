@@ -12,6 +12,8 @@ spec:
   ingresses:
     - https://arbeidsgiver.dev.nav.no/altinn-rettigheter-proxy
     - https://arbeidsgiver.dev.intern.nav.no/altinn-rettigheter-proxy
+    - https://altinn-rettigheter-proxy.dev.intern.nav.no/altinn-rettigheter-proxy
+    - https://altinn-rettigheter-proxy.dev.nav.no/altinn-rettigheter-proxy
   liveness:
     path: /altinn-rettigheter-proxy/internal/alive
     initialDelay: 60
@@ -86,6 +88,13 @@ spec:
           namespace: fager
 
         - application: tiltak-refusjon-api
+
+        - application: permitteringsskjema-api
+          namespace: permittering-og-nedbemanning
+          
+        - application: innsyn-aareg-api
+          namespace: fager
+          cluster: dev-fss
 
     outbound:
       rules:

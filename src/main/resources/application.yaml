@@ -1,15 +1,28 @@
 spring:
   profiles:
     active: local
+  main:
+    banner-mode: log
   redis:
     host: ${REDIS_HOST}
     port: 6379
     password: ${REDIS_PASSWORD}
-    timeout: 1000
+    timeout: 2000
+    lettuce:
+      pool:
+        max-active: 16
+        min-idle: 8
+        enabled: true
+        time-between-eviction-runs: 10000
   cache:
     redis:
       time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
     cache-names: reportees
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  packagesToScan: no.nav.arbeidsgiver.altinnrettigheter.proxy
 
 server:
   port: 8080

@@ -7,12 +7,10 @@ import no.nav.arbeidsgiver.altinnrettigheter.proxy.service.AltinnrettigheterServ
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollService
 import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ResponseStatusException
 import java.util.concurrent.ConcurrentHashMap
 
 @Protected
@@ -27,12 +25,14 @@ class AltinnrettigheterProxyController(
 
     @GetMapping(value = ["/organisasjoner"])
     fun proxyOrganisasjonerNY(
+            @RequestHeader(value = "host", required = false) host: String?,
             @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
             @RequestParam serviceCode: String, @RequestParam serviceEdition: String
     ): List<AltinnOrganisasjon> {
 
         return proxyOrganisasjoner(
                 consumerId,
+                host,
                 mapOf(
                         "ForceEIAuthentication" to "",
                         "serviceCode" to serviceCode,
@@ -46,12 +46,14 @@ class AltinnrettigheterProxyController(
 
     @GetMapping("/v2/organisasjoner")
     fun proxyOrganisasjonerV2(
+            @RequestHeader(value = "host", required = false) host: String?,
             @RequestHeader(value = "X-Consumer-ID") consumerId: String,
             @RequestParam(required = false) serviceCode: String?,
             @RequestParam(required = false) serviceEdition: String?,
             @RequestParam top: Number,
             @RequestParam skip: Number,
-            @RequestParam(required = false, defaultValue = "true") filterPaaAktiveOrganisasjoner: String
+            @RequestParam(required = false, defaultValue = "true") filterPaaAktiveOrganisasjoner: String,
+            @RequestParam(required = false) filter: String?
     ): List<AltinnOrganisasjon> {
         sjekkParametreInneholderSifre(
                 mapOf(
@@ -68,7 +70,9 @@ class AltinnrettigheterProxyController(
                 "\$skip" to "$skip"
         )
 
-        if (filterPaaAktiveOrganisasjoner == "true") {
+        if (filter != null && filter.isNotEmpty()) {
+            queryParametre["\$filter"] = filter
+        } else if (filterPaaAktiveOrganisasjoner == "true") {
             queryParametre["\$filter"] = "Type ne 'Person' and Status eq 'Active'"
         }
 
@@ -82,6 +86,7 @@ class AltinnrettigheterProxyController(
 
         return proxyOrganisasjoner(
                 consumerId,
+                host,
                 queryParametre
         )
     }
@@ -89,13 +94,14 @@ class AltinnrettigheterProxyController(
     @GetMapping(value = ["/ekstern/altinn/api/serviceowner/reportees"])
     fun proxyOrganisasjoner(
             @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
+            @RequestHeader(value = "host", required = false) host: String?,
             @RequestParam query: Map<String, String>
     ): List<AltinnOrganisasjon> {
         logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
 
         val validertQuery = validerOgFiltrerQuery(query)
 
-        return withTimer(consumerId ?: "UKJENT_KLIENT_APP") {
+        return withTimer(consumerId ?: "UKJENT_KLIENT_APP", host) {
             altinnrettigheterService.hentOrganisasjoner(
                 validertQuery,
                 tilgangskontrollService.hentInnloggetBruker().fnr
@@ -118,10 +124,7 @@ class AltinnrettigheterProxyController(
     private fun validerObligatoriskeParametre(query: Map<String, String>, vararg obligatorisk: String) {
         val parametreSomIkkeErMed = obligatorisk.filter { !query.containsKey(it) }
         if (parametreSomIkkeErMed.isNotEmpty()) {
-            throw ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Obligatoriske parametre ble ikke sendt med: $parametreSomIkkeErMed"
-            )
+            throw ManglendeObligatoriskParameterException(parametreSomIkkeErMed)
         }
     }
 
@@ -134,11 +137,16 @@ class AltinnrettigheterProxyController(
     }
 
     private val reporteesTimer = ConcurrentHashMap<String, Timer>()
-    private fun <T>withTimer(consumerId: String, body: () -> T): T =
+    private fun <T : Any> withTimer(consumerId: String, host: String?, body: () -> T): T =
         reporteesTimer.computeIfAbsent(consumerId) {
             Timer.builder("altinn_rettigheter_proxy_reportees_responsetid")
                 .tag("klientapp", it)
+                .apply {
+                    if (host != null) {
+                        tag("host", host)
+                    }
+                }
                 .publishPercentileHistogram()
                 .register(meterRegistry)
-        }.recordCallable(body)
+        }.recordCallable(body)!!
 }
