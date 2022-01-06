@@ -57,6 +57,7 @@ class MaskinportenClientImpl(
             .expirationTime(Date(Date().time + 120 * 1000))
             .notBeforeTime(Date())
 //            .subject(config.clientId) // kan ikke se denne nevnt i doken her https://docs.digdir.no/maskinporten_protocol_jwtgrant.html eller her https://altinn.github.io/docs/api/rest/kom-i-gang/virksomhet/#autentisering-med-virksomhetsbruker-og-maskinporten
+            .claim("scope", "altinn:serviceowner/reportees")
             .claim("resource", basedOnEnv(prod = {"https://www.altinn.no/"}, other = {"https://tt02.altinn.no/"}))
             .jwtID(UUID.randomUUID().toString())
             .build()
