@@ -6,7 +6,9 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.basedOnEnv
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.InitializingBean
 import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.http.RequestEntity
@@ -15,17 +17,36 @@ import java.time.Duration
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
+interface MaskinportenClient {
+    fun fetchAccessToken(): String
+}
+
 @Component
-class AccessTokenClient(
+@Profile("dev", "prod")
+class MaskinportenClientImpl(
     val config: MaskinportenConfig,
     restTemplateBuilder: RestTemplateBuilder,
-) {
+): MaskinportenClient, InitializingBean {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val restTemplate = restTemplateBuilder.build()
 
-    private val wellKnownResponse: WellKnownResponse by lazy { // TODO: no lazy!
-        restTemplate.getForObject(config.wellKnownUrl, WellKnownResponse::class.java)!!
+    private lateinit var wellKnownResponse: WellKnownResponse
+
+    override fun afterPropertiesSet() {
+        wellKnownResponse = restTemplate.getForObject(config.wellKnownUrl, WellKnownResponse::class.java)!!
+
+        Thread {
+            while (true) {
+                logger.info("sjekker om accesstoken er i ferd med å utløpe..")
+                val value = token.get()
+                if (value != null && value.expiresIn() < Duration.ofMinutes(2)) {
+                    getAccessToken()
+                }
+                Thread.sleep(Duration.ofMinutes(1).toMillis())
+            }
+        }
     }
+
 
     fun createClientAssertion(): String {
         val claimsSet: JWTClaimsSet = JWTClaimsSet.Builder()
@@ -73,17 +94,17 @@ class AccessTokenClient(
         }
     }
 
-    init {
-        Thread {
-            while (true) {
-                logger.info("sjekker om accesstoken er i ferd med å utløpe..")
-                val value = token.get()
-                if (value != null && value.expiresIn() < Duration.ofMinutes(2)) {
-                   getAccessToken()
-                }
-                Thread.sleep(Duration.ofMinutes(1).toMillis())
-            }
-        }
+    override fun fetchAccessToken(): String {
+        return getAccessToken().accessToken
+    }
+}
 
+
+@Component
+@Profile("local")
+class MaskinportenClientStub(
+): MaskinportenClient {
+    override fun fetchAccessToken(): String {
+        return "stub-access-token"
     }
 }

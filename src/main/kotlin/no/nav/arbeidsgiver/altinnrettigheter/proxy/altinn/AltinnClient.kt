@@ -1,5 +1,6 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn
 
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.maskinporten.MaskinportenClient
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import org.springframework.beans.factory.annotation.Value
@@ -15,7 +16,10 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.time.Duration
 
 @Component
-class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
+class AltinnClient(
+    private val maskinportenClient: MaskinportenClient,
+    restTemplateBuilder: RestTemplateBuilder
+) {
 
     private val restTemplate: RestTemplate = restTemplateBuilder
         .setConnectTimeout(Duration.ofSeconds(60))
@@ -24,10 +28,10 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
 
     @Value("\${altinn.url}")
     lateinit var altinnUrl: String
-    @Value("\${altinn.apigw.apikey}")
-    lateinit var altinnAPIGWApikey: String
+
     @Value("\${altinn.apikey}")
     lateinit var altinnApikey: String
+
     val apiUrl : String by lazy {
         UriComponentsBuilder
             .fromUriString(altinnUrl)
@@ -40,11 +44,12 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
                 "reportees"
             ).build().toUriString()
     }
-    val header : HttpEntity<Any?> by lazy {
+
+    fun createHeaders(): HttpEntity<Any?> {
         val headers = HttpHeaders()
-        headers["X-NAV-APIKEY"] = altinnAPIGWApikey
+        headers.setBearerAuth(maskinportenClient.fetchAccessToken())
         headers["APIKEY"] = altinnApikey
-        HttpEntity(headers)
+        return HttpEntity(headers)
     }
 
     fun hentOrganisasjoner(
@@ -63,7 +68,7 @@ class AltinnClient(restTemplateBuilder: RestTemplateBuilder) {
             restTemplate.exchange(
                 "$apiUrl?$query",
                 HttpMethod.GET,
-                header,
+                createHeaders(),
                 object : ParameterizedTypeReference<List<AltinnOrganisasjon>>() {},
                 queryParametereMedSubject
             ).body!!
