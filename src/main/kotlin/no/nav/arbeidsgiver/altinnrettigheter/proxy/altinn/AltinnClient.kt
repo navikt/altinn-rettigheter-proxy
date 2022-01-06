@@ -37,8 +37,6 @@ class AltinnClient(
             .fromUriString(altinnUrl)
             .pathSegment()
             .pathSegment(
-                "ekstern",
-                "altinn",
                 "api",
                 "serviceowner",
                 "reportees"
