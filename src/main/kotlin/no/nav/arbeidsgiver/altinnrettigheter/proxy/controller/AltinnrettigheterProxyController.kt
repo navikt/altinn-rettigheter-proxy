@@ -27,12 +27,14 @@ class AltinnrettigheterProxyController(
 
     @GetMapping(value = ["/organisasjoner"])
     fun proxyOrganisasjonerNY(
+            @RequestHeader(value = "host", required = false) host: String?,
             @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
             @RequestParam serviceCode: String, @RequestParam serviceEdition: String
     ): List<AltinnOrganisasjon> {
 
         return proxyOrganisasjoner(
                 consumerId,
+                host,
                 mapOf(
                         "ForceEIAuthentication" to "",
                         "serviceCode" to serviceCode,
@@ -46,6 +48,7 @@ class AltinnrettigheterProxyController(
 
     @GetMapping("/v2/organisasjoner")
     fun proxyOrganisasjonerV2(
+            @RequestHeader(value = "host", required = false) host: String?,
             @RequestHeader(value = "X-Consumer-ID") consumerId: String,
             @RequestParam(required = false) serviceCode: String?,
             @RequestParam(required = false) serviceEdition: String?,
@@ -85,6 +88,7 @@ class AltinnrettigheterProxyController(
 
         return proxyOrganisasjoner(
                 consumerId,
+                host,
                 queryParametre
         )
     }
@@ -92,13 +96,14 @@ class AltinnrettigheterProxyController(
     @GetMapping(value = ["/ekstern/altinn/api/serviceowner/reportees"])
     fun proxyOrganisasjoner(
             @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
+            @RequestHeader(value = "host", required = false) host: String?,
             @RequestParam query: Map<String, String>
     ): List<AltinnOrganisasjon> {
         logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
 
         val validertQuery = validerOgFiltrerQuery(query)
 
-        return withTimer(consumerId ?: "UKJENT_KLIENT_APP") {
+        return withTimer(consumerId ?: "UKJENT_KLIENT_APP", host) {
             altinnrettigheterService.hentOrganisasjoner(
                 validertQuery,
                 tilgangskontrollService.hentInnloggetBruker().fnr
@@ -137,10 +142,15 @@ class AltinnrettigheterProxyController(
     }
 
     private val reporteesTimer = ConcurrentHashMap<String, Timer>()
-    private fun <T : Any> withTimer(consumerId: String, body: () -> T): T =
+    private fun <T : Any> withTimer(consumerId: String, host: String?, body: () -> T): T =
         reporteesTimer.computeIfAbsent(consumerId) {
             Timer.builder("altinn_rettigheter_proxy_reportees_responsetid")
                 .tag("klientapp", it)
+                .apply {
+                    if (host != null) {
+                        tag("host", host)
+                    }
+                }
                 .publishPercentileHistogram()
                 .register(meterRegistry)
         }.recordCallable(body)!!
