@@ -39,7 +39,7 @@ class AltinnKlientRestTemplateTest {
         server.expect(
                 ExpectedCount.once(),
                 requestTo(
-                        "http://local.test/ekstern/altinn/api/serviceowner/reportees" +
+                        "http://local.test/api/serviceowner/reportees" +
                                 "?ForceEIAuthentication" +
                                 "&serviceCode=3403" +
                                 "&serviceEdition=1" +
@@ -71,7 +71,7 @@ class AltinnKlientRestTemplateTest {
         server.expect(
                 ExpectedCount.once(),
                 requestTo(
-                        "http://local.test/ekstern/altinn/api/serviceowner/reportees" +
+                        "http://local.test/api/serviceowner/reportees" +
                                 "?ForceEIAuthentication" +
                                 "&serviceCode=9999" +
                                 "&serviceEdition=1" +
@@ -100,7 +100,7 @@ class AltinnKlientRestTemplateTest {
         server.expect(
                 ExpectedCount.once(),
                 requestTo(
-                        "http://local.test/ekstern/altinn/api/serviceowner/reportees" +
+                        "http://local.test/api/serviceowner/reportees" +
                                 "?ForceEIAuthentication" +
                                 "&serviceCode=3403" +
                                 "&serviceEdition=1" +
