@@ -101,9 +101,8 @@ class MaskinportenClientImpl(
 
 
 @Component
-@Profile("local")
-class MaskinportenClientStub(
-): MaskinportenClient {
+@Profile("local", "test")
+class MaskinportenClientStub: MaskinportenClient {
     override fun fetchAccessToken(): String {
         return "stub-access-token"
     }
