@@ -15,6 +15,7 @@ import org.springframework.http.RequestEntity
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import java.time.Duration
+import java.time.Instant
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -40,23 +41,24 @@ class MaskinportenClientImpl(
             while (true) {
                 logger.info("sjekker om accesstoken er i ferd med å utløpe..")
                 val value = token.get()
-                if (value != null && value.expiresIn() < Duration.ofMinutes(2)) {
+                if (value == null || value.expiresIn() < Duration.ofSeconds(40)) {
                     getAccessToken()
                 }
-                Thread.sleep(Duration.ofMinutes(1).toMillis())
+                Thread.sleep(Duration.ofSeconds(30).toMillis())
             }
         }
     }
 
-
     fun createClientAssertion(): String {
+        val now = Instant.now()
+        val expire = now + Duration.ofSeconds(120)
+
         val claimsSet: JWTClaimsSet = JWTClaimsSet.Builder()
             .audience(wellKnownResponse.issuer)
             .issuer(config.clientId)
-            .issueTime(Date())
-            .expirationTime(Date(Date().time + 120 * 1000))
-            .notBeforeTime(Date())
-//            .subject(config.clientId) // kan ikke se denne nevnt i doken her https://docs.digdir.no/maskinporten_protocol_jwtgrant.html eller her https://altinn.github.io/docs/api/rest/kom-i-gang/virksomhet/#autentisering-med-virksomhetsbruker-og-maskinporten
+            .issueTime(Date.from(now))
+            .expirationTime(Date.from(expire))
+            .notBeforeTime(Date.from(now))
             .claim("scope", "altinn:serviceowner/reportees")
             .claim("resource", basedOnEnv(prod = {"https://www.altinn.no/"}, other = {"https://tt02.altinn.no/"}))
             .jwtID(UUID.randomUUID().toString())
@@ -90,6 +92,7 @@ class MaskinportenClientImpl(
         return if (value != null && value.isValid()) {
             value
         } else {
+            /* this shouldn't happen, as refresh loop above refreshes often */
             fetchNewAccessToken().also {
                 token.set(it)
             }

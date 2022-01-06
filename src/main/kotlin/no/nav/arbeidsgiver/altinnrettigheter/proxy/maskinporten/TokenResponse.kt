@@ -22,7 +22,7 @@ data class TokenResponse(
     @JsonProperty("scope") val scope: String,
 ) {
     val jwt = JWTParser.parse(accessToken)
-    fun isValid(): Boolean = expiresIn() > Duration.ofMinutes(5)
+    fun isValid(): Boolean = expiresIn() > Duration.ofSeconds(20)
     fun expiresIn() : Duration = Duration.ofMillis(jwt.jwtClaimsSet.expirationTime.time - Date().time)
 }
 
