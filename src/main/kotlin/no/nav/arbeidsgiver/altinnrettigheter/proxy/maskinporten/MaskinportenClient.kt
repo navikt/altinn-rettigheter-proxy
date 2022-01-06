@@ -13,6 +13,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.http.RequestEntity
 import org.springframework.stereotype.Component
+import org.springframework.util.LinkedMultiValueMap
 import java.time.Duration
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
@@ -75,10 +76,10 @@ class MaskinportenClientImpl(
         return restTemplate.exchange(RequestEntity
             .method(HttpMethod.POST, wellKnownResponse.tokenEndpoint)
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(mapOf(
-                "grant_type" to "urn:ietf:params:oauth:grant-type:jwt-bearer",
-                "assertion" to createClientAssertion()
-            )), TokenResponse::class.java).body!!
+            .body(LinkedMultiValueMap(mapOf(
+                "grant_type" to listOf("urn:ietf:params:oauth:grant-type:jwt-bearer"),
+                "assertion" to listOf(createClientAssertion())
+            ))), TokenResponse::class.java).body!!
     }
 
     private val token = AtomicReference<TokenResponse?>()
