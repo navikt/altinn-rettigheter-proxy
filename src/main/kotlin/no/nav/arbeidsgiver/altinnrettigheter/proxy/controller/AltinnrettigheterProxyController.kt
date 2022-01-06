@@ -95,8 +95,8 @@ class AltinnrettigheterProxyController(
 
     @GetMapping(value = ["/ekstern/altinn/api/serviceowner/reportees"])
     fun proxyOrganisasjoner(
-            @RequestHeader(value = "host", required = false) host: String?,
             @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
+            @RequestHeader(value = "host", required = false) host: String?,
             @RequestParam query: Map<String, String>
     ): List<AltinnOrganisasjon> {
         logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
