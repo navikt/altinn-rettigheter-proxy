@@ -2,6 +2,7 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.AltinnException
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.ProxyHttpStatusCodeException
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.controller.ManglendeObligatoriskParameterException
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.controller.UgyldigParameterException
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
@@ -28,7 +29,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         GATEWAY_TIMEOUT,
     )
 
-    @ExceptionHandler(value = [UgyldigParameterException::class])
+    @ExceptionHandler(UgyldigParameterException::class)
     @ResponseBody
     protected fun handleUgyldigParameterException(
         e: UgyldigParameterException,
@@ -41,13 +42,26 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         )
     }
 
+    @ExceptionHandler(ManglendeObligatoriskParameterException::class)
+    @ResponseBody
+    protected fun handleManglendeObligatoriskParameterException(
+        e: ManglendeObligatoriskParameterException,
+        webRequest: WebRequest?
+    ): ResponseEntity<FeilRespons> {
+        return getResponseEntity(
+            e,
+            "Obligatoriske parametre ble ikke sendt med: ${e.parametere}",
+            BAD_REQUEST
+        )
+    }
+
     @ExceptionHandler(value = [TilgangskontrollException::class])
     @ResponseBody
     protected fun handleTilgangskontrollException(
         e: TilgangskontrollException,
         webRequest: WebRequest?
     ): ResponseEntity<FeilRespons> {
-        return getResponseEntity(e, e.message!!, FORBIDDEN)
+        return getResponseEntity(e, "You don't have access to this resource", FORBIDDEN)
     }
 
     @ExceptionHandler(value = [JwtTokenUnauthorizedException::class, AccessDeniedException::class])

@@ -7,12 +7,10 @@ import no.nav.arbeidsgiver.altinnrettigheter.proxy.service.AltinnrettigheterServ
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.tilgangskontroll.TilgangskontrollService
 import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ResponseStatusException
 import java.util.concurrent.ConcurrentHashMap
 
 @Protected
@@ -126,10 +124,7 @@ class AltinnrettigheterProxyController(
     private fun validerObligatoriskeParametre(query: Map<String, String>, vararg obligatorisk: String) {
         val parametreSomIkkeErMed = obligatorisk.filter { !query.containsKey(it) }
         if (parametreSomIkkeErMed.isNotEmpty()) {
-            throw ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Obligatoriske parametre ble ikke sendt med: $parametreSomIkkeErMed"
-            )
+            throw ManglendeObligatoriskParameterException(parametreSomIkkeErMed)
         }
     }
 
