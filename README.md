@@ -8,14 +8,14 @@ bl.a. støtte for fall-back til Altinns API.
 # Hvordan ta i bruk proxyen (GCP)
 Dere bruker [service discovery](https://doc.nais.io/clusters/service-discovery/) for å snakke med altinn-rettigheter-proxy. 
 
-Den fulle URLen er `http://altinn-rettigheter-proxy.fager.svc.cluster.local`. For å bruke denne, så kreves
+Den fulle URLen er `http://altinn-rettigheter-proxy.arbeidsgiver.svc.cluster.local`. For å bruke denne, så kreves
 det at deres app har satt outbound access policy:
 ```yaml
 accessPolicy:
   outbound:
     rules:
       - application: altinn-rettigheter-proxy
-        namespace: fager
+        namespace: arbeidsgiver
         cluster: dev-gcp/prod-gcp
 ```
 og tilsvarende, må vi legge til dere i vår inbound access policy i [nais/prod-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/prod-gcp.yaml) og [nais/dev-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/dev-gcp.yaml)
