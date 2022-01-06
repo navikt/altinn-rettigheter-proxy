@@ -39,12 +39,16 @@ class MaskinportenClientImpl(
 
         Thread {
             while (true) {
-                logger.info("sjekker om accesstoken er i ferd med å utløpe..")
-                val value = token.get()
-                if (value == null || value.expiresIn() < Duration.ofSeconds(40)) {
-                    val newToken = fetchNewAccessToken()
-                    token.set(newToken)
-                    logger.info("Fetched new access token. Expires in {} seconds.", newToken.expiresIn().toSeconds())
+                try {
+                    logger.info("sjekker om accesstoken er i ferd med å utløpe..")
+                    val value = token.get()
+                    if (value == null || value.expiresIn() < Duration.ofSeconds(40)) {
+                        val newToken = fetchNewAccessToken()
+                        token.set(newToken)
+                        logger.info("Fetched new access token. Expires in {} seconds.", newToken.expiresIn().toSeconds())
+                    }
+                } catch (e: Exception) {
+                    logger.error("refreshing maskinporten token failed with exception {}.", e.message, e)
                 }
                 Thread.sleep(Duration.ofSeconds(30).toMillis())
             }
@@ -93,7 +97,7 @@ class MaskinportenClientImpl(
         return if (value != null && value.isValid()) {
             value
         } else {
-            logger.error("maskinporten access token almost expired, trying to fetch new")
+            logger.error("maskinporten access token almost expired. is refresh loop running? doing emergency fetch.")
             /* this shouldn't happen, as refresh loop above refreshes often */
             fetchNewAccessToken().also {
                 token.set(it)
