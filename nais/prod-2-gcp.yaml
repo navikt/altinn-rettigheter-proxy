@@ -1,0 +1,56 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: altinn-rettigheter-proxy-2
+  namespace: arbeidsgiver
+  labels:
+    team: arbeidsgiver
+spec:
+  image: {{ image }}
+  port: 8080
+  liveness:
+    path: /altinn-rettigheter-proxy/internal/alive
+    initialDelay: 60
+    timeout: 15
+  readiness:
+    path: /altinn-rettigheter-proxy/internal/ready
+    initialDelay: 60
+    timeout: 15
+  tokenx:
+    enabled: true
+  maskinporten:
+    enabled: true
+    scopes:
+      consumes:
+        - name: "altinn:serviceowner/reportees"
+  ingresses:
+    - https://altinn-rettigheter-proxy-2.intern.nav.no/altinn-rettigheter-proxy/
+  accessPolicy:
+    inbound:
+      rules:
+        - application: min-side-arbeidsgiver-api
+          namespace: fager
+
+        - application: innsyn-aareg-api
+          namespace: fager
+          cluster: prod-fss
+
+    outbound:
+      rules:
+        - application: altinn-rettigheter-proxy-redis
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: prod
+    - name: REDIS_HOST
+      value: altinn-rettigheter-proxy-redis.arbeidsgiver.svc.cluster.local
+    - name: CACHE_TIME_TO_LIVE_MILLIS
+      value: "1200000"
+    - name: ALTINN_URL
+      value: "https://www.altinn.no/"
+  envFrom:
+    - configmap: loginservice-idporten
+    - secret: altinn-rettigheter-proxy-redis-password
+    - secret: altinn-rettigheter-proxy
+  prometheus:
+    enabled: true
+    path: /altinn-rettigheter-proxy/internal/actuator/prometheus

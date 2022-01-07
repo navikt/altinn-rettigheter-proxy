@@ -29,6 +29,7 @@ spec:
       rules:
         - application: altinn-rettigheter-proxy-redisexporter
         - application: altinn-rettigheter-proxy
+        - application: altinn-rettigheter-proxy-2
   envFrom:
     - secret: altinn-rettigheter-proxy-redis-password
 
@@ -65,6 +66,7 @@ spec:
     inbound:
       rules:
         - application: altinn-rettigheter-proxy
+        - application: altinn-rettigheter-proxy-2
   env:
     - name: REDIS_ADDR
       value: altinn-rettigheter-proxy-redis:6379
