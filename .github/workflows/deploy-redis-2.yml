@@ -1,4 +1,4 @@
-name: Deploy Redis
+name: Deploy Redis 2
 
 on:
   push:
