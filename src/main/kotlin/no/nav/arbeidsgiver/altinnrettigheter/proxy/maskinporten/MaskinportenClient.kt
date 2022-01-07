@@ -52,7 +52,7 @@ class MaskinportenClientImpl(
                 }
                 Thread.sleep(Duration.ofSeconds(30).toMillis())
             }
-        }
+        }.start()
     }
 
     private fun createClientAssertion(): String {
