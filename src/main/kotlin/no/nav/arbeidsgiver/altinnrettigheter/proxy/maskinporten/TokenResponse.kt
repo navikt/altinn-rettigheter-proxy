@@ -2,9 +2,8 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy.maskinporten
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.nimbusds.jwt.JWTParser
 import java.time.Duration
-import java.util.*
+import java.time.Instant
 
 /**
  * {
@@ -18,11 +17,17 @@ import java.util.*
 data class TokenResponse(
     @JsonProperty("access_token") val accessToken: String,
     @JsonProperty("token_type") val tokenType: String,
-    @JsonProperty("expires_in") val expiresIn: Long,
+    @JsonProperty("expires_in") val expiresInSeconds: Long,
     @JsonProperty("scope") val scope: String,
 ) {
-    val jwt = JWTParser.parse(accessToken)
-    fun isValid(): Boolean = expiresIn() > Duration.ofSeconds(20)
-    fun expiresIn() : Duration = Duration.ofMillis(jwt.jwtClaimsSet.expirationTime.time - Date().time)
+    val expiresIn: Duration = Duration.ofSeconds(expiresInSeconds)
+}
+
+data class TokenResponseWrapper(
+    val requestedAt: Instant,
+    val tokenResponse: TokenResponse,
+) {
+    private val expiresAt = requestedAt.plus(tokenResponse.expiresIn)
+    fun expiresIn(now: Instant = Instant.now()): Duration = Duration.between(now, expiresAt)
 }
 

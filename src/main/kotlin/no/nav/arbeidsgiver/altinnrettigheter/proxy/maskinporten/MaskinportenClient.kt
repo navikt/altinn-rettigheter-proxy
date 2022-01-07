@@ -4,6 +4,7 @@ import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
+import io.micrometer.core.instrument.MeterRegistry
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.basedOnEnv
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
@@ -22,27 +23,31 @@ import java.util.concurrent.atomic.AtomicReference
 interface MaskinportenClient {
     fun fetchAccessToken(): String
 }
-
 @Component
 @Profile("dev", "prod")
 class MaskinportenClientImpl(
     val config: MaskinportenConfig,
+    val meterRegistry: MeterRegistry,
     restTemplateBuilder: RestTemplateBuilder,
 ): MaskinportenClient, InitializingBean {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val restTemplate = restTemplateBuilder.build()
     private lateinit var wellKnownResponse: WellKnownResponse
-    private val token = AtomicReference<TokenResponse?>()
+    private val token = AtomicReference<TokenResponseWrapper?>()
 
     override fun afterPropertiesSet() {
         wellKnownResponse = restTemplate.getForObject(config.wellKnownUrl, WellKnownResponse::class.java)!!
-
+        meterRegistry.gauge(
+            "maskinporten.token.expiry.seconds", token
+        ) {
+            it.get()?.expiresIn()?.seconds?.toDouble() ?: Double.NaN
+        }
         Thread {
             while (true) {
                 try {
                     logger.info("sjekker om accesstoken er i ferd med å utløpe..")
                     val value = token.get()
-                    if (value == null || value.expiresIn() < Duration.ofSeconds(40)) {
+                    if (value == null || value.expiresIn() < Duration.ofMinutes(10)) {
                         val newToken = fetchNewAccessToken()
                         token.set(newToken)
                         logger.info("Fetched new access token. Expires in {} seconds.", newToken.expiresIn().toSeconds())
@@ -80,28 +85,33 @@ class MaskinportenClientImpl(
         return signedJWT.serialize()
     }
 
-    private fun fetchNewAccessToken(): TokenResponse {
+    private fun fetchNewAccessToken(): TokenResponseWrapper {
         logger.info("henter ny accesstoken")
-        return restTemplate.exchange(RequestEntity
+        val requestedAt = Instant.now()
+
+        return TokenResponseWrapper(
+            requestedAt = requestedAt,
+            tokenResponse = restTemplate.exchange(RequestEntity
             .method(HttpMethod.POST, wellKnownResponse.tokenEndpoint)
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(LinkedMultiValueMap(mapOf(
                 "grant_type" to listOf("urn:ietf:params:oauth:grant-type:jwt-bearer"),
                 "assertion" to listOf(createClientAssertion())
             ))), TokenResponse::class.java).body!!
+        )
     }
 
 
     private fun fetchAccessTokenCached(): TokenResponse {
         val value = token.get()
-        return if (value != null && value.isValid()) {
-            value
+        return if (value != null && value.expiresIn() >= Duration.ofSeconds(40)) {
+            value.tokenResponse
         } else {
             logger.error("maskinporten access token almost expired. is refresh loop running? doing emergency fetch.")
             /* this shouldn't happen, as refresh loop above refreshes often */
             fetchNewAccessToken().also {
                 token.set(it)
-            }
+            }.tokenResponse
         }
     }
 
