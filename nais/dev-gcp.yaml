@@ -37,7 +37,7 @@ spec:
     - name: CACHE_TIME_TO_LIVE_MILLIS
       value: "600000"
     - name: ALTINN_URL
-      value: "https://api-gw-q1.oera.no/"
+      value: "https://tt02.altinn.no"
   envFrom:
     - configmap: loginservice-idporten
     - secret: altinn-rettigheter-proxy-redis-password

@@ -37,7 +37,7 @@ class MockServer @Autowired constructor(
                                 ConsoleNotifier(MOCK_SERVER_VERBOSE_CONSOLE_LOGGING_ENABLED)
                         )
         )
-        val altinnPathToReportees = URL(altinnUrl).path + "ekstern/altinn/api/serviceowner/reportees"
+        val altinnPathToReportees = URL(altinnUrl).path + "api/serviceowner/reportees"
 
         // Mock kall til Altinn uten filter på aktive organisasjoner med serviceCode 3403 --> returnerer 5 organisasjoner
         mockWithParameters(
