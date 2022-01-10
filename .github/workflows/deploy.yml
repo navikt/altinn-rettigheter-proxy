@@ -82,18 +82,3 @@ jobs:
           CLUSTER: prod-gcp
           VAR: version=${{ env.IMAGE }}
           RESOURCE: nais/prod-gcp.yaml
-
-  ###### GCP PROD 2
-  deploy-server2-prod-gcp:
-    name: Deploy server2 prod-gcp
-    needs: deploy-server-dev-gcp
-    if: github.ref == 'refs/heads/maskinport1'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-gcp
-          VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/prod-2-gcp.yaml
