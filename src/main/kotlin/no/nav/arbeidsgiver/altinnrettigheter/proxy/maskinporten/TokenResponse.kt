@@ -27,7 +27,7 @@ data class TokenResponseWrapper(
     val requestedAt: Instant,
     val tokenResponse: TokenResponse,
 ) {
-    private val expiresAt = requestedAt.plus(tokenResponse.expiresIn)
+    private val expiresAt = requestedAt + tokenResponse.expiresIn
     fun expiresIn(now: Instant = Instant.now()): Duration = Duration.between(now, expiresAt)
 }
 

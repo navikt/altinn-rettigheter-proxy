@@ -92,12 +92,14 @@ class MaskinportenClientImpl(
         return TokenResponseWrapper(
             requestedAt = requestedAt,
             tokenResponse = restTemplate.exchange(RequestEntity
-            .method(HttpMethod.POST, wellKnownResponse.tokenEndpoint)
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(LinkedMultiValueMap(mapOf(
-                "grant_type" to listOf("urn:ietf:params:oauth:grant-type:jwt-bearer"),
-                "assertion" to listOf(createClientAssertion())
-            ))), TokenResponse::class.java).body!!
+                .method(HttpMethod.POST, wellKnownResponse.tokenEndpoint)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(LinkedMultiValueMap(mapOf(
+                    "grant_type" to listOf("urn:ietf:params:oauth:grant-type:jwt-bearer"),
+                    "assertion" to listOf(createClientAssertion())
+                ))),
+                TokenResponse::class.java
+            ).body!!
         )
     }
 
