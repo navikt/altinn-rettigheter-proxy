@@ -29,7 +29,7 @@ class AltinnrettigheterProxyController(
             @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
             @RequestParam serviceCode: String, @RequestParam serviceEdition: String
     ): List<AltinnOrganisasjon> {
-        return proxyOrganisasjoner(
+        return hentOrganisasjoner(
                 consumerId = consumerId,
                 host = host,
                 query = mapOf(
