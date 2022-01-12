@@ -45,17 +45,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: arbeidsgiver-arbeidsforhold-api
-          namespace: default
-          cluster: dev-fss
-
-        - application: arbeidsgiver-arbeidsforhold-api
-          namespace: arbeidsgiver
-          cluster: dev-fss
-
-        - application: klage-permittering-refusjon-api
-          namespace: default
-          cluster: dev-fss
 
         - application: klage-permittering-refusjon-api
           namespace: teamloennskomp
@@ -63,10 +52,6 @@ spec:
 
         - application: permittering-refusjon-api
           namespace: teamloennskomp
-          cluster: dev-fss
-
-        - application: permitteringsskjema-api
-          namespace: default
           cluster: dev-fss
 
         - application: sykefravarsstatistikk-api
@@ -79,8 +64,6 @@ spec:
 
         - application: min-side-arbeidsgiver-api
           namespace: fager
-
-        - application: arbeidsgiver-arbeidsforhold-api
 
         - application: ia-tjenester-metrikker
         
