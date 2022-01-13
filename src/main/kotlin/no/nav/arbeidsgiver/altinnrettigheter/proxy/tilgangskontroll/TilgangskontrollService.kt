@@ -50,6 +50,12 @@ class TilgangskontrollService(
         throw TilgangskontrollException("Finner ikke token")
     }
 
+    fun nameOfAppCallingUs(): String? =
+        tokenValidationcontextHolder
+            .tokenValidationContext
+            .getClaimsFor(ISSUER_TOKENX)
+            ?.getStringClaim("client_id")
+
     private fun JwtTokenClaims.getTokenXFnr(): String {
         /* NOTE: This is not validation of original issuer. We trust TokenX to only issue
          * tokens from trustworthy sources. The purpose is simply to differentiate different

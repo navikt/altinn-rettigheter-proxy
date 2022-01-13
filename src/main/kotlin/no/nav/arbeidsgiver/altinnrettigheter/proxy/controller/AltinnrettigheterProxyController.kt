@@ -29,18 +29,17 @@ class AltinnrettigheterProxyController(
             @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
             @RequestParam serviceCode: String, @RequestParam serviceEdition: String
     ): List<AltinnOrganisasjon> {
-
-        return proxyOrganisasjoner(
-                consumerId,
-                host,
-                mapOf(
+        return hentOrganisasjoner(
+                consumerId = consumerId,
+                host = host,
+                query = mapOf(
                         "ForceEIAuthentication" to "",
                         "serviceCode" to serviceCode,
                         "serviceEdition" to serviceEdition,
                         "\$filter" to "Type+ne+'Person'+and+Status+eq+'Active'",
                         "\$top" to "500",
                         "\$skip" to "0"
-                )
+                ),
         )
     }
 
@@ -84,10 +83,10 @@ class AltinnrettigheterProxyController(
             queryParametre["serviceEdition"] = serviceEdition
         }
 
-        return proxyOrganisasjoner(
-                consumerId,
-                host,
-                queryParametre
+        return hentOrganisasjoner(
+                consumerId = consumerId,
+                host = host,
+                query = queryParametre,
         )
     }
 
@@ -97,11 +96,22 @@ class AltinnrettigheterProxyController(
             @RequestHeader(value = "host", required = false) host: String?,
             @RequestParam query: Map<String, String>
     ): List<AltinnOrganisasjon> {
+        return hentOrganisasjoner(
+            query = query,
+            host = host,
+            consumerId = consumerId
+        )
+    }
+
+    private fun hentOrganisasjoner(
+        query: Map<String, String>,
+        consumerId: String?,
+        host: String?,
+    ): List<AltinnOrganisasjon> {
         logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
-
         val validertQuery = validerOgFiltrerQuery(query)
-
-        return withTimer(consumerId ?: "UKJENT_KLIENT_APP", host) {
+        val callingApp = tilgangskontrollService.nameOfAppCallingUs()
+        return withTimer(callingApp ?: consumerId ?: "UKJENT_KLIENT_APP", host) {
             altinnrettigheterService.hentOrganisasjoner(
                 validertQuery,
                 tilgangskontrollService.hentInnloggetBruker().fnr
