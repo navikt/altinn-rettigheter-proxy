@@ -14,17 +14,18 @@ class TokenResponseWrapperTest {
     }
 
     @Test
-    fun timeToRefresh() {
-        assertTimeToRefresh(90, 180, 50.0)
-        assertTimeToRefresh(180, 180, 0.0)
-        assertTimeToRefresh(200, 180, 0.0)
-        assertTimeToRefresh(135, 180, 25.0)
+    fun percentageRemaining() {
+        assertPercentageRemaining(age = 90, tokenExpire = 180, expectedPercentageRemaining = 50.0)
+        assertPercentageRemaining(age = 180, tokenExpire = 180, expectedPercentageRemaining = 0.0)
+        assertPercentageRemaining(age = 200, tokenExpire = 180, expectedPercentageRemaining = 0.0)
+        assertPercentageRemaining(age = 135, tokenExpire = 180, expectedPercentageRemaining = 25.0)
     }
 
-    private fun assertTimeToRefresh(age: Long, tokenExpire: Long, expectedRemainingPercentage: Double) {
+    @Suppress("SameParameterValue")
+    private fun assertPercentageRemaining(age: Long, tokenExpire: Long, expectedPercentageRemaining: Double) {
         val now = Instant.now()
         val requestedAt = now.minus(Duration.ofSeconds(age))
-        val remainingPercetage = TokenResponseWrapper(
+        val percentageRemaining = TokenResponseWrapper(
             requestedAt = requestedAt,
             TokenResponse(
                 expiresInSeconds = tokenExpire,
@@ -32,10 +33,10 @@ class TokenResponseWrapperTest {
                 tokenType = "",
                 scope = "",
             )
-        ).timeToRefresh(now)
+        ).percentageRemaining(now)
         assertEquals(
-            expectedRemainingPercentage,
-            remainingPercetage
+            expectedPercentageRemaining,
+            percentageRemaining
         )
     }
 

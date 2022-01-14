@@ -30,11 +30,12 @@ data class TokenResponseWrapper(
     private val expiresAt = requestedAt + tokenResponse.expiresIn
     fun expiresIn(now: Instant = Instant.now()): Duration = Duration.between(now, expiresAt)
 
-    fun timeToRefresh(now: Instant = Instant.now()): Double {
-        val brøk = tokenResponse.expiresIn.dividedBy(expiresIn(now))
-        return if(brøk>0.0){
-            100.0 / brøk
-        } else 0.0
+    fun percentageRemaining(now: Instant = Instant.now()): Double {
+        val expiresIn = expiresIn(now)
+        return if (expiresIn.isZero || expiresIn.isNegative)
+            0.0
+        else
+            100.0 / tokenResponse.expiresIn.dividedBy(expiresIn)
     }
 }
 
