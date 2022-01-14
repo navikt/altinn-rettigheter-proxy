@@ -10,8 +10,6 @@ spec:
   team: arbeidsgiver
   port: 8080
   ingresses:
-    - https://arbeidsgiver.dev.nav.no/altinn-rettigheter-proxy
-    - https://arbeidsgiver.dev.intern.nav.no/altinn-rettigheter-proxy
     - https://altinn-rettigheter-proxy.dev.intern.nav.no/altinn-rettigheter-proxy
     - https://altinn-rettigheter-proxy.dev.nav.no/altinn-rettigheter-proxy
   liveness:
