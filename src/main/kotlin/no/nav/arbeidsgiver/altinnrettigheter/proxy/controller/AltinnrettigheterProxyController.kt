@@ -106,7 +106,6 @@ class AltinnrettigheterProxyController(
         consumerId: String?,
         host: String?,
     ): List<AltinnOrganisasjon> {
-        logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
         val callingApp = tilgangskontrollService.nameOfAppCallingUs()
         val consumer = callingApp ?: consumerId ?: "UKJENT_KLIENT_APP"
         val validertQuery = validerOgFiltrerQuery(query, consumer)
