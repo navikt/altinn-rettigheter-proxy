@@ -4,12 +4,9 @@ import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import io.micrometer.core.instrument.MeterRegistry
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.basedOnEnv
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
-import org.springframework.boot.actuate.health.Health
-import org.springframework.boot.actuate.health.HealthIndicator
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpMethod
@@ -17,66 +14,27 @@ import org.springframework.http.MediaType
 import org.springframework.http.RequestEntity
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
-import java.lang.management.ManagementFactory
 import java.time.Duration
 import java.time.Instant
 import java.util.*
-import java.util.concurrent.atomic.AtomicReference
 
 interface MaskinportenClient {
-    fun fetchAccessToken(): String
+    fun fetchNewAccessToken(): TokenResponseWrapper
 }
+
 @Component
 @Profile("dev", "prod")
 class MaskinportenClientImpl(
     val config: MaskinportenConfig,
-    val meterRegistry: MeterRegistry,
     restTemplateBuilder: RestTemplateBuilder,
-): MaskinportenClient, InitializingBean, HealthIndicator {
+): MaskinportenClient, InitializingBean {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val restTemplate = restTemplateBuilder.build()
     private lateinit var wellKnownResponse: WellKnownResponse
-    private val tokenStore = AtomicReference<TokenResponseWrapper?>()
 
     override fun afterPropertiesSet() {
         wellKnownResponse = restTemplate.getForObject(config.wellKnownUrl, WellKnownResponse::class.java)!!
-        meterRegistry.gauge(
-            "maskinporten.token.expiry.seconds", tokenStore
-        ) {
-            it.get()?.expiresIn()?.seconds?.toDouble() ?: Double.NaN
-        }
-        Thread {
-            while (true) {
-                try {
-                    logger.info("sjekker om accesstoken er i ferd med å utløpe..")
-                    val token = tokenStore.get()
-                    if (token == null || token.percentageRemaining() < 50.0) {
-                        val newToken = fetchNewAccessToken()
-                        tokenStore.set(newToken)
-                    }
-                } catch (e: Exception) {
-                    logger.error("refreshing maskinporten token failed with exception {}.", e.message, e)
-                }
-                Thread.sleep(Duration.ofSeconds(30).toMillis())
-            }
-        }.start()
     }
-
-    override fun health(): Health =
-        when (val token = tokenStore.get()) {
-            null -> {
-                if (uptime() > Duration.ofMinutes(5))
-                    Health.down().withDetail("reason", "no token fetched since start up").build()
-                else
-                    healthy
-            }
-            else -> {
-                if (token.percentageRemaining() < 20)
-                    Health.down().withDetail("reason", "token about to expire").build()
-                else
-                    healthy
-            }
-        }
 
     private fun createClientAssertion(): String {
         val now = Instant.now()
@@ -103,7 +61,7 @@ class MaskinportenClientImpl(
         return signedJWT.serialize()
     }
 
-    private fun fetchNewAccessToken(): TokenResponseWrapper {
+    override fun fetchNewAccessToken(): TokenResponseWrapper {
         logger.info("henter ny accesstoken")
         val requestedAt = Instant.now()
 
@@ -124,40 +82,20 @@ class MaskinportenClientImpl(
             tokenResponse = tokenResponse,
         )
     }
-
-
-    private fun fetchAccessTokenCached(): TokenResponse {
-        val token = tokenStore.get()
-        return if (token != null && token.percentageRemaining() < 20.0) {
-            token.tokenResponse
-        } else {
-            logger.error("maskinporten access token almost expired. is refresh loop running? doing emergency fetch.")
-            /* this shouldn't happen, as refresh loop above refreshes often */
-            fetchNewAccessToken().also {
-                tokenStore.set(it)
-            }.tokenResponse
-        }
-    }
-
-    override fun fetchAccessToken(): String {
-        return fetchAccessTokenCached().accessToken
-    }
-
-    private fun uptime(): Duration =
-        Duration.ofMillis(
-            ManagementFactory.getRuntimeMXBean().uptime
-        )
-
-    companion object {
-        private val healthy = Health.up().build()
-    }
 }
-
 
 @Component
 @Profile("local", "test")
 class MaskinportenClientStub: MaskinportenClient {
-    override fun fetchAccessToken(): String {
-        return "stub-access-token"
+    override fun fetchNewAccessToken(): TokenResponseWrapper {
+        return TokenResponseWrapper(
+            requestedAt = Instant.now(),
+            tokenResponse = TokenResponse(
+                accessToken = "",
+                tokenType = "",
+                expiresInSeconds = Duration.ofHours(1).toSeconds(),
+                scope = "",
+            )
+        )
     }
 }
