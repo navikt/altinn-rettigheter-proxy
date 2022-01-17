@@ -62,14 +62,13 @@ class MaskinportenClientImpl(
         }.start()
     }
 
-
     override fun health(): Health {
         val token = tokenStore.get()
-        if (token == null && uptime() > Duration.ofMillis(5)) {
+        if (token == null && uptime() > Duration.ofMinutes(5)) {
             return Health.down().withDetail("reason", "no token fetched since start up").build()
         }
 
-        if (token != null && token.expiresIn() < Duration.ofMinutes(5)) {
+        if (token != null && token.percentageRemaining() < 20) {
             return Health.down().withDetail("reason", "token about to expire").build()
         }
 
@@ -125,9 +124,9 @@ class MaskinportenClientImpl(
 
 
     private fun fetchAccessTokenCached(): TokenResponse {
-        val value = tokenStore.get()
-        return if (value != null && value.percentageRemaining() < 20.0) {
-            value.tokenResponse
+        val token = tokenStore.get()
+        return if (token != null && token.percentageRemaining() < 20.0) {
+            token.tokenResponse
         } else {
             logger.error("maskinporten access token almost expired. is refresh loop running? doing emergency fetch.")
             /* this shouldn't happen, as refresh loop above refreshes often */

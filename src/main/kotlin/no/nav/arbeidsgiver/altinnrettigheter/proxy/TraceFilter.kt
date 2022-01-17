@@ -16,7 +16,7 @@ class TraceFilter : OncePerRequestFilter() {
             val headers = request
                 .headerNames
                 .toList()
-                .filter { it.toLowerCase() != "authorization" }
+                .filter { it.lowercase() != "authorization" }
                 .associateWith { request.getHeader(it) }
             logger.info("${request.method} ${request.requestURI} $headers")
         }
