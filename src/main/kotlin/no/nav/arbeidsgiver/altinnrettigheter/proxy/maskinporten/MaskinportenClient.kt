@@ -62,18 +62,21 @@ class MaskinportenClientImpl(
         }.start()
     }
 
-    override fun health(): Health {
-        val token = tokenStore.get()
-        if (token == null && uptime() > Duration.ofMinutes(5)) {
-            return Health.down().withDetail("reason", "no token fetched since start up").build()
+    override fun health(): Health =
+        when (val token = tokenStore.get()) {
+            null -> {
+                if (uptime() > Duration.ofMinutes(5))
+                    Health.down().withDetail("reason", "no token fetched since start up").build()
+                else
+                    healthy
+            }
+            else -> {
+                if (token.percentageRemaining() < 20)
+                    Health.down().withDetail("reason", "token about to expire").build()
+                else
+                    healthy
+            }
         }
-
-        if (token != null && token.percentageRemaining() < 20) {
-            return Health.down().withDetail("reason", "token about to expire").build()
-        }
-
-        return healthy
-    }
 
     private fun createClientAssertion(): String {
         val now = Instant.now()
