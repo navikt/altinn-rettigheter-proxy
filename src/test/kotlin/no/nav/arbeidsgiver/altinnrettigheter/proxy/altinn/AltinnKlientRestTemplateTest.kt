@@ -1,13 +1,17 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn
 
+import io.micrometer.core.instrument.MeterRegistry
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.maskinporten.MaskinportenClientStub
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.maskinporten.MaskinportenTokenService
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -22,9 +26,12 @@ import org.springframework.test.web.client.response.MockRestResponseCreators.wit
 
 @RunWith(SpringRunner::class)
 @ActiveProfiles("test")
-@RestClientTest(AltinnClient::class, MaskinportenClientStub::class)
+@RestClientTest(AltinnClient::class, MaskinportenTokenService::class, MaskinportenClientStub::class)
 @EnableMockOAuth2Server
 class AltinnKlientRestTemplateTest {
+
+    @MockBean
+    lateinit var meterRegistry: MeterRegistry
 
     @Autowired
     private lateinit var server: MockRestServiceServer

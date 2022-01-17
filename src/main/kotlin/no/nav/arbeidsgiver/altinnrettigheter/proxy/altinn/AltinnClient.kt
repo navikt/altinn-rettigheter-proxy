@@ -1,6 +1,6 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn
 
-import no.nav.arbeidsgiver.altinnrettigheter.proxy.maskinporten.MaskinportenClient
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.maskinporten.MaskinportenTokenService
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import org.springframework.beans.factory.annotation.Value
@@ -17,7 +17,7 @@ import java.time.Duration
 
 @Component
 class AltinnClient(
-    private val maskinportenClient: MaskinportenClient,
+    private val maskinportenTokenService: MaskinportenTokenService,
     restTemplateBuilder: RestTemplateBuilder
 ) {
 
@@ -45,7 +45,7 @@ class AltinnClient(
 
     fun createHeaders(): HttpEntity<Any?> {
         val headers = HttpHeaders()
-        headers.setBearerAuth(maskinportenClient.fetchAccessToken())
+        headers.setBearerAuth(maskinportenTokenService.currentAccessToken())
         headers["APIKEY"] = altinnApikey
         return HttpEntity(headers)
     }
