@@ -50,7 +50,7 @@ class MaskinportenClientImpl(
                 try {
                     logger.info("sjekker om accesstoken er i ferd med å utløpe..")
                     val token = tokenStore.get()
-                    if (token == null || token.expiresIn() < Duration.ofMinutes(10)) {
+                    if (token == null || token.percentageRemaining() < 50.0) {
                         val newToken = fetchNewAccessToken()
                         tokenStore.set(newToken)
                     }
@@ -126,7 +126,7 @@ class MaskinportenClientImpl(
 
     private fun fetchAccessTokenCached(): TokenResponse {
         val value = tokenStore.get()
-        return if (value != null && value.expiresIn() >= Duration.ofSeconds(40)) {
+        return if (value != null && value.percentageRemaining() < 20.0) {
             value.tokenResponse
         } else {
             logger.error("maskinporten access token almost expired. is refresh loop running? doing emergency fetch.")
