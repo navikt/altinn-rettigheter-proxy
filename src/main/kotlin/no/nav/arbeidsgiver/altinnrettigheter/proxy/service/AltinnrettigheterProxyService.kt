@@ -10,17 +10,12 @@ import org.springframework.stereotype.Service
 
 @Service
 class AltinnrettigheterProxyService(val altinnClient: AltinnClient) {
-
-    private val logger = LoggerFactory.getLogger(javaClass)
-
     @Cacheable(REPORTEES_CACHE)
     fun hentOrganisasjonerCached(query: Map<String, String>, fnr: Fnr): List<AltinnOrganisasjon> {
         return hentOrganisasjonerIAltinn(query, fnr)
     }
 
     fun hentOrganisasjonerIAltinn(query: Map<String, String>, fnr: Fnr): List<AltinnOrganisasjon> {
-        logger.info("Kall til Altinn")
         return altinnClient.hentOrganisasjoner(query, fnr)
     }
-
 }
