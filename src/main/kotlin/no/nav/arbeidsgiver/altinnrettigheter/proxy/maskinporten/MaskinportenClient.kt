@@ -47,7 +47,7 @@ class MaskinportenClientImpl(
             .expirationTime(Date.from(expire))
             .notBeforeTime(Date.from(now))
             .claim("scope", "altinn:serviceowner/reportees")
-            .claim("resource", basedOnEnv(prod = {"https://www.altinn.no/"}, other = {"https://tt02.altinn.no/"}))
+            .claim("resource", basedOnEnv(prod = { "https://www.altinn.no/" }, other = { "https://tt02.altinn.no/" }))
             .jwtID(UUID.randomUUID().toString())
             .build()
 
@@ -65,13 +65,18 @@ class MaskinportenClientImpl(
         logger.info("henter ny accesstoken")
         val requestedAt = Instant.now()
 
-        val tokenResponse = restTemplate.exchange(RequestEntity
-            .method(HttpMethod.POST, wellKnownResponse.tokenEndpoint)
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(LinkedMultiValueMap(mapOf(
-                "grant_type" to listOf("urn:ietf:params:oauth:grant-type:jwt-bearer"),
-                "assertion" to listOf(createClientAssertion())
-            ))),
+        val tokenResponse = restTemplate.exchange(
+            RequestEntity
+                .method(HttpMethod.POST, wellKnownResponse.tokenEndpoint)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(
+                    LinkedMultiValueMap(
+                        mapOf(
+                            "grant_type" to listOf("urn:ietf:params:oauth:grant-type:jwt-bearer"),
+                            "assertion" to listOf(createClientAssertion())
+                        )
+                    )
+                ),
             TokenResponse::class.java
         ).body!!
 

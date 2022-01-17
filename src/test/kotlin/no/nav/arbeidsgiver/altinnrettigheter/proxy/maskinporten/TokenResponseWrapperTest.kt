@@ -19,6 +19,7 @@ class TokenResponseWrapperTest {
         assertPercentageRemaining(age = 180, tokenExpire = 180, expectedPercentageRemaining = 0.0)
         assertPercentageRemaining(age = 200, tokenExpire = 180, expectedPercentageRemaining = 0.0)
         assertPercentageRemaining(age = 135, tokenExpire = 180, expectedPercentageRemaining = 25.0)
+        assertPercentageRemaining(age = 1440, tokenExpire = 3600, expectedPercentageRemaining = 60.0)
     }
 
     @Suppress("SameParameterValue")

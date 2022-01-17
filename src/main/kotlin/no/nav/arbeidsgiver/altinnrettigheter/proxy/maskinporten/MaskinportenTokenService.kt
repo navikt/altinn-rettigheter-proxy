@@ -23,7 +23,7 @@ class MaskinportenTokenService(
 
     fun currentAccessToken(): String {
         val storedToken = tokenStore.get()
-        val token = if (storedToken != null && storedToken.percentageRemaining() < 20.0) {
+        val token = if (storedToken != null && storedToken.percentageRemaining() > 20.0) {
             storedToken
         } else {
             logger.error("maskinporten access token almost expired. is refresh loop running? doing emergency fetch.")
