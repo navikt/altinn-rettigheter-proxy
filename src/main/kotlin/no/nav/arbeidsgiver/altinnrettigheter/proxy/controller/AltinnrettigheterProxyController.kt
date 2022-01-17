@@ -25,48 +25,46 @@ class AltinnrettigheterProxyController(
 
     @GetMapping(value = ["/organisasjoner"])
     fun proxyOrganisasjonerNY(
-            @RequestHeader(value = "host", required = false) host: String?,
-            @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
-            @RequestParam serviceCode: String, @RequestParam serviceEdition: String
+        @RequestHeader(value = "host", required = false) host: String?,
+        @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
+        @RequestParam serviceCode: String, @RequestParam serviceEdition: String
     ): List<AltinnOrganisasjon> {
         return hentOrganisasjoner(
-                consumerId = consumerId,
-                host = host,
-                query = mapOf(
-                        "ForceEIAuthentication" to "",
-                        "serviceCode" to serviceCode,
-                        "serviceEdition" to serviceEdition,
-                        "\$filter" to "Type+ne+'Person'+and+Status+eq+'Active'",
-                        "\$top" to "500",
-                        "\$skip" to "0"
-                ),
+            consumerId = consumerId,
+            host = host,
+            query = mapOf(
+                "ForceEIAuthentication" to "",
+                "serviceCode" to serviceCode,
+                "serviceEdition" to serviceEdition,
+                "\$filter" to "Type+ne+'Person'+and+Status+eq+'Active'",
+                "\$top" to "500",
+                "\$skip" to "0"
+            ),
         )
     }
 
     @GetMapping("/v2/organisasjoner")
     fun proxyOrganisasjonerV2(
-            @RequestHeader(value = "host", required = false) host: String?,
-            @RequestHeader(value = "X-Consumer-ID") consumerId: String,
-            @RequestParam(required = false) serviceCode: String?,
-            @RequestParam(required = false) serviceEdition: String?,
-            @RequestParam top: Number,
-            @RequestParam skip: Number,
-            @RequestParam(required = false, defaultValue = "true") filterPaaAktiveOrganisasjoner: String,
-            @RequestParam(required = false) filter: String?
+        @RequestHeader(value = "host", required = false) host: String?,
+        @RequestHeader(value = "X-Consumer-ID") consumerId: String,
+        @RequestParam(required = false) serviceCode: String?,
+        @RequestParam(required = false) serviceEdition: String?,
+        @RequestParam top: Number,
+        @RequestParam skip: Number,
+        @RequestParam(required = false, defaultValue = "true") filterPaaAktiveOrganisasjoner: String,
+        @RequestParam(required = false) filter: String?
     ): List<AltinnOrganisasjon> {
         sjekkParametreInneholderSifre(
-                mapOf(
-                        "serviceCode" to serviceCode,
-                        "serviceEdition" to serviceEdition
-
-                )
+            mapOf(
+                "serviceCode" to serviceCode,
+                "serviceEdition" to serviceEdition
+            )
         )
 
-
         val queryParametre = mutableMapOf(
-                "ForceEIAuthentication" to "",
-                "\$top" to "$top",
-                "\$skip" to "$skip"
+            "ForceEIAuthentication" to "",
+            "\$top" to "$top",
+            "\$skip" to "$skip"
         )
 
         if (filter != null && filter.isNotEmpty()) {
@@ -84,17 +82,17 @@ class AltinnrettigheterProxyController(
         }
 
         return hentOrganisasjoner(
-                consumerId = consumerId,
-                host = host,
-                query = queryParametre,
+            consumerId = consumerId,
+            host = host,
+            query = queryParametre,
         )
     }
 
     @GetMapping(value = ["/ekstern/altinn/api/serviceowner/reportees"])
     fun proxyOrganisasjoner(
-            @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
-            @RequestHeader(value = "host", required = false) host: String?,
-            @RequestParam query: Map<String, String>
+        @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
+        @RequestHeader(value = "host", required = false) host: String?,
+        @RequestParam query: Map<String, String>
     ): List<AltinnOrganisasjon> {
         return hentOrganisasjoner(
             query = query,
@@ -109,9 +107,10 @@ class AltinnrettigheterProxyController(
         host: String?,
     ): List<AltinnOrganisasjon> {
         logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
-        val validertQuery = validerOgFiltrerQuery(query)
         val callingApp = tilgangskontrollService.nameOfAppCallingUs()
-        return withTimer(callingApp ?: consumerId ?: "UKJENT_KLIENT_APP", host) {
+        val consumer = callingApp ?: consumerId ?: "UKJENT_KLIENT_APP"
+        val validertQuery = validerOgFiltrerQuery(query, consumer)
+        return withTimer(consumer, host) {
             altinnrettigheterService.hentOrganisasjoner(
                 validertQuery,
                 tilgangskontrollService.hentInnloggetBruker().fnr
@@ -120,22 +119,25 @@ class AltinnrettigheterProxyController(
     }
 
 
-    private fun validerOgFiltrerQuery(query: Map<String, String>): Map<String, String> {
-        validerObligatoriskeParametre(query,"ForceEIAuthentication")
+    private fun validerOgFiltrerQuery(query: Map<String, String>, consumerId: String?): Map<String, String> {
+        val forceEIAuthentication = "ForceEIAuthentication"
+        if (!query.containsKey(forceEIAuthentication)) {
+            throw ManglendeObligatoriskParameterException(listOf(forceEIAuthentication))
+        }
 
         if (query.containsKey("subject")) {
-            logger.warn("Request inneholder subject (fødselsnummer). Dette burde forhindres av personvernshensyn, da det logges av andre systemer.")
+            logger.warn(
+                """
+                    Request inneholder subject (fødselsnummer). 
+                    Dette burde forhindres av personvernshensyn, da det logges av andre systemer. 
+                    Callerid: {}
+                """.trimMargin(),
+                consumerId ?: "ukjent"
+            )
 
             return query.filter { (key, _) -> key != "subject" }
         }
         return query
-    }
-
-    private fun validerObligatoriskeParametre(query: Map<String, String>, vararg obligatorisk: String) {
-        val parametreSomIkkeErMed = obligatorisk.filter { !query.containsKey(it) }
-        if (parametreSomIkkeErMed.isNotEmpty()) {
-            throw ManglendeObligatoriskParameterException(parametreSomIkkeErMed)
-        }
     }
 
     private fun sjekkParametreInneholderSifre(parametre: Map<String, String?>) {
