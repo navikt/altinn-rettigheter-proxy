@@ -19,7 +19,6 @@ class AltinnrettigheterProxyService(val altinnClient: AltinnClient) {
     }
 
     fun hentOrganisasjonerIAltinn(query: Map<String, String>, fnr: Fnr): List<AltinnOrganisasjon> {
-        logger.info("Kall til Altinn")
         return altinnClient.hentOrganisasjoner(query, fnr)
     }
 

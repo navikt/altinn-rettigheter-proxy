@@ -108,7 +108,6 @@ class AltinnrettigheterProxyController(
         consumerId: String?,
         host: String?,
     ): List<AltinnOrganisasjon> {
-        logger.info("Mottatt request for organisasjoner innlogget brukeren har rettigheter i")
         val validertQuery = validerOgFiltrerQuery(query)
         val callingApp = tilgangskontrollService.nameOfAppCallingUs()
         return withTimer(callingApp ?: consumerId ?: "UKJENT_KLIENT_APP", host) {
@@ -118,7 +117,6 @@ class AltinnrettigheterProxyController(
             )
         }
     }
-
 
     private fun validerOgFiltrerQuery(query: Map<String, String>): Map<String, String> {
         validerObligatoriskeParametre(query,"ForceEIAuthentication")
