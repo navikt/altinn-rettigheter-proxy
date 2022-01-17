@@ -1,5 +1,6 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.controller
 
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.maskinporten.MaskinportenTokenService
 import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.connection.RedisConnectionFactory
@@ -12,12 +13,16 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class HealthcheckController(
     val redisConnectionFactory: RedisConnectionFactory,
+    val maskinportenTokenService: MaskinportenTokenService
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @GetMapping("/internal/alive")
-    fun alive(): String {
-        return "OK"
+    fun alive(): ResponseEntity<String> {
+        return if (maskinportenTokenService.alive())
+            ResponseEntity.ok("OK")
+        else
+            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build()
     }
 
     @GetMapping("/internal/ready")
@@ -31,11 +36,12 @@ class HealthcheckController(
             false
         }
 
-        return if (readyReadis) {
+        val readyMaskinporten = maskinportenTokenService.ready()
+
+        return if (readyReadis && readyMaskinporten) {
             ResponseEntity.ok("READY")
         } else {
             ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build()
         }
     }
-
 }

@@ -3,8 +3,6 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy.maskinporten
 import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
-import org.springframework.boot.actuate.health.Health
-import org.springframework.boot.actuate.health.HealthIndicator
 import org.springframework.stereotype.Component
 import java.lang.management.ManagementFactory
 import java.time.Duration
@@ -14,10 +12,7 @@ import java.util.concurrent.atomic.AtomicReference
 class MaskinportenTokenService(
     private val maskinportenClient: MaskinportenClient,
     private val meterRegistry: MeterRegistry,
-):
-    HealthIndicator,
-    InitializingBean
-{
+): InitializingBean {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val tokenStore = AtomicReference<TokenResponseWrapper?>()
 
@@ -60,21 +55,16 @@ class MaskinportenTokenService(
         }.start()
     }
 
-
-    override fun health(): Health =
+    fun ready(): Boolean =
         when (val token = tokenStore.get()) {
-            null -> {
-                if (uptime() > Duration.ofMinutes(5))
-                    Health.down().withDetail("reason", "no token fetched since start up").build()
-                else
-                    healthy
-            }
-            else -> {
-                if (token.percentageRemaining() < 20)
-                    Health.down().withDetail("reason", "token about to expire").build()
-                else
-                    healthy
-            }
+            null -> false
+            else -> token.expiresIn() > Duration.ZERO
+        }
+
+    fun alive(): Boolean =
+        when (val token = tokenStore.get()) {
+            null -> uptime() < Duration.ofMinutes(5)
+            else -> token.percentageRemaining() > 10
         }
 
     private fun uptime(): Duration =
@@ -82,7 +72,4 @@ class MaskinportenTokenService(
             ManagementFactory.getRuntimeMXBean().uptime
         )
 
-    companion object {
-        private val healthy = Health.up().build()
-    }
 }
