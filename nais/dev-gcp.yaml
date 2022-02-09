@@ -76,6 +76,9 @@ spec:
         - application: innsyn-aareg-api
           namespace: fager
           cluster: dev-fss
+          
+        - application: yrkesskade-melding-api
+          namespace: yrkesskade
 
     outbound:
       rules:
