@@ -72,7 +72,10 @@ spec:
 
         - application: permitteringsskjema-api
           namespace: permittering-og-nedbemanning
-          
+
+        - application: permitteringsportal-api
+          namespace: permittering-og-nedbemanning
+
         - application: innsyn-aareg-api
           namespace: fager
           cluster: dev-fss
