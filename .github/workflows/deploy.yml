@@ -30,7 +30,7 @@ jobs:
     #########################
     ### DEVELOPERS: Insert your feature branch name below (in addition to master) if you want to deploy it to dev
     #########################
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/snyk-fix-fd73b73bdc5be27b513fa106703db005'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/loginservice_pid'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
