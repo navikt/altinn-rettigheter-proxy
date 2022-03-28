@@ -84,6 +84,7 @@ class ApiTest {
                     "Bearer " + testTokenUtil.createToken(
                         issuerId = "tokenx",
                         sub = "01065500791",
+                        pid = "01065500791",
                         idp = "https://navtestb2c.b2clogin.com/1234"
                     )
                 )
@@ -128,39 +129,6 @@ class ApiTest {
 
         Assertions.assertThat(response.statusCode()).isEqualTo(200)
         assertAntallOrganisasjonerEr(response, 4)
-    }
-
-    @Test
-    fun `Endepunkt _organisasjoner_ returnerer en liste av organisasjoner innlogget bruker har rettigheter i (tokenx, idp ukjent)`() {
-        val response = HttpClient.newBuilder().build().send(
-            HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
-                        .addParameter("serviceCode", "3403")
-                        .addParameter("serviceEdition", "1")
-                        .build()
-                )
-                .header(
-                    HttpHeaders.AUTHORIZATION,
-                    "Bearer " + testTokenUtil.createToken(
-                        issuerId = "tokenx",
-                        sub = "01065500791",
-                        idp = "hverken idporten eller loginservice",
-                        pid = "01065500791",
-                    )
-                )
-                .header("X-Correlation-ID", "klient-applikasjon")
-                .GET()
-                .build(),
-            JsonBodyHandler.of<FeilRespons>()
-        )
-
-        Assertions.assertThat(response.statusCode()).isEqualTo(403)
-        Assertions.assertThat(response.body().message).isEqualTo("You don't have access to this resource")
-        Assertions.assertThat(response.body().cause).isEqualTo("Ukjent idp fra tokendings")
     }
 
     @Test
