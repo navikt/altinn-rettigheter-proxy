@@ -8,10 +8,10 @@ class TestTokenUtil(
     val mockOAuth2Server: MockOAuth2Server
 ) {
     fun createToken(
-        sub: String,
+        pid: String,
         issuerId: String = "loginservice",
         idp: String? = null,
-        pid: String? = null,
+        sub: String = "foo",
     ): String =
         mockOAuth2Server
             .issueToken(
@@ -22,9 +22,7 @@ class TestTokenUtil(
                     if (idp != null) {
                         claims["idp"] = idp
                     }
-                    if (pid != null) {
-                        claims["pid"] = pid
-                    }
+                    claims["pid"] = pid
                 }
             )
             .serialize()
