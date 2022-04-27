@@ -54,7 +54,7 @@ class ApiTest {
                 )
                 .header(
                     HttpHeaders.AUTHORIZATION,
-                    "Bearer " + testTokenUtil.createToken(issuerId = "loginservice", sub = "01065500791")
+                    "Bearer " + testTokenUtil.createToken(issuerId = "loginservice", pid = "01065500791")
                 )
                 .header("X-Correlation-ID", "klient-applikasjon")
                 .GET()
