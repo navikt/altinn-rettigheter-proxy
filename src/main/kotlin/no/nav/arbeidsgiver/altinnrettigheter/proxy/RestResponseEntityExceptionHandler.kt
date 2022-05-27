@@ -21,13 +21,6 @@ import java.nio.file.AccessDeniedException
 
 @ControllerAdvice
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
-    private val infoStatuses = listOf(
-        FORBIDDEN,
-        UNAUTHORIZED,
-        BAD_GATEWAY,
-        SERVICE_UNAVAILABLE,
-        GATEWAY_TIMEOUT,
-    )
 
     @ExceptionHandler(UgyldigParameterException::class)
     @ResponseBody
@@ -79,19 +72,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         e: ProxyHttpStatusCodeException,
         webRequest: WebRequest?
     ): ResponseEntity<FeilRespons> {
-        if (e.httpStatus in infoStatuses) {
-            log.info(
-                "Feil ved Altinn integrasjon, med status '${e.httpStatus}' , statusText '${e.statusText}' og responseBody '${e.responseBodyAsString}'",
-                e
-            )
-        } else {
-            log.warn(
-                "Feil ved Altinn integrasjon, med status '${e.httpStatus}' , statusText '${e.statusText}' og responseBody '${e.responseBodyAsString}'",
-                e
-            )
-        }
-
-        return getResponseEntity(e, e.responseBodyAsString, e.httpStatus)
+        return getResponseEntity(e, "${e.statusText} ${e.responseBodyAsString}", e.httpStatus)
     }
 
     @ExceptionHandler(value = [AltinnException::class])
@@ -113,12 +94,16 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         melding: String,
         status: HttpStatus
     ): ResponseEntity<FeilRespons> {
-        val body = FeilRespons(message = melding, cause = e.message?:"ukjent feil")
-        log.info(
-            "Returnerer følgende HttpStatus '$status' med melding '${melding}' pga exception '${e.message}'",
-            e
-        )
-        return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(body)
+        log.info("Returnerer følgende HttpStatus '{}' med melding '{}' pga exception '{}'", status, melding, e.message)
+        return ResponseEntity
+            .status(status)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(
+                FeilRespons(
+                    message = melding,
+                    cause = e.message ?: "ukjent feil"
+                )
+            )
     }
 
     companion object {
