@@ -3,8 +3,8 @@ name: Build & deploy
 on: [push, workflow_dispatch]
 
 env:
-  IMAGE_BASE: ghcr.io/${{ github.repository }}//altinn-rettigheter-proxy
-  IMAGE: ghcr.io/${{ github.repository }}//altinn-rettigheter-proxy:${{ github.sha }}
+  IMAGE_BASE: ghcr.io/${{ github.repository }}/altinn-rettigheter-proxy
+  IMAGE: ghcr.io/${{ github.repository }}/altinn-rettigheter-proxy:${{ github.sha }}
   
 jobs:
   test:
