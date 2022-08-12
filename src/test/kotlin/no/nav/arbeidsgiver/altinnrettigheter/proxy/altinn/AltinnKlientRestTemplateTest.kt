@@ -8,7 +8,6 @@ import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -73,7 +72,7 @@ class AltinnKlientRestTemplateTest {
 
 
     @Test
-    fun altinnKlient_hentOrganisasjoner_kaster_ProxyHttpStatusCodeException_med_HttpStatus_400_dersom_Altinn_returnerer_400() {
+    fun altinnKlient_hentOrganisasjoner_returnerer_tom_liste_dersom_Altinn_returnerer_400() {
 
         server.expect(
                 ExpectedCount.once(),
@@ -85,21 +84,18 @@ class AltinnKlientRestTemplateTest {
                                 "&subject=01065500791"
                 )
         )
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withStatus(HttpStatus.BAD_REQUEST))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withStatus(HttpStatus.BAD_REQUEST))
 
-        try {
-            klient.hentOrganisasjoner(
-                    mapOf(
-                            "ForceEIAuthentication" to "",
-                            "serviceCode" to "9999",
-                            "serviceEdition" to "1"
-                    ),
-                    Fnr("01065500791")
-            )
-        } catch (e: ProxyHttpStatusCodeException) {
-            assertThat(e.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
-        }
+        val organisasjoner = klient.hentOrganisasjoner(
+            mapOf(
+                "ForceEIAuthentication" to "",
+                "serviceCode" to "9999",
+                "serviceEdition" to "1"
+            ),
+            Fnr("01065500791")
+        )
+        assertThat(organisasjoner).isEmpty()
     }
 
     @Test

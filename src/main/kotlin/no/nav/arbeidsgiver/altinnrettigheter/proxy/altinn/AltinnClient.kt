@@ -9,6 +9,7 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
@@ -71,12 +72,15 @@ class AltinnClient(
                 queryParametereMedSubject
             ).body!!
         } catch (exception: HttpStatusCodeException) {
-            throw ProxyHttpStatusCodeException(
-                exception.statusCode,
-                exception.statusText,
-                exception.responseBodyAsString,
-                exception
-            )
+            when (exception.statusCode) {
+                HttpStatus.BAD_REQUEST -> listOf() // mangler profil i altinn
+                else -> throw ProxyHttpStatusCodeException(
+                    exception.statusCode,
+                    exception.statusText,
+                    exception.responseBodyAsString,
+                    exception
+                )
+            }
         } catch (exception: RuntimeException) {
             throw AltinnException("Feil ved kall til Altinn", exception)
         }
