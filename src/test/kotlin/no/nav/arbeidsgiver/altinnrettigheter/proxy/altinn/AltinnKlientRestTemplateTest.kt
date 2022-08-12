@@ -11,9 +11,13 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.client.AbstractClientHttpResponse
+import org.springframework.http.client.ClientHttpRequest
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.client.ExpectedCount
@@ -21,6 +25,7 @@ import org.springframework.test.web.client.MockRestServiceServer
 import org.springframework.test.web.client.match.MockRestRequestMatchers.method
 import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
 import org.springframework.test.web.client.response.MockRestResponseCreators.withStatus
+import java.io.InputStream
 
 
 @RunWith(SpringRunner::class)
@@ -85,7 +90,12 @@ class AltinnKlientRestTemplateTest {
                 )
         )
             .andExpect(method(HttpMethod.GET))
-            .andRespond(withStatus(HttpStatus.BAD_REQUEST))
+            .andRespond(
+                withStatus(
+                    400,
+                    "User profile could not be found for ***********. User profile is created at first login to the Altinn.no portal"
+                )
+            )
 
         val organisasjoner = klient.hentOrganisasjoner(
             mapOf(
@@ -96,6 +106,35 @@ class AltinnKlientRestTemplateTest {
             Fnr("01065500791")
         )
         assertThat(organisasjoner).isEmpty()
+    }
+
+    @Test
+    fun altinnKlient_hentOrganisasjoner_kaster_ProxyHttpStatusCodeException_med_HttpStatus_400_dersom_Altinn_returnerer_400() {
+        server.expect(
+            ExpectedCount.once(),
+            requestTo(
+                "http://local.test/api/serviceowner/reportees" +
+                        "?ForceEIAuthentication" +
+                        "&serviceCode=9999" +
+                        "&serviceEdition=1" +
+                        "&subject=01065500791"
+            )
+        )
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withStatus(HttpStatus.BAD_REQUEST))
+
+        try {
+            klient.hentOrganisasjoner(
+                mapOf(
+                    "ForceEIAuthentication" to "",
+                    "serviceCode" to "9999",
+                    "serviceEdition" to "1"
+                ),
+                Fnr("01065500791")
+            )
+        } catch (e: ProxyHttpStatusCodeException) {
+            assertThat(e.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
+        }
     }
 
     @Test
@@ -126,4 +165,19 @@ class AltinnKlientRestTemplateTest {
             assertThat(e.httpStatus).isEqualTo(HttpStatus.BAD_GATEWAY)
         }
     }
+
+    @Suppress("SameParameterValue")
+    private fun withStatus(
+        httpStatus: Int,
+        statusText: String
+    ): (request: ClientHttpRequest?) -> ClientHttpResponse =
+        {
+            object : AbstractClientHttpResponse() {
+                override fun getHeaders(): HttpHeaders = HttpHeaders()
+                override fun getBody(): InputStream = InputStream.nullInputStream()
+                override fun close() = Unit
+                override fun getRawStatusCode(): Int = httpStatus
+                override fun getStatusText(): String = statusText
+            }
+        }
 }

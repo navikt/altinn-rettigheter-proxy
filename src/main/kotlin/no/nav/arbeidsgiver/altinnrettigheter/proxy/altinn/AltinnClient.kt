@@ -9,7 +9,6 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
@@ -72,9 +71,10 @@ class AltinnClient(
                 queryParametereMedSubject
             ).body!!
         } catch (exception: HttpStatusCodeException) {
-            when (exception.statusCode) {
-                HttpStatus.BAD_REQUEST -> listOf() // mangler profil i altinn
-                else -> throw ProxyHttpStatusCodeException(
+            if (exception.manglerAltinnProfil()) {
+                listOf()
+            } else {
+                throw ProxyHttpStatusCodeException(
                     exception.statusCode,
                     exception.statusText,
                     exception.responseBodyAsString,
@@ -86,3 +86,6 @@ class AltinnClient(
         }
     }
 }
+
+private fun HttpStatusCodeException.manglerAltinnProfil() =
+    statusCode.value() == 400 && statusText.contains("User profile")
