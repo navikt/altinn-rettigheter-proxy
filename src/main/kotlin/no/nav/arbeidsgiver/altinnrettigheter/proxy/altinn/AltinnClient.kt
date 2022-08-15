@@ -71,14 +71,21 @@ class AltinnClient(
                 queryParametereMedSubject
             ).body!!
         } catch (exception: HttpStatusCodeException) {
-            throw ProxyHttpStatusCodeException(
-                exception.statusCode,
-                exception.statusText,
-                exception.responseBodyAsString,
-                exception
-            )
+            if (exception.manglerAltinnProfil()) {
+                listOf()
+            } else {
+                throw ProxyHttpStatusCodeException(
+                    exception.statusCode,
+                    exception.statusText,
+                    exception.responseBodyAsString,
+                    exception
+                )
+            }
         } catch (exception: RuntimeException) {
             throw AltinnException("Feil ved kall til Altinn", exception)
         }
     }
 }
+
+private fun HttpStatusCodeException.manglerAltinnProfil() =
+    statusCode.value() == 400 && statusText.contains("User profile")
