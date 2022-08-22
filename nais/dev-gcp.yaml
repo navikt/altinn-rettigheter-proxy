@@ -82,6 +82,9 @@ spec:
           
         - application: yrkesskade-melding-api
           namespace: yrkesskade
+          
+        - application: forebyggingsplan
+          namespace: pia
 
     outbound:
       rules:
