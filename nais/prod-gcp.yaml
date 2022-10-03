@@ -8,6 +8,11 @@ metadata:
 spec:
   image: {{ image }}
   port: 8080
+  resources:
+    requests:
+      cpu: 1000m
+    limits:
+      cpu: 5000m # https://home.robusta.dev/blog/stop-using-cpu-limits/
   liveness:
     path: /altinn-rettigheter-proxy/internal/alive
     initialDelay: 60
