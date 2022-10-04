@@ -11,8 +11,10 @@ spec:
   resources:
     requests:
       cpu: 1000m
+      memory: 512Mi
     limits:
       cpu: 5000m # https://home.robusta.dev/blog/stop-using-cpu-limits/
+      memory: 1024Mi
   liveness:
     path: /altinn-rettigheter-proxy/internal/alive
     initialDelay: 60
@@ -79,6 +81,8 @@ spec:
       value: "1800000"
     - name: ALTINN_URL
       value: "https://www.altinn.no/"
+    - name: JAVA_OPTS
+      value: "-XX:+UseParallelGC -XX:MaxRAMPercentage=75.0 -XX:ActiveProcessorCount=2"
   envFrom:
     - configmap: loginservice-idporten
     - secret: altinn-rettigheter-proxy-redis-password
