@@ -69,6 +69,10 @@ spec:
           namespace: fager
           cluster: prod-fss
 
+        - application: aareg-innsyn-arbeidsgiver-api
+          namespace: arbeidsforhold
+          cluster: prod-fss
+
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis

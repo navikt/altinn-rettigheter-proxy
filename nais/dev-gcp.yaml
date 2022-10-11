@@ -79,11 +79,11 @@ spec:
         - application: innsyn-aareg-api
           namespace: fager
           cluster: dev-fss
-          
+
         - application: aareg-innsyn-arbeidsgiver-api
           namespace: arbeidsforhold
-          cluster: dev-fss         
-          
+          cluster: dev-fss
+
         - application: yrkesskade-melding-api
           namespace: yrkesskade
           
