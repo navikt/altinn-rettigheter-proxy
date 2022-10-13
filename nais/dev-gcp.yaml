@@ -89,6 +89,10 @@ spec:
           
         - application: forebyggingsplan
           namespace: pia
+         
+        - application: sosialhjelp-avtaler-api
+          namespace: teamdigisos
+         
 
     outbound:
       rules:
