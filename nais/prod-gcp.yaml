@@ -75,6 +75,9 @@ spec:
          
         - application: sosialhjelp-avtaler-api
           namespace: teamdigisos
+
+        - application: presenterte-kandidater-api
+          namespace: toi
           
     outbound:
       rules:

@@ -92,6 +92,9 @@ spec:
          
         - application: sosialhjelp-avtaler-api-dev
           namespace: teamdigisos
+
+        - application: presenterte-kandidater-api
+          namespace: toi
          
 
     outbound:
