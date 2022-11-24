@@ -14,3 +14,4 @@ klage-permittering-refusjon-api | https://github.com/navikt/klage-permittering-r
 min-side-arbeidsgiver-api | https://github.com/navikt/min-side-arbeidsgiver-api | klient | 403, AltinnrettigheterProxyKlientFallbackException.ServerResponseException
 notifikasjon-bruker-api | https://github.com/navikt/arbeidsgiver-notifikasjon-produsent-api | klient | samme som min-side-ag-api
 permitteringsskjema-api | https://github.com/navikt/permitteringsskjema-api | `ekstern/altinn/api/serviceowner/` | RestClientException
+presenterte-kandidater-api | https://github.com/navikt/presenterte-kandidater-api | klient via AltinnKlient | Ikke bestemt
