@@ -75,6 +75,9 @@ spec:
          
         - application: sosialhjelp-avtaler-api
           namespace: teamdigisos
+          
+        - application: forebyggingsplan
+          namespace: pia
 
         - application: presenterte-kandidater-api
           namespace: toi
