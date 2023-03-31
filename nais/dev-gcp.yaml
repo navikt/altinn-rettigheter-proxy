@@ -43,7 +43,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-
         - application: klage-permittering-refusjon-api
           namespace: teamloennskomp
           cluster: dev-fss
@@ -100,6 +99,8 @@ spec:
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
+      external:
+        - host: tt02.altinn.no
   prometheus:
     enabled: true
     path:  /altinn-rettigheter-proxy/internal/actuator/prometheus

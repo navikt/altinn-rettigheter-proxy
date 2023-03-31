@@ -85,6 +85,9 @@ spec:
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
+      external:
+        - host: www.altinn.no
+
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
