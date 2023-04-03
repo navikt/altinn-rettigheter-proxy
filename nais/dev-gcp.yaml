@@ -63,7 +63,7 @@ spec:
           namespace: fager
 
         - application: ia-tjenester-metrikker
-        
+
         - application: notifikasjon-bruker-api
           namespace: fager
 
@@ -85,16 +85,16 @@ spec:
 
         - application: yrkesskade-melding-api
           namespace: yrkesskade
-          
+
         - application: forebyggingsplan
-          namespace: pia
-         
+          namespace: teamia
+
         - application: sosialhjelp-avtaler-api-dev
           namespace: teamdigisos
 
         - application: presenterte-kandidater-api
           namespace: toi
-         
+
 
     outbound:
       rules:
