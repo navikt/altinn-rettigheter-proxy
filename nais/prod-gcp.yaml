@@ -64,7 +64,7 @@ spec:
 
         - application: permitteringsskjema-api
           namespace: permittering-og-nedbemanning
-          
+
         - application: innsyn-aareg-api
           namespace: fager
           cluster: prod-fss
@@ -72,16 +72,16 @@ spec:
         - application: aareg-innsyn-arbeidsgiver-api
           namespace: arbeidsforhold
           cluster: prod-fss
-         
+
         - application: sosialhjelp-avtaler-api
           namespace: teamdigisos
-          
+
         - application: forebyggingsplan
-          namespace: pia
+          namespace: teamia
 
         - application: presenterte-kandidater-api
           namespace: toi
-          
+
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
