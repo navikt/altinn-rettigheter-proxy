@@ -3,17 +3,18 @@ spring:
     active: local
   main:
     banner-mode: off
-  redis:
-    host: ${REDIS_HOST}
-    port: 6379
-    password: ${REDIS_PASSWORD}
-    timeout: 2000
-    lettuce:
-      pool:
-        max-active: 16
-        min-idle: 8
-        enabled: true
-        time-between-eviction-runs: 10000
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      password: ${REDIS_PASSWORD}
+      timeout: 2000
+      lettuce:
+        pool:
+          max-active: 16
+          min-idle: 8
+          enabled: true
+          time-between-eviction-runs: 10000
   cache:
     redis:
       time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
