@@ -31,7 +31,7 @@ jobs:
     #########################
     ### DEVELOPERS: Insert your feature branch name below (in addition to master) if you want to deploy it to dev
     #########################
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/outbound_policy'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/snyk-fix-51ccaeacfc76b13c3d991e6bafda6d8d'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
