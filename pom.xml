@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.6</version>
+        <version>3.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>no.nav.arbeidsgiver</groupId>
@@ -15,8 +15,8 @@
     <description>Arbeidsgiver - Proxy for Altinn tjenester om rettigheter til arbeidsgiver</description>
 
     <properties>
-        <java.version>11</java.version>
-        <kotlin.version>1.6.10</kotlin.version>
+        <java.version>17</java.version>
+        <kotlin.version>1.8.20</kotlin.version>
         <token-support.version>3.0.10</token-support.version>
 
         <!-- token-validation-spring-test krever denne versjonen -->
@@ -52,16 +52,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jetty</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -95,13 +85,7 @@
         <!-- Prometheus -->
         <dependency>
             <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-core</artifactId>
-            <version>1.8.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>1.8.1</version>
         </dependency>
 
         <!-- json -->
@@ -142,14 +126,14 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>7.3</version>
+            <version>7.2</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>log</artifactId>
             <version>2.2021.12.09_11.47-999457edc68f</version>
-        </dependency>
-        <dependency>
+        </dependency-->
+        <!--dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.32</version>
@@ -163,7 +147,7 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <version>1.2.10</version>
-        </dependency>
+        </dependency-->
 
         <!-- Swagger -->
         <dependency>
@@ -175,8 +159,8 @@
         <!-- Testing -->
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock</artifactId>
-            <version>2.27.2</version>
+            <artifactId>wiremock-jre8-standalone</artifactId>
+            <version>2.35.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
