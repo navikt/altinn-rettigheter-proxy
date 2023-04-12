@@ -2,19 +2,19 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.google.common.net.HttpHeaders
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.AltinnOrganisasjon
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
-import org.apache.http.client.utils.URIBuilder
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
+import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -43,19 +43,8 @@ class ApiTest {
     fun `Endepunkt _organisasjoner_ returnerer en liste av organisasjoner innlogget bruker har rettigheter i`() {
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
-                        .addParameter("serviceCode", "3403")
-                        .addParameter("serviceEdition", "1")
-                        .build()
-                )
-                .header(
-                    HttpHeaders.AUTHORIZATION,
-                    "Bearer " + testTokenUtil.createToken(issuerId = "loginservice", pid = "01065500791")
-                )
+                .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/organisasjoner?serviceCode=3403&serviceEdition=1"))
+                .header(AUTHORIZATION, "Bearer ${testTokenUtil.createToken(issuerId = "loginservice", pid = "01065500791")}")
                 .header("X-Correlation-ID", "klient-applikasjon")
                 .GET()
                 .build(),
@@ -70,17 +59,8 @@ class ApiTest {
     fun `Endepunkt _organisasjoner_ returnerer en liste av organisasjoner innlogget bruker har rettigheter i (tokenx, idp loginservice)`() {
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
-                        .addParameter("serviceCode", "3403")
-                        .addParameter("serviceEdition", "1")
-                        .build()
-                )
-                .header(
-                    HttpHeaders.AUTHORIZATION,
+                .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/organisasjoner?serviceCode=3403&serviceEdition=1"))
+                .header(AUTHORIZATION,
                     "Bearer " + testTokenUtil.createToken(
                         issuerId = "tokenx",
                         sub = "01065500791",
@@ -103,17 +83,9 @@ class ApiTest {
     fun `Endepunkt _organisasjoner_ returnerer en liste av organisasjoner innlogget bruker har rettigheter i (tokenx, idp idporten)`() {
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
-                        .addParameter("serviceCode", "3403")
-                        .addParameter("serviceEdition", "1")
-                        .build()
-                )
+                .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/organisasjoner?serviceCode=3403&serviceEdition=1"))
                 .header(
-                    HttpHeaders.AUTHORIZATION,
+                    AUTHORIZATION,
                     "Bearer " + testTokenUtil.createToken(
                         issuerId = "tokenx",
                         sub = "dette-er-ikke-et-fnr",
@@ -135,19 +107,8 @@ class ApiTest {
     fun `Endepunkt _organisasjoner_ krever AUTH header med gyldig token`() {
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
-                        .addParameter("serviceCode", "3403")
-                        .addParameter("serviceEdition", "1")
-                        .build()
-                )
-                .header(
-                    HttpHeaders.AUTHORIZATION,
-                    "Bearer " + "DETTE_ER_IKKE_EN_GYLDIG_TOKEN"
-                )
+                .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/organisasjoner?serviceCode=3403&serviceEdition=1"))
+                .header(AUTHORIZATION, "Bearer DETTE_ER_IKKE_EN_GYLDIG_TOKEN")
                 .GET()
                 .build(),
             JsonBodyHandler.of<FeilRespons>()
@@ -162,18 +123,8 @@ class ApiTest {
     fun `Endepunkt _organisasjoner_ trenger serviceCode og serviceEdition`() {
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/organisasjoner")
-                        .addParameter("serviceCode", "3403")
-                        .build()
-                )
-                .header(
-                    HttpHeaders.AUTHORIZATION,
-                    "Bearer " + testTokenUtil.createToken("01065500791")
-                )
+                .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/organisasjoner?serviceCode=3403"))
+                .header(AUTHORIZATION, "Bearer ${testTokenUtil.createToken("01065500791")}")
                 .GET()
                 .build(),
             BodyHandlers.ofString()
@@ -190,21 +141,8 @@ class ApiTest {
     fun `Endepunkt _organisasjonerV2_ sjekker at serviceCode og serviceEdition bare inneholder tall`() {
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/v2/organisasjoner")
-                        .addParameter("serviceCode", "malicious serviceCode")
-                        .addParameter("serviceEdition", "1")
-                        .addParameter("top", "500")
-                        .addParameter("skip", "0")
-                        .build()
-                )
-                .header(
-                    HttpHeaders.AUTHORIZATION,
-                    "Bearer " + testTokenUtil.createToken("01065500791")
-                )
+                .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/v2/organisasjoner?serviceCode=malicious%20serviceCode&serviceEdition=1&top=500&skip=0"))
+                .header(AUTHORIZATION, "Bearer ${testTokenUtil.createToken("01065500791")}")
                 .header("X-Correlation-ID", "cn39rh9eawhd93rh974")
                 .header("X-Consumer-ID", "klient-applikasjon")
                 .GET()
@@ -219,21 +157,8 @@ class ApiTest {
     fun `Endepunkt _organisasjonerV2_ returnerer en liste av aktive organisasjoner innlogget bruker har rettigheter i`() {
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/v2/organisasjoner")
-                        .addParameter("serviceCode", "3403")
-                        .addParameter("serviceEdition", "1")
-                        .addParameter("top", "500")
-                        .addParameter("skip", "0")
-                        .build()
-                )
-                .header(
-                    HttpHeaders.AUTHORIZATION,
-                    "Bearer " + testTokenUtil.createToken("01065500791")
-                )
+                .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/v2/organisasjoner?serviceCode=3403&serviceEdition=1&top=500&skip=0"))
+                .header(AUTHORIZATION, "Bearer ${testTokenUtil.createToken("01065500791")}")
                 .header("X-Correlation-ID", "cn39rh9eawhd93rh974")
                 .header("X-Consumer-ID", "klient-applikasjon")
                 .GET()
@@ -249,22 +174,8 @@ class ApiTest {
     fun `Endepunkt _organisasjonerV2_ returnerer en liste av alle organisasjoner innlogget bruker har rettigheter i`() {
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/v2/organisasjoner")
-                        .addParameter("serviceCode", "3403")
-                        .addParameter("serviceEdition", "1")
-                        .addParameter("top", "500")
-                        .addParameter("skip", "0")
-                        .addParameter("filterPaaAktiveOrganisasjoner", "false")
-                        .build()
-                )
-                .header(
-                    HttpHeaders.AUTHORIZATION,
-                    "Bearer " + testTokenUtil.createToken("01065500791")
-                )
+                .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/v2/organisasjoner?serviceCode=3403&serviceEdition=1&top=500&skip=0&filterPaaAktiveOrganisasjoner=false"))
+                .header(AUTHORIZATION, "Bearer ${testTokenUtil.createToken("01065500791")}")
                 .header("X-Correlation-ID", "cn39rh9eawhd93rh974")
                 .header("X-Consumer-ID", "klient-applikasjon")
                 .GET()
@@ -280,19 +191,8 @@ class ApiTest {
     fun `Endepunkt _organisasjonerV2_ returnerer en liste av organisasjoner innlogget bruker har rettigheter i uten noen spesisfiske rettigheter`() {
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/v2/organisasjoner")
-                        .addParameter("top", "500")
-                        .addParameter("skip", "0")
-                        .build()
-                )
-                .header(
-                    HttpHeaders.AUTHORIZATION,
-                    "Bearer " + testTokenUtil.createToken("01020300123")
-                )
+                .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/v2/organisasjoner?top=500&skip=0"))
+                .header(AUTHORIZATION, "Bearer ${testTokenUtil.createToken("01020300123")}")
                 .header("X-Correlation-ID", "cn39rh9eawhd93rh974")
                 .header("X-Consumer-ID", "klient-applikasjon")
                 .GET()
@@ -314,23 +214,8 @@ class ApiTest {
 
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/ekstern/altinn/api/serviceowner/reportees")
-                        .addParameter("ForceEIAuthentication", "")
-                        .addParameter("serviceCode", "3403")
-                        .addParameter("serviceEdition", "1")
-                        .addParameter("\$filter", "Type+ne+'Person'+and+Status+eq+'Active'")
-                        .addParameter("\$top", "500")
-                        .addParameter("\$skip", "0")
-                        .build()
-                )
-                .header(
-                    HttpHeaders.AUTHORIZATION,
-                    "Bearer " + testTokenUtil.createToken("01065500791")
-                )
+                .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/ekstern/altinn/api/serviceowner/reportees?ForceEIAuthentication=&serviceCode=3403&serviceEdition=1&\$filter=Type+ne+'Person'+and+Status+eq+'Active'&\$top=500&\$skip=0"))
+                .header(AUTHORIZATION, "Bearer ${testTokenUtil.createToken("01065500791")}")
                 .GET()
                 .build(),
             BodyHandlers.ofString()
@@ -345,19 +230,8 @@ class ApiTest {
 
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
-                .uri(
-                    URIBuilder()
-                        .setScheme("http")
-                        .setHost("localhost:$port")
-                        .setPath("/altinn-rettigheter-proxy/ekstern/altinn/api/serviceowner/reportees")
-                        .addParameter("serviceCode", "3403")
-                        .addParameter("serviceEdition", "1")
-                        .build()
-                )
-                .header(
-                    HttpHeaders.AUTHORIZATION,
-                    "Bearer " + testTokenUtil.createToken("01065500791")
-                )
+                .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/ekstern/altinn/api/serviceowner/reportees?serviceCode=3403&serviceEdition=1"))
+                .header(AUTHORIZATION, "Bearer ${testTokenUtil.createToken("01065500791")}")
                 .GET()
                 .build(),
             JsonBodyHandler.of<FeilRespons>()
