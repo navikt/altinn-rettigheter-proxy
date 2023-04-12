@@ -31,9 +31,15 @@ server:
   servlet:
     context-path: /altinn-rettigheter-proxy
 
-management.endpoints.web:
-  exposure.include: info, health, metrics, prometheus
-  base-path: /internal/actuator
+management:
+  endpoints.web:
+    exposure.include: info, health, metrics, prometheus
+    base-path: /internal/actuator
+  metrics.distribution:
+    percentiles-histogram:
+      http.server.requests: true
+    percentiles:
+      http.server.requests: 0.99,0.95,0.90,0.80,0.50
 
 no.nav.security.jwt:
   issuer:
