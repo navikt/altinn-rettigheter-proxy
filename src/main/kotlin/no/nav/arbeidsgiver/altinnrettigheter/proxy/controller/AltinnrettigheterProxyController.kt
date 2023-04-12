@@ -23,7 +23,7 @@ class AltinnrettigheterProxyController(
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    @GetMapping(value = ["/organisasjoner"])
+    @GetMapping("/organisasjoner", "/organisasjoner/")
     fun proxyOrganisasjonerNY(
         @RequestHeader(value = "host", required = false) host: String?,
         @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
@@ -43,7 +43,7 @@ class AltinnrettigheterProxyController(
         )
     }
 
-    @GetMapping("/v2/organisasjoner")
+    @GetMapping("/v2/organisasjoner", "/v2/organisasjoner/")
     fun proxyOrganisasjonerV2(
         @RequestHeader(value = "host", required = false) host: String?,
         @RequestHeader(value = "X-Consumer-ID") consumerId: String,
@@ -88,7 +88,7 @@ class AltinnrettigheterProxyController(
         )
     }
 
-    @GetMapping(value = ["/ekstern/altinn/api/serviceowner/reportees"])
+    @GetMapping("/ekstern/altinn/api/serviceowner/reportees", "/ekstern/altinn/api/serviceowner/reportees/")
     fun proxyOrganisasjoner(
         @RequestHeader(value = "X-Consumer-ID", required = false) consumerId: String?,
         @RequestHeader(value = "host", required = false) host: String?,
