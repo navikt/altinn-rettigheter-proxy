@@ -11,8 +11,6 @@ spec:
   port: 8080
   ingresses:
     - https://altinn-rettigheter-proxy.intern.dev.nav.no/altinn-rettigheter-proxy
-    - https://altinn-rettigheter-proxy.dev.intern.nav.no/altinn-rettigheter-proxy # Slutter å fungere etter 02.05.23
-    - https://altinn-rettigheter-proxy.dev.nav.no/altinn-rettigheter-proxy  # Slutter å fungere etter 02.05.23
   liveness:
     path: /altinn-rettigheter-proxy/internal/alive
     initialDelay: 60
