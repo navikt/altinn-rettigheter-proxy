@@ -93,6 +93,9 @@ spec:
 
         - application: presenterte-kandidater-api
           namespace: toi
+          
+        - application: fia-arbeidsgiver
+          namespace: pia
 
 
     outbound:
