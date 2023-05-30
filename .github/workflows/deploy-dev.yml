@@ -1,0 +1,19 @@
+name: Deploy dev
+
+on: [workflow_dispatch]
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}/altinn-rettigheter-proxy:${{ github.sha }}
+  
+jobs:
+  deploy-server-dev-gcp:
+    name: Deploy server dev-gcp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          VAR: version=${{ env.IMAGE }}
+          RESOURCE: nais/dev-gcp.yaml
