@@ -94,7 +94,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         melding: String,
         status: HttpStatus
     ): ResponseEntity<FeilRespons> {
-        log.info("Returnerer følgende HttpStatus '{}' med melding '{}' pga exception '{}'", status, melding, e.message)
+        log.info("Returnerer følgende HttpStatus '{}' med melding '{}' pga exception '{}'", status, melding, e.message, e)
         return ResponseEntity
             .status(status)
             .contentType(MediaType.APPLICATION_JSON)
