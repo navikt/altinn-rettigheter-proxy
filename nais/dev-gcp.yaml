@@ -105,6 +105,9 @@ spec:
           namespace: dsopkontroll
           cluster: dev-fss
 
+        - application: institusjon-opphold-innrapportering-web
+          namespace: team-rocket
+
     outbound:
       rules:
         - application: altinn-rettigheter-proxy-redis
