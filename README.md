@@ -1,7 +1,9 @@
 Altinn-proxy
 ============
 
-Denne appen er en proxy mot Altinn sine tjenester til arbeidsgiver. 
+Denne appen er en proxy mot Altinn sine tjenester til arbeidsgiver.
+Dere må bruke [TokenX](https://doc.nais.io/security/auth/tokenx/) når dere kaller oss.
+
 Vi har et java/kotlin bibliotek [altinn-rettigheter-proxy-klient](https://github.com/navikt/altinn-rettigheter-proxy-klient) som gjør det lettere å bruke denne proxyen. Den har
 bl.a. støtte for fall-back til Altinns API.
 
@@ -28,8 +30,6 @@ accessPolicy:
         cluster: dev-gcp/prod-gcp
 ```
 
-Vi anbefaler på det sterkeste å bruke TokenX, da vi ønsker å fjerne støtten for å bruke loginservice direkte.
-
 I dev, så er det også en vanlig ingress tilgjengelig, `https://altinn-rettigheter-proxy.intern.dev.nav.no/altinn-rettigheter-proxy`, som dere kan bruke uten å måtte oppdatere vår access policy.
 
 # Hvordan ta i bruk proxyen (FSS)
@@ -52,11 +52,6 @@ accessPolicy:
         namespace: fager
         cluster: dev-gcp/prod-gcp
 ```
-
-Vi anbefaler på det sterkeste å bruke TokenX, da vi ønsker å fjerne støtten for å bruke loginservice direkte.
-
-
-
 
 # Kjøre lokalt: komme i gang
 
