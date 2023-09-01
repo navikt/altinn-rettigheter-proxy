@@ -36,14 +36,6 @@ spec:
     inbound:
       rules:
 
-        - application: klage-permittering-refusjon-api
-          namespace: teamloennskomp
-          cluster: prod-fss
-
-        - application: permittering-refusjon-api
-          namespace: teamloennskomp
-          cluster: prod-fss
-
         - application: sykefravarsstatistikk-api
           namespace: arbeidsgiver
           cluster: prod-fss
@@ -64,10 +56,6 @@ spec:
 
         - application: permitteringsskjema-api
           namespace: permittering-og-nedbemanning
-
-        - application: innsyn-aareg-api
-          namespace: fager
-          cluster: prod-fss
 
         - application: aareg-innsyn-arbeidsgiver-api
           namespace: arbeidsforhold

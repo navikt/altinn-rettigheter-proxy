@@ -36,20 +36,11 @@ spec:
     - name: ALTINN_URL
       value: "https://tt02.altinn.no"
   envFrom:
-    - configmap: loginservice-idporten
     - secret: altinn-rettigheter-proxy-redis-password
     - secret: altinn-rettigheter-proxy
   accessPolicy:
     inbound:
       rules:
-        - application: klage-permittering-refusjon-api
-          namespace: teamloennskomp
-          cluster: dev-fss
-
-        - application: permittering-refusjon-api
-          namespace: teamloennskomp
-          cluster: dev-fss
-
         - application: sykefravarsstatistikk-api
           namespace: arbeidsgiver
           cluster: dev-fss
@@ -73,10 +64,6 @@ spec:
 
         - application: permitteringsportal-api
           namespace: permittering-og-nedbemanning
-
-        - application: innsyn-aareg-api
-          namespace: fager
-          cluster: dev-fss
 
         - application: aareg-innsyn-arbeidsgiver-api
           namespace: arbeidsforhold

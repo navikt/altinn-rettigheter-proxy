@@ -44,7 +44,7 @@ class ApiTest {
         val response = HttpClient.newBuilder().build().send(
             HttpRequest.newBuilder()
                 .uri(URI("http://localhost:$port/altinn-rettigheter-proxy/organisasjoner?serviceCode=3403&serviceEdition=1"))
-                .header(AUTHORIZATION, "Bearer ${testTokenUtil.createToken(issuerId = "loginservice", pid = "01065500791")}")
+                .header(AUTHORIZATION, "Bearer ${testTokenUtil.createToken(issuerId = "tokenx", pid = "01065500791")}")
                 .header("X-Correlation-ID", "klient-applikasjon")
                 .GET()
                 .build(),
@@ -65,7 +65,7 @@ class ApiTest {
                         issuerId = "tokenx",
                         sub = "01065500791",
                         pid = "01065500791",
-                        idp = "https://navtestb2c.b2clogin.com/1234"
+                        idp = "https://xyz.com/1234"
                     )
                 )
                 .header("X-Correlation-ID", "klient-applikasjon")

@@ -9,7 +9,7 @@ class TestTokenUtil(
 ) {
     fun createToken(
         pid: String,
-        issuerId: String = "loginservice",
+        issuerId: String = "tokenx",
         idp: String? = null,
         sub: String = "foo",
     ): String =
