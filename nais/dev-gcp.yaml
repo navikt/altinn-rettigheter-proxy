@@ -36,7 +36,6 @@ spec:
     - name: ALTINN_URL
       value: "https://tt02.altinn.no"
   envFrom:
-    - configmap: loginservice-idporten
     - secret: altinn-rettigheter-proxy-redis-password
     - secret: altinn-rettigheter-proxy
   accessPolicy:
