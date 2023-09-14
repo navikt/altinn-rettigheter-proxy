@@ -8,7 +8,7 @@ on:
 jobs:
   deploy-redis-dev-gcp:
     name: Deploy redis dev-gcp
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/TAG-1787'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/TAG-2172_nais_aiven_redis'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
