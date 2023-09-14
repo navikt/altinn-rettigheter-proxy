@@ -32,6 +32,9 @@ spec:
     scopes:
       consumes:
         - name: "altinn:serviceowner/reportees"
+  redis:
+    - instance: lookup
+      access: readwrite
   accessPolicy:
     inbound:
       rules:
