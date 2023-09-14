@@ -5,9 +5,9 @@ spring:
     banner-mode: off
   data:
     redis:
-      password: ${REDIS_PASSWORD_LOOKUP}
-      username: ${REDIS_USERNAME_LOOKUP}
-      url: ${REDIS_URI_LOOKUP:redis://localhost:6379}
+      password: ${REDIS_PASSWORD_ALTINNRETTIGHETER}
+      username: ${REDIS_USERNAME_ALTINNRETTIGHETER}
+      url: ${REDIS_URI_ALTINNRETTIGHETER:redis://localhost:6379}
       timeout: 2000
       lettuce:
         pool:

@@ -33,7 +33,7 @@ spec:
       consumes:
         - name: "altinn:serviceowner/reportees"
   redis:
-    - instance: lookup
+    - instance: altinnrettigheter
       access: readwrite
   accessPolicy:
     inbound:
