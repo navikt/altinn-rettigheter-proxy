@@ -5,7 +5,7 @@ metadata:
     app: altinn-rettigheter-proxy-redis
     team: fager
   name: redis-fager-lookup
-  namespace: fager
+  namespace: arbeidsgiver
 spec:
   plan: startup-4
   project: nav-dev
