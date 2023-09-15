@@ -66,4 +66,13 @@ class AltinnRettigheterProxyIntegrationTest {
         verify(altinnClient, times(1)).hentOrganisasjoner(query, sub1)
         verify(altinnClient, times(1)).hentOrganisasjoner(query, sub2)
     }
+
+    @Test
+    fun `is ready`() {
+        mockMvc
+            .perform(
+                get("/internal/ready")
+            )
+            .andExpect(status().isOk)
+    }
 }

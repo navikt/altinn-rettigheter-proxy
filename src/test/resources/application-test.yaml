@@ -2,6 +2,7 @@ spring:
   data:
     redis:
       ssl: false
+      password: leeloodallasmultipass
 
 altinn:
   url: "http://local.test/"
