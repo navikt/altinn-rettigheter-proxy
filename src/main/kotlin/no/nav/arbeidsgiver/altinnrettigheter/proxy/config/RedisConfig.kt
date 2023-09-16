@@ -22,10 +22,11 @@ class RedisConfig {
         @Value("\${spring.data.redis.url}") redisHost: URI,
         @Value("\${spring.data.redis.password}") password: String,
         @Value("\${spring.data.redis.username}") username: String,
-    ): RedisStandaloneConfiguration {
-        return RedisStandaloneConfiguration(redisHost.host, redisHost.port).apply {
-            setUsername(username)
-            setPassword(password)
-        }
+    ) = RedisStandaloneConfiguration(
+        redisHost.host,
+        redisHost.port
+    ).apply {
+        setUsername(username)
+        setPassword(password)
     }
 }
