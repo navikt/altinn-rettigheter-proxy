@@ -6,6 +6,7 @@ import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest(
@@ -22,6 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 )
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
+@AutoConfigureObservability
 @EnableMockOAuth2Server
 class AltinnRettigheterProxyIntegrationTest {
     @Autowired
@@ -74,5 +77,11 @@ class AltinnRettigheterProxyIntegrationTest {
                 get("/internal/ready")
             )
             .andExpect(status().isOk)
+        mockMvc
+            .perform(
+                get("/internal/actuator/prometheus")
+            )
+            .andExpect(status().isOk)
+            .andDo(MockMvcResultHandlers.print())
     }
 }
