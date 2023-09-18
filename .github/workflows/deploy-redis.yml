@@ -30,7 +30,7 @@ jobs:
           RESOURCE: nais/legacy-redis-gcp.yaml
 
   deploy-redis-dev-gcp:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/TAG-2172_nais_aiven_redis'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/revert-160-revert-157-TAG-2172_nais_aiven_redis'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
