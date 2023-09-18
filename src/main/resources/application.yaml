@@ -5,12 +5,12 @@ spring:
     banner-mode: off
   data:
     redis:
-      client-type: jedis
       password: ${REDIS_PASSWORD_ALTINNRETTIGHETER:}
       username: ${REDIS_USERNAME_ALTINNRETTIGHETER:}
       redisuri: ${REDIS_URI_ALTINNRETTIGHETER:redis://127.0.0.1:6379}
+      ssl: true
       timeout: 2000
-      jedis:
+      lettuce:
         pool:
           max-active: 16
           min-idle: 8
