@@ -1,10 +1,8 @@
 spring:
-  redis:
-    host: 127.0.0.1
-    password: abcd
-  cache:
+  data:
     redis:
-      time-to-live: 30000 # 30 sek i millis
+      ssl: false
+      password: leeloodallasmultipass
 
 altinn:
   url: "http://local.test/"

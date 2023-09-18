@@ -5,9 +5,10 @@ spring:
     banner-mode: off
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: 6379
-      password: ${REDIS_PASSWORD}
+      password: ${REDIS_PASSWORD_ALTINNRETTIGHETER:}
+      username: ${REDIS_USERNAME_ALTINNRETTIGHETER:}
+      url: ${REDIS_URI_ALTINNRETTIGHETER:redis://127.0.0.1:6379}
+      ssl: true
       timeout: 2000
       lettuce:
         pool:
@@ -17,7 +18,7 @@ spring:
           time-between-eviction-runs: 10000
   cache:
     redis:
-      time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS}
+      time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS:30000}
     cache-names: reportees
 
 springdoc:
