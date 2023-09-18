@@ -11,7 +11,11 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.http.*
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.client.AbstractClientHttpResponse
 import org.springframework.http.client.ClientHttpRequest
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.test.context.ActiveProfiles
@@ -168,14 +172,12 @@ class AltinnKlientRestTemplateTest {
         statusText: String
     ): (request: ClientHttpRequest?) -> ClientHttpResponse =
         {
-            object : ClientHttpResponse {
+            object : AbstractClientHttpResponse() {
                 override fun getHeaders(): HttpHeaders = HttpHeaders()
                 override fun getBody(): InputStream = InputStream.nullInputStream()
                 override fun close() = Unit
-                override fun getStatusCode(): HttpStatusCode = HttpStatusCode.valueOf(httpStatus)
-                override fun getStatusText(): String = statusText
-                @Deprecated("Deprecated in Java", ReplaceWith("httpStatus"))
                 override fun getRawStatusCode(): Int = httpStatus
+                override fun getStatusText(): String = statusText
             }
         }
 }

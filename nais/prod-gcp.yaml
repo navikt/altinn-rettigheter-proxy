@@ -32,9 +32,6 @@ spec:
     scopes:
       consumes:
         - name: "altinn:serviceowner/reportees"
-  redis:
-    - instance: altinnrettigheter
-      access: readwrite
   accessPolicy:
     inbound:
       rules:
@@ -85,6 +82,8 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
+    - name: REDIS_HOST
+      value: altinn-rettigheter-proxy-redis.arbeidsgiver.svc.cluster.local
     - name: CACHE_TIME_TO_LIVE_MILLIS
       value: "1800000"
     - name: ALTINN_URL
