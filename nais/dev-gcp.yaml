@@ -37,7 +37,6 @@ spec:
     - name: ALTINN_URL
       value: "https://tt02.altinn.no"
   envFrom:
-    - secret: altinn-rettigheter-proxy-redis-password
     - secret: altinn-rettigheter-proxy
   accessPolicy:
     inbound:
@@ -97,8 +96,6 @@ spec:
           namespace: team-rocket
 
     outbound:
-      rules:
-        - application: altinn-rettigheter-proxy-redis
       external:
         - host: tt02.altinn.no
   prometheus:
