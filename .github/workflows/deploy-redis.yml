@@ -2,52 +2,33 @@ name: Deploy Redis
 
 on:
   push:
-    paths: ['nais/redis-gcp.yaml', 'nais/redis-dev-gcp.yaml', 'nais/redis-prod-gcp.yaml']
+    paths: ['nais/redis-gcp.yaml']
   workflow_dispatch:
 
 jobs:
-  deploy-legacy-redis-dev-gcp:
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          RESOURCE: nais/legacy-redis-gcp.yaml
-
-  deploy-legacy-redis-prod-gcp:
-    needs: deploy-legacy-redis-dev-gcp
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-gcp
-          RESOURCE: nais/legacy-redis-gcp.yaml
-
+  ###### GCP DEV
   deploy-redis-dev-gcp:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/TAG-2172_nais_aiven_redis'
+    name: Deploy redis dev-gcp
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/TAG-1787'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v1
       - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: nais/redis-dev-gcp.yaml
+          RESOURCE: nais/redis-gcp.yaml
 
+  ###### GCP PROD
   deploy-redis-prod-gcp:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/TAG-2172_nais_aiven_redis'
+    name: Deploy redis prod-gcp
     needs: deploy-redis-dev-gcp
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v1
       - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          RESOURCE: nais/redis-prod-gcp.yaml
+          RESOURCE: nais/redis-gcp.yaml

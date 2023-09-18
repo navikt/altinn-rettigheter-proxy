@@ -1,8 +1,10 @@
 spring:
-  data:
+  redis:
+    host: 127.0.0.1
+    password: foobared # default passord lokalt i /usr/local/etc/redis.conf
+  cache:
     redis:
-      ssl: false
-      password: leeloodallasmultipass
+      time-to-live: 30000 # 30 sek i millis
 
 server:
   port: 9090
