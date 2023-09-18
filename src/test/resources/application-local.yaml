@@ -1,6 +1,7 @@
 spring:
   data:
     redis:
+      ssl: false
       password: leeloodallasmultipass
 
 server:
