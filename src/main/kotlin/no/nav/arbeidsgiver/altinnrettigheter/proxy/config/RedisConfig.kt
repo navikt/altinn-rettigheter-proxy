@@ -1,6 +1,8 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.config
 
+import io.lettuce.core.RedisURI
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration
@@ -19,14 +21,23 @@ class RedisConfig {
      */
     @Bean
     fun redisStandalone(
-        @Value("\${spring.data.redis.url}") redisHost: URI,
+        @Value("\${spring.data.redis.url}") redisUrl: URI,
         @Value("\${spring.data.redis.password}") password: String,
         @Value("\${spring.data.redis.username}") username: String,
     ) = RedisStandaloneConfiguration(
-        redisHost.host,
-        redisHost.port
+        redisUrl.host,
+        redisUrl.port
     ).apply {
         setUsername(username)
         setPassword(password)
+    }
+
+    @Bean
+    fun lettuceClientConfigurationCustomizer(
+        @Value("\${spring.data.redis.url}") redisUrl: URI,
+    ) : LettuceClientConfigurationBuilderCustomizer {
+        return LettuceClientConfigurationBuilderCustomizer {
+            it.apply(RedisURI.create(redisUrl))
+        }
     }
 }
