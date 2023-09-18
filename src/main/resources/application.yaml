@@ -8,7 +8,6 @@ spring:
       password: ${REDIS_PASSWORD_ALTINNRETTIGHETER:}
       username: ${REDIS_USERNAME_ALTINNRETTIGHETER:}
       redisuri: ${REDIS_URI_ALTINNRETTIGHETER:redis://127.0.0.1:6379}
-      database: 0
       ssl: true
       timeout: 2000
       lettuce:

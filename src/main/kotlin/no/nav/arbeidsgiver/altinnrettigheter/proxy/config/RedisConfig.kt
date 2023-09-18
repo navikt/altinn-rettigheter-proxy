@@ -1,6 +1,7 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.config
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration
@@ -29,5 +30,14 @@ class RedisConfig {
     ).apply {
         setUsername(username)
         setPassword(password)
+    }
+
+    @Bean
+    fun lettuceClientConfigurationBuilderCustomizer(
+        @Value("\${spring.data.redis.ssl}") ssl: Boolean,
+    ) = LettuceClientConfigurationBuilderCustomizer {
+        if (ssl) {
+            it.useSsl().startTls()
+        }
     }
 }
