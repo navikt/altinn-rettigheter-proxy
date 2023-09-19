@@ -14,7 +14,7 @@ import java.net.URI
 class RedisConfig {
     @Bean
     fun redisConnectionFactory(
-        @Value("\${spring.data.redis.redisuri}") url: URI,
+        @Value("\${spring.data.redis.url}") url: URI,
         @Value("\${spring.data.redis.password}") password: String,
         @Value("\${spring.data.redis.username}") username: String,
     ): LettuceConnectionFactory {
