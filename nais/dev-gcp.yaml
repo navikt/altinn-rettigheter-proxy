@@ -27,7 +27,7 @@ spec:
       consumes:
         - name: "altinn:serviceowner/reportees"
   redis:
-    - instance: tilganger
+    - instance: altinnrettigheter
       access: readwrite
   env:
     - name: SPRING_PROFILES_ACTIVE
