@@ -1,13 +1,9 @@
 package no.nav.arbeidsgiver.altinnrettigheter.proxy.config
 
-import io.lettuce.core.ClientOptions
 import io.lettuce.core.RedisURI
-import io.lettuce.core.SslOptions
-import io.lettuce.core.protocol.ProtocolVersion
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.io.Resource
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
@@ -19,7 +15,6 @@ class RedisConfig {
     @Bean
     fun redisConnectionFactory(
         @Value("\${spring.data.redis.redisuri}") url: URI,
-        @Value("\${spring.data.redis.aivenca}") aivenca: Resource?,
         @Value("\${spring.data.redis.password}") password: String,
         @Value("\${spring.data.redis.username}") username: String,
     ): LettuceConnectionFactory {
@@ -31,17 +26,7 @@ class RedisConfig {
                 database = redisURI.database
             }, LettuceClientConfiguration.builder().apply {
                 if (redisURI.isSsl) {
-                    clientOptions(
-                        ClientOptions
-                            .builder()
-                            .sslOptions(
-                                SslOptions.builder()
-                                    .trustManager(aivenca!!.file)
-                                    .build()
-                            )
-                            .protocolVersion(ProtocolVersion.RESP3)
-                            .build()
-                    ).useSsl()
+                    useSsl()
                 }
             }.build()
         )
