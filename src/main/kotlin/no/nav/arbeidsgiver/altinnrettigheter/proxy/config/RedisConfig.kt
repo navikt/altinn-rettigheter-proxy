@@ -36,7 +36,7 @@ class RedisConfig {
                             .builder()
                             .sslOptions(
                                 SslOptions.builder()
-                                    .trustManager(aivenca!!.file)
+                                    //.trustManager(aivenca!!.file.inputStream())
                                     .build()
                             )
                             .protocolVersion(ProtocolVersion.RESP3)
