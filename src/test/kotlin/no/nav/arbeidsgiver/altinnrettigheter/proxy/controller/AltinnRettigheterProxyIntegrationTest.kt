@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest(
@@ -58,12 +59,14 @@ class AltinnRettigheterProxyIntegrationTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer ${testTokenUtil.createToken(sub1.verdi)}")
                 )
                 .andExpect(status().isOk)
+                .andDo(print())
             mockMvc
                 .perform(
                     get("/organisasjoner?serviceCode={code}&serviceEdition={edition}", "1337", "1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer ${testTokenUtil.createToken(sub2.verdi)}")
                 )
                 .andExpect(status().isOk)
+                .andDo(print())
         }
 
         verify(altinnClient, times(1)).hentOrganisasjoner(query, sub1)
@@ -82,6 +85,6 @@ class AltinnRettigheterProxyIntegrationTest {
                 get("/internal/actuator/prometheus")
             )
             .andExpect(status().isOk)
-            .andDo(MockMvcResultHandlers.print())
+            .andDo(print())
     }
 }
