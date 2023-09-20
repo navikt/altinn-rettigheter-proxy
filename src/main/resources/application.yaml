@@ -18,6 +18,7 @@ spring:
   cache:
     redis:
       time-to-live: ${CACHE_TIME_TO_LIVE_MILLIS:30000}
+      enable-statistics: true
     cache-names: reportees
 
 springdoc:
