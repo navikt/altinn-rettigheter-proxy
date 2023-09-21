@@ -2,33 +2,10 @@ name: Deploy Redis
 
 on:
   push:
-    paths: ['nais/redis-gcp.yaml', 'nais/redis-dev-gcp.yaml', 'nais/redis-prod-gcp.yaml']
+    paths: ['nais/redis-dev-gcp.yaml', 'nais/redis-prod-gcp.yaml']
   workflow_dispatch:
 
 jobs:
-  deploy-legacy-redis-dev-gcp:
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          RESOURCE: nais/legacy-redis-gcp.yaml
-
-  deploy-legacy-redis-prod-gcp:
-    needs: deploy-legacy-redis-dev-gcp
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-gcp
-          RESOURCE: nais/legacy-redis-gcp.yaml
-
   deploy-redis-dev-gcp:
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/revert-160-revert-157-TAG-2172_nais_aiven_redis'
     runs-on: ubuntu-latest
