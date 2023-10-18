@@ -1,10 +1,6 @@
 name: Build & deploy
 
 on: [push, workflow_dispatch]
-
-env:
-  IMAGE_BASE: ghcr.io/${{ github.repository }}/altinn-rettigheter-proxy
-  IMAGE: ghcr.io/${{ github.repository }}/altinn-rettigheter-proxy:${{ github.sha }}
   
 jobs:
   build:
@@ -26,20 +22,14 @@ jobs:
           java-version: 17
           cache: maven
       - run: mvn -B package
-      - uses: docker/login-action@v1
+
+      - uses: nais/docker-build-push@v0
+        id: gar-push
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.IMAGE }}
-            ${{ env.IMAGE_BASE }}:latest
-          cache-from: type=registry,ref=${{ env.IMAGE_BASE }}:latest
-          cache-to: type=inline
+          team: arbeidsgiver
+          tag: ${{ github.sha }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
 
   ###### GCP DEV
   deploy-server-dev-gcp:
@@ -48,13 +38,19 @@ jobs:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
+      - uses: nais/login@v0
+        id: login
+        with:
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          team: arbeidsgiver
       - uses: nais/deploy/actions/deploy@v1
         env:
+          IMAGE: ${{ steps.login.outputs.registry }}/altinn-rettigheter-proxy:${{ github.sha }}
+          RESOURCE: nais/dev-gcp.yaml
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/dev-gcp.yaml
 
   ###### GCP PROD
   deploy-server-prod-gcp:
@@ -63,10 +59,16 @@ jobs:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
+      - uses: nais/login@v0
+        id: login
+        with:
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          team: arbeidsgiver
       - uses: nais/deploy/actions/deploy@v1
         env:
+          IMAGE: ${{ steps.login.outputs.registry }}/altinn-rettigheter-proxy:${{ github.sha }}
+          RESOURCE: nais/prod-gcp.yaml
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          VAR: version=${{ env.IMAGE }}
-          RESOURCE: nais/prod-gcp.yaml
