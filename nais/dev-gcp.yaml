@@ -62,9 +62,6 @@ spec:
         - application: permitteringsskjema-api
           namespace: permittering-og-nedbemanning
 
-        - application: permitteringsportal-api
-          namespace: permittering-og-nedbemanning
-
         - application: aareg-innsyn-arbeidsgiver-api
           namespace: arbeidsforhold
           cluster: dev-fss
