@@ -90,7 +90,6 @@ spec:
     - name: JAVA_OPTS
       value: "-XX:+UseParallelGC -XX:MaxRAMPercentage=75.0 -XX:ActiveProcessorCount=2"
   envFrom:
-    - configmap: loginservice-idporten
     - secret: altinn-rettigheter-proxy
   prometheus:
     enabled: true

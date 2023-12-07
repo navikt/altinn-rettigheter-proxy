@@ -48,15 +48,3 @@ no.nav.security.jwt:
       discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
       accepted_audience: ${TOKEN_X_CLIENT_ID}
 
-
----
-spring:
-  config:
-    activate:
-      on-profile: prod
-
-no.nav.security.jwt:
-  issuer:
-    loginservice:
-      discoveryurl: ${LOGINSERVICE_IDPORTEN_DISCOVERY_URL}
-      accepted_audience: ${LOGINSERVICE_IDPORTEN_AUDIENCE}
