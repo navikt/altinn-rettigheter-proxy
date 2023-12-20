@@ -1,5 +1,6 @@
-package no.nav.arbeidsgiver.altinnrettigheter.proxy;
+package no.nav.arbeidsgiver.altinnrettigheter.proxy.controller;
 
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.TestTokenUtil
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.AltinnClient
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
@@ -11,12 +12,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpHeaders
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.get
 
 @SpringBootTest(
     properties = [
@@ -27,6 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @AutoConfigureMockMvc
 @AutoConfigureObservability
 @EnableMockOAuth2Server
+@DirtiesContext
 class AltinnRettigheterProxyIntegrationTest {
     @Autowired
     lateinit var mockMvc: MockMvc
@@ -53,38 +53,34 @@ class AltinnRettigheterProxyIntegrationTest {
         `when`(altinnClient.hentOrganisasjoner(query, sub2)).thenReturn(emptyList())
 
         for (i in 1..10) {
-            mockMvc
-                .perform(
-                    get("/organisasjoner?serviceCode={code}&serviceEdition={edition}", "1337", "1")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer ${testTokenUtil.createToken(sub1.verdi)}")
-                )
-                .andExpect(status().isOk)
-                .andDo(print())
-            mockMvc
-                .perform(
-                    get("/organisasjoner?serviceCode={code}&serviceEdition={edition}", "1337", "1")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer ${testTokenUtil.createToken(sub2.verdi)}")
-                )
-                .andExpect(status().isOk)
-                .andDo(print())
-        }
+            mockMvc.get("/organisasjoner?serviceCode={code}&serviceEdition={edition}", "1337", "1") {
+                header(HttpHeaders.AUTHORIZATION, "Bearer ${testTokenUtil.createToken(sub1.verdi)}")
+            }.andExpect {
+                status { isOk() }
+            }.andDo {
+                print()
+            }
+            mockMvc.get("/organisasjoner?serviceCode={code}&serviceEdition={edition}", "1337", "1") {
+                header(HttpHeaders.AUTHORIZATION, "Bearer ${testTokenUtil.createToken(sub2.verdi)}")
+            }.andExpect {
+                status { isOk() }
+            }.andDo {
+                print()
+            }
 
-        verify(altinnClient, times(1)).hentOrganisasjoner(query, sub1)
-        verify(altinnClient, times(1)).hentOrganisasjoner(query, sub2)
+            verify(altinnClient, times(1)).hentOrganisasjoner(query, sub1)
+            verify(altinnClient, times(1)).hentOrganisasjoner(query, sub2)
+        }
     }
 
     @Test
     fun `is ready`() {
         mockMvc
-            .perform(
-                get("/internal/ready")
-            )
-            .andExpect(status().isOk)
+            .get("/internal/ready")
+            .andExpect { status { isOk() } }
         mockMvc
-            .perform(
-                get("/internal/actuator/prometheus")
-            )
-            .andExpect(status().isOk)
-            .andDo(print())
+            .get("/internal/actuator/prometheus")
+            .andExpect { status { isOk() } }
+            .andDo { print() }
     }
 }

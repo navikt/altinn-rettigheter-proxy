@@ -4,7 +4,6 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.apache.commons.lang3.StringUtils
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -19,7 +18,7 @@ class CorrelationIdFilter : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         try {
             val correlationIdHeader = request.getHeader(CORRELATION_ID_HEADER_NAME)
-            if (StringUtils.isBlank(correlationIdHeader)) {
+            if (correlationIdHeader.isNullOrBlank()) {
                 MDC.put(CORRELATION_ID_MDC_NAME, UUID.randomUUID().toString())
             } else {
                 MDC.put(CORRELATION_ID_MDC_NAME, correlationIdHeader)
