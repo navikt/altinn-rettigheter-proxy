@@ -34,7 +34,9 @@ class AltinnClient(
             retryInterceptor(
                 maxAttempts = 3,
                 backoffPeriod = 250L,
-                javax.net.ssl.SSLHandshakeException::class.java
+                javax.net.ssl.SSLHandshakeException::class.java,
+                java.net.SocketTimeoutException::class.java,
+                java.net.SocketException::class.java,
             )
         )
         .build()
