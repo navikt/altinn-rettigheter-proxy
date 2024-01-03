@@ -21,11 +21,6 @@ spring:
       enable-statistics: true
     cache-names: reportees
 
-springdoc:
-  swagger-ui:
-    enabled: true
-  packagesToScan: no.nav.arbeidsgiver.altinnrettigheter.proxy
-
 server:
   port: 8080
   max-http-request-header-size: 10KB
