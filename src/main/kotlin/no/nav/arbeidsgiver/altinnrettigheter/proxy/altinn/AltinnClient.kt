@@ -37,6 +37,7 @@ class AltinnClient(
                 javax.net.ssl.SSLHandshakeException::class.java,
                 java.net.SocketTimeoutException::class.java,
                 java.net.SocketException::class.java,
+                java.io.EOFException::class.java,
             )
         )
         .build()
