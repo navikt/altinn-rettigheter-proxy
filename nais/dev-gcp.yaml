@@ -7,7 +7,6 @@ metadata:
     team: arbeidsgiver
 spec:
   image: {{image}}
-  team: arbeidsgiver
   port: 8080
   ingresses:
     - https://altinn-rettigheter-proxy.intern.dev.nav.no/altinn-rettigheter-proxy
