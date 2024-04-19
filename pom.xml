@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>no.nav.arbeidsgiver</groupId>
@@ -21,7 +21,6 @@
 
         <!-- token-validation-spring-test krever denne versjonen -->
         <okhttp3.version>4.9.1</okhttp3.version>
-        <logback.version>1.4.14</logback.version>
     </properties>
 
     <dependencies>
