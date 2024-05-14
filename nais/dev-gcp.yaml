@@ -91,6 +91,9 @@ spec:
         - application: institusjon-opphold-innrapportering-web
           namespace: team-rocket
 
+        - application: ftinntektsmelding
+          namespace: teamforeldrepenger
+
     outbound:
       external:
         - host: tt02.altinn.no
