@@ -80,6 +80,9 @@ spec:
           namespace: dsopkontroll
           cluster: prod-fss
 
+        - application: ftinntektsmelding
+          namespace: teamforeldrepenger
+
     outbound:
       external:
         - host: www.altinn.no
