@@ -80,7 +80,7 @@ spec:
           namespace: dsopkontroll
           cluster: prod-fss
 
-        - application: ftinntektsmelding
+        - application: fpinntektsmelding
           namespace: teamforeldrepenger
 
     outbound:
