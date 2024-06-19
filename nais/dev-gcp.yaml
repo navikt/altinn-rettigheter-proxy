@@ -91,9 +91,6 @@ spec:
         - application: institusjon-opphold-innrapportering-web
           namespace: team-rocket
 
-        - application: ftinntektsmelding
-          namespace: teamforeldrepenger
-
         - application: fpinntektsmelding
           namespace: teamforeldrepenger
 
