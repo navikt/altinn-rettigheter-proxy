@@ -88,9 +88,6 @@ spec:
           namespace: dsopkontroll
           cluster: dev-fss
 
-        - application: institusjon-opphold-innrapportering-web
-          namespace: team-rocket
-
         - application: fpinntektsmelding
           namespace: teamforeldrepenger
 
