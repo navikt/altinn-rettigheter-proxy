@@ -4,7 +4,6 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.core.io.Resource
@@ -25,7 +24,6 @@ class MockServer(
         val server = WireMockServer(
             WireMockConfiguration()
                 .port(port)
-                .extensions(ResponseTemplateTransformer(true))
                 .notifier(ConsoleNotifier(true))
         )
         val altinnPathToReportees = URL(altinnUrl).path + "api/serviceowner/reportees"

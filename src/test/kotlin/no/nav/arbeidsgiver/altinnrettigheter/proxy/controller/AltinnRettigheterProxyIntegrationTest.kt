@@ -2,8 +2,10 @@ package no.nav.arbeidsgiver.altinnrettigheter.proxy.controller;
 
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.TestTokenUtil
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.altinn.AltinnClient
+import no.nav.arbeidsgiver.altinnrettigheter.proxy.config.CachingConfig.Companion.REPORTEES_CACHE
 import no.nav.arbeidsgiver.altinnrettigheter.proxy.model.Fnr
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.actuate.observability.AutoCon
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.cache.CacheManager
 import org.springframework.http.HttpHeaders
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
@@ -26,7 +29,7 @@ import org.springframework.test.web.servlet.get
 @AutoConfigureMockMvc
 @AutoConfigureObservability
 @EnableMockOAuth2Server
-@DirtiesContext
+@DirtiesContext(classMode= DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class AltinnRettigheterProxyIntegrationTest {
     @Autowired
     lateinit var mockMvc: MockMvc
@@ -36,6 +39,15 @@ class AltinnRettigheterProxyIntegrationTest {
 
     @MockBean
     lateinit var altinnClient: AltinnClient
+
+    @Autowired
+    lateinit var cacheManager: CacheManager
+
+    @BeforeEach
+    fun beforeEach() {
+        /* Repeatedly running the test may fail if not cleaned. */
+        cacheManager.getCache(REPORTEES_CACHE)?.clear()
+    }
 
     @Test
     fun `samme query treffer cache men ikke på tvers av fnr`() {
