@@ -30,7 +30,7 @@ jobs:
           tag: ${{ github.sha }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          byosbom: target/bom.json
+          byosbom: target/classes/META-INF/sbom/application.cdx.json
 
   ###### GCP DEV
   deploy-server-dev-gcp:
@@ -49,7 +49,7 @@ jobs:
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           team: arbeidsgiver
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: nais/deploy/actions/deploy@v2
         env:
           IMAGE: ${{ steps.login.outputs.registry }}/altinn-rettigheter-proxy:${{ github.sha }}
           RESOURCE: nais/dev-gcp.yaml
