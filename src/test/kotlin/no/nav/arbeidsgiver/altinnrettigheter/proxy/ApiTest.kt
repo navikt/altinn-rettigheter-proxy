@@ -20,6 +20,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers
 import java.net.http.HttpResponse.BodySubscribers
+import java.nio.charset.Charset
 
 
 @RunWith(SpringRunner::class)
@@ -257,8 +258,12 @@ class ApiTest {
         val objectMapper = jacksonObjectMapper()
 
         override fun apply(responseInfo: HttpResponse.ResponseInfo?): HttpResponse.BodySubscriber<T> =
-            BodySubscribers.mapping(BodySubscribers.ofInputStream()) { it ->
-                it.use { objectMapper.readValue(it, target) }
+            /* Read whole string, as the body may be chuncked (happens some times, but not always), and
+             * `objectMapper.readValue` doesn't handle chunked streams, apparently.
+             * Supposed to prevent this error:
+             * error: java.io.IOException: chunked transfer encoding, state: READING_LENGTH. */
+            BodySubscribers.mapping(BodySubscribers.ofString(Charsets.UTF_8)) { json ->
+                objectMapper.readValue(json, target)
             }
     }
 }

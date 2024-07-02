@@ -12,19 +12,30 @@ class TilgangskontrollService(
         private const val ISSUER_TOKENX = "tokenx"
     }
 
+    private fun getStringClaim(claim: String): String {
+        val token = try {
+            tokenValidationcontextHolder
+                .getTokenValidationContext()
+                .getClaims(ISSUER_TOKENX)
+        } catch (e: Exception) {
+            throw TilgangskontrollException("Finner ikke token")
+        }
+
+        return try {
+            token.getStringClaim(claim)
+        } catch (e: Exception) {
+            throw TilgangskontrollException("Finner ikke claim $claim i token")
+        }
+    }
+
     fun hentInnloggetBruker(): InnloggetBruker {
-        val fnr = tokenValidationcontextHolder
-            .tokenValidationContext
-            .anyValidClaims
-            .orElseThrow { TilgangskontrollException("Finner ikke token") }
-            .getStringClaim("pid")
-            .let { Fnr(it) }
+        val fnr = Fnr(getStringClaim("pid"))
         return InnloggetBruker(fnr = fnr)
     }
 
-    fun nameOfAppCallingUs(): String? =
-        tokenValidationcontextHolder
-            .tokenValidationContext
-            .getClaims(ISSUER_TOKENX)
-            ?.getStringClaim("client_id")
+    fun nameOfAppCallingUs(): String? = try {
+        getStringClaim("client_id")
+    } catch (e: TilgangskontrollException) {
+        null
+    }
 }
