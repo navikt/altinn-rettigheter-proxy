@@ -20,7 +20,7 @@ accessPolicy:
         namespace: arbeidsgiver
         cluster: dev-gcp/prod-gcp
 ```
-og tilsvarende, må vi legge til dere i vår inbound access policy i [nais/prod-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/prod-gcp.yaml) og [nais/dev-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/dev-gcp.yaml)
+og tilsvarende, må vi legge til dere i vår inbound access policy i [nais/prod-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/main/nais/prod-gcp.yaml) og [nais/dev-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/main/nais/dev-gcp.yaml)
 ```yaml
 accessPolicy:
   inbound:
@@ -34,7 +34,7 @@ I dev, så er det også en vanlig ingress tilgjengelig, `https://altinn-rettighe
 
 # Hvordan ta i bruk proxyen (FSS)
 Fra FSS kan dere nå oss med ingressen `https://altinn-rettigheter-proxy.intern.nav.no/altinn-rettigheter-proxy/`. I dev er URL-en `https://altinn-rettigheter-proxy.intern.dev.nav.no/altinn-rettigheter-proxy`.
-For at den skal fungere, må dere være lagt inn i access policy-en vår i [nais/prod-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/prod-gcp.yaml) og [nais/dev-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/master/nais/dev-gcp.yaml), slik:
+For at den skal fungere, må dere være lagt inn i access policy-en vår i [nais/prod-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/main/nais/prod-gcp.yaml) og [nais/dev-gcp.yaml](https://github.com/navikt/altinn-rettigheter-proxy/blob/main/nais/dev-gcp.yaml), slik:
 ```yaml
 accessPolicy:
   inbound:
