@@ -18,9 +18,8 @@ jobs:
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           team: arbeidsgiver
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: nais/deploy/actions/deploy@v2
         env:
-          IMAGE: ${{ steps.login.outputs.registry }}/altinn-rettigheter-proxy:${{ github.sha }}
+          VAR: image=${{ steps.login.outputs.registry }}/altinn-rettigheter-proxy:${{ github.sha }}
           RESOURCE: nais/dev-gcp.yaml
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
