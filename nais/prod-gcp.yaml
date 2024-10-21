@@ -68,9 +68,9 @@ spec:
 
         - application: presenterte-kandidater-api
           namespace: toi
-          
+
         - application: fia-arbeidsgiver
-          namespace: pia         
+          namespace: pia
 
         - application: dsop-kontroll
           namespace: dsopkontroll
@@ -78,6 +78,9 @@ spec:
 
         - application: fpinntektsmelding
           namespace: teamforeldrepenger
+
+        - application: mulighetsrommet-api
+          namespace: team-mulighetsrommet
 
     outbound:
       external:
