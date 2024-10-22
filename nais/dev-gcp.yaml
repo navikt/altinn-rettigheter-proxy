@@ -44,18 +44,9 @@ spec:
           namespace: arbeidsgiver
           cluster: dev-fss
 
-        - application: min-side-arbeidsgiver-api
-          namespace: fager
-
         - application: ia-tjenester-metrikker
 
-        - application: notifikasjon-bruker-api
-          namespace: fager
-
         - application: tiltak-refusjon-api
-
-        - application: permitteringsskjema-api
-          namespace: permittering-og-nedbemanning
 
         - application: aareg-innsyn-arbeidsgiver-api
           namespace: arbeidsforhold
