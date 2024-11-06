@@ -2,12 +2,14 @@ name: Deploy Redis
 
 on:
   push:
-    paths: ['nais/redis-dev-gcp.yaml', 'nais/redis-prod-gcp.yaml']
+    paths:
+      - nais/redis-dev-gcp.yaml
+      - nais/redis-prod-gcp.yaml
   workflow_dispatch:
 
 jobs:
   deploy-redis-dev-gcp:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/revert-160-revert-157-TAG-2172_nais_aiven_redis'
+    if: github.ref == 'refs/heads/main' || github.ref == 'mv_arbeidsgiver_fager'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,7 +19,7 @@ jobs:
           RESOURCE: nais/redis-dev-gcp.yaml
 
   deploy-redis-prod-gcp:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/TAG-2172_nais_aiven_redis'
+    if: github.ref == 'refs/heads/main'
     needs: deploy-redis-dev-gcp
     runs-on: ubuntu-latest
     steps:

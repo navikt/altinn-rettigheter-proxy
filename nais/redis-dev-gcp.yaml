@@ -3,9 +3,9 @@ kind: Redis
 metadata:
   labels:
     app: altinn-rettigheter-proxy-redis
-    team: arbeidsgiver
+    team: fager
   name: redis-arbeidsgiver-altinnrettigheter
-  namespace: arbeidsgiver
+  namespace: fager
 spec:
   plan: startup-4
   project: nav-dev

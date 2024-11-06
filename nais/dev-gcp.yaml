@@ -2,18 +2,19 @@ apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
   name: altinn-rettigheter-proxy
-  namespace: arbeidsgiver
+  namespace: fager
   labels:
-    team: arbeidsgiver
+    team: fager
 spec:
   image: {{image}}
   port: 8080
-  ingresses:
-    - https://altinn-rettigheter-proxy.intern.dev.nav.no/altinn-rettigheter-proxy
   liveness:
     path: /altinn-rettigheter-proxy/internal/alive
   readiness:
     path: /altinn-rettigheter-proxy/internal/ready
+  prometheus:
+    enabled: true
+    path: /altinn-rettigheter-proxy/internal/actuator/prometheus
   tokenx:
     enabled: true
   maskinporten:
@@ -45,8 +46,10 @@ spec:
           cluster: dev-fss
 
         - application: ia-tjenester-metrikker
+          namespace: arbeidsgiver
 
         - application: tiltak-refusjon-api
+          namespace: arbeidsgiver
 
         - application: aareg-innsyn-arbeidsgiver-api
           namespace: arbeidsforhold
@@ -83,7 +86,4 @@ spec:
     outbound:
       external:
         - host: tt02.altinn.no
-  prometheus:
-    enabled: true
-    path:  /altinn-rettigheter-proxy/internal/actuator/prometheus
 

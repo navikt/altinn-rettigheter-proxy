@@ -2,26 +2,18 @@ apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
   name: altinn-rettigheter-proxy
-  namespace: fager
+  namespace: arbeidsgiver
   labels:
-    team: fager
+    team: arbeidsgiver
 spec:
   image: {{image}}
   port: 8080
-  resources:
-    requests:
-      cpu: 1000m
-      memory: 512Mi
-    limits:
-      cpu: 5000m # https://home.robusta.dev/blog/stop-using-cpu-limits/
-      memory: 1024Mi
+  ingresses:
+    - https://altinn-rettigheter-proxy.intern.dev.nav.no/altinn-rettigheter-proxy
   liveness:
     path: /altinn-rettigheter-proxy/internal/alive
   readiness:
     path: /altinn-rettigheter-proxy/internal/ready
-  prometheus:
-    enabled: true
-    path: /altinn-rettigheter-proxy/internal/actuator/prometheus
   tokenx:
     enabled: true
   maskinporten:
@@ -32,33 +24,42 @@ spec:
   redis:
     - instance: altinnrettigheter
       access: readwrite
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: dev
+    - name: CACHE_TIME_TO_LIVE_MILLIS
+      value: "600000"
+    - name: ALTINN_URL
+      value: "https://tt02.altinn.no"
+  envFrom:
+    - secret: altinn-rettigheter-proxy
   accessPolicy:
     inbound:
       rules:
-
         - application: sykefravarsstatistikk-api
           namespace: arbeidsgiver
-          cluster: prod-fss
+          cluster: dev-fss
 
         - application: tiltaksgjennomforing-api
           namespace: arbeidsgiver
-          cluster: prod-fss
+          cluster: dev-fss
 
         - application: ia-tjenester-metrikker
-          namespace: arbeidsgiver
 
         - application: tiltak-refusjon-api
-          namespace: arbeidsgiver
 
         - application: aareg-innsyn-arbeidsgiver-api
           namespace: arbeidsforhold
-          cluster: prod-fss
+          cluster: dev-fss
 
-        - application: sosialhjelp-avtaler-api
-          namespace: teamdigisos
+        - application: yrkesskade-melding-api
+          namespace: yrkesskade
 
         - application: forebyggingsplan
           namespace: teamia
+
+        - application: sosialhjelp-avtaler-api-dev
+          namespace: teamdigisos
 
         - application: presenterte-kandidater-api
           namespace: toi
@@ -66,23 +67,23 @@ spec:
         - application: fia-arbeidsgiver
           namespace: pia
 
+        - application: dsop-kontroll-q1
+          namespace: dsopkontroll
+          cluster: dev-fss
+
         - application: dsop-kontroll
           namespace: dsopkontroll
-          cluster: prod-fss
+          cluster: dev-fss
 
         - application: fpinntektsmelding
           namespace: teamforeldrepenger
 
+        - application: k9-inntektsmelding
+          namespace: k9saksbehandling
     outbound:
       external:
-        - host: www.altinn.no
+        - host: tt02.altinn.no
+  prometheus:
+    enabled: true
+    path:  /altinn-rettigheter-proxy/internal/actuator/prometheus
 
-  env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: prod
-    - name: CACHE_TIME_TO_LIVE_MILLIS
-      value: "1800000"
-    - name: ALTINN_URL
-      value: "https://www.altinn.no/"
-  envFrom:
-    - secret: altinn-rettigheter-proxy
