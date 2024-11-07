@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy-redis-dev-gcp:
-    if: github.ref == 'refs/heads/main' || github.ref == 'mv_arbeidsgiver_fager'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/mv_arbeidsgiver_fager'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
