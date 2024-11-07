@@ -4,7 +4,7 @@ metadata:
   labels:
     app: altinn-rettigheter-proxy-redis
     team: fager
-  name: redis-arbeidsgiver-altinnrettigheter
+  name: redis-fager-altinnrettigheter
   namespace: fager
 spec:
   plan: startup-4
