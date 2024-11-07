@@ -11,6 +11,9 @@ jobs:
   deploy-redis-dev-gcp:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/mv_arbeidsgiver_fager'
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
@@ -22,6 +25,9 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: deploy-redis-dev-gcp
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
