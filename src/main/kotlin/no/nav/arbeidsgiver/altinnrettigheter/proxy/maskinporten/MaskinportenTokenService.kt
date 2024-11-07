@@ -41,7 +41,7 @@ class MaskinportenTokenService(
         Thread {
             while (true) {
                 try {
-                    logger.info("sjekker om accesstoken er i ferd med å utløpe..")
+                    logger.debug("sjekker om accesstoken er i ferd med å utløpe..")
                     val token = tokenStore.get()
                     if (token == null || token.percentageRemaining() < 50.0) {
                         val newToken = maskinportenClient.fetchNewAccessToken()
