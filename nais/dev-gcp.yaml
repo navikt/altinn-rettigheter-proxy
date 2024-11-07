@@ -8,6 +8,9 @@ metadata:
 spec:
   image: {{image}}
   port: 8080
+  # TODO: før vi overskriver ingress må konsumenter som kaller den få lagt til accessPolicy
+  #ingresses:
+  #  - https://altinn-rettigheter-proxy.intern.dev.nav.no/altinn-rettigheter-proxy
   liveness:
     path: /altinn-rettigheter-proxy/internal/alive
   readiness:

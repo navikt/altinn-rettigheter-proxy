@@ -15,6 +15,9 @@ spec:
     limits:
       cpu: 5000m # https://home.robusta.dev/blog/stop-using-cpu-limits/
       memory: 1024Mi
+  # TODO: før vi overskriver ingress må konsumenter som kaller den få lagt til accessPolicy
+  #ingresses:
+  #  - https://altinn-rettigheter-proxy.intern.nav.no/altinn-rettigheter-proxy/
   liveness:
     path: /altinn-rettigheter-proxy/internal/alive
   readiness:
