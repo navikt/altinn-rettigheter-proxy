@@ -36,6 +36,10 @@ spec:
   accessPolicy:
     inbound:
       rules:
+        - application: tokenx-token-generator
+          namespace: aura
+          cluster: dev-gcp
+
         - application: sykefravarsstatistikk-api
           namespace: arbeidsgiver
           cluster: dev-fss
