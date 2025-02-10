@@ -5,9 +5,9 @@ spring:
     banner-mode: off
   data:
     redis:
-      url: ${REDIS_URI_ALTINNRETTIGHETER:redis://127.0.0.1:6379}
-      username: ${REDIS_USERNAME_ALTINNRETTIGHETER:}
-      password: ${REDIS_PASSWORD_ALTINNRETTIGHETER:}
+      url: ${VALKEY_URI_ALTINNRETTIGHETER:valkey://127.0.0.1:6379}
+      username: ${VALKEY_USERNAME_ALTINNRETTIGHETER:}
+      password: ${VALKEY_PASSWORD_ALTINNRETTIGHETER:}
       timeout: 2000
       lettuce:
         pool:
