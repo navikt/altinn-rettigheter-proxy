@@ -21,7 +21,7 @@ spec:
     scopes:
       consumes:
         - name: "altinn:serviceowner/reportees"
-  redis:
+  valkey:
     - instance: altinnrettigheter
       access: readwrite
   env:
