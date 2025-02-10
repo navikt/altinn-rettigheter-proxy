@@ -18,14 +18,13 @@ class RedisConfig {
         @Value("\${spring.data.redis.password}") password: String,
         @Value("\${spring.data.redis.username}") username: String,
     ): LettuceConnectionFactory {
-        val redisURI = RedisURI.create(url)
+        val isSsl = url.toString().startsWith("valkeys")
         return LettuceConnectionFactory(
             RedisStandaloneConfiguration(url.host, url.port).apply {
                 setUsername(username)
                 setPassword(password)
-                database = redisURI.database
             }, LettuceClientConfiguration.builder().apply {
-                if (redisURI.isSsl) {
+                if (isSsl) {
                     useSsl()
                 }
             }.build()
