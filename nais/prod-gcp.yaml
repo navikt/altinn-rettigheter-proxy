@@ -43,25 +43,14 @@ spec:
           namespace: arbeidsgiver
           cluster: prod-fss
 
-        - application: ia-tjenester-metrikker
-
         - application: tiltak-refusjon-api
 
         - application: aareg-innsyn-arbeidsgiver-api
           namespace: arbeidsforhold
           cluster: prod-fss
 
-        - application: sosialhjelp-avtaler-api
-          namespace: teamdigisos
-
-        - application: forebyggingsplan
-          namespace: teamia
-
         - application: presenterte-kandidater-api
           namespace: toi
-          
-        - application: fia-arbeidsgiver
-          namespace: pia         
 
         - application: dsop-kontroll
           namespace: dsopkontroll
