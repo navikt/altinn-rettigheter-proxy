@@ -48,8 +48,6 @@ spec:
           namespace: arbeidsgiver
           cluster: dev-fss
 
-        - application: ia-tjenester-metrikker
-
         - application: tiltak-refusjon-api
 
         - application: aareg-innsyn-arbeidsgiver-api
@@ -59,17 +57,8 @@ spec:
         - application: yrkesskade-melding-api
           namespace: yrkesskade
 
-        - application: forebyggingsplan
-          namespace: teamia
-
-        - application: sosialhjelp-avtaler-api-dev
-          namespace: teamdigisos
-
         - application: presenterte-kandidater-api
           namespace: toi
-
-        - application: fia-arbeidsgiver
-          namespace: pia
 
         - application: dsop-kontroll-q1
           namespace: dsopkontroll
