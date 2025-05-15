@@ -8,7 +8,7 @@ Denne applikasjonen er en proxy mot Altinn 2 api for tilganger. Altinn 2 APIer e
 Dere kan allerede i dag bytte ut altinn 2 med altinn 3 uten å migrere noe, og vi har en ny applikasjon [arbeidsgiver-altinn-tilganger](https://github.com/navikt/arbeidsgiver-altinn-tilganger) som kan hjelpe med dette arbeidet.
 Den nye applikasjonen er også plug n play med ny [virksomhetsvelger](https://github.com/navikt/virksomhetsvelger/)
 
-Vi bistår gjerne med å hjelpe dere ut av altinn 2 / `altinn-rettigheter-proxy` og over til altinn 3 / `arbeidsgiver-altinn-tilganger`.
+Vi bistår gjerne med å få dere ut av altinn 2 / `altinn-rettigheter-proxy` og over til altinn 3 / `arbeidsgiver-altinn-tilganger`.
 
 Ta kontakt med oss på #team-fager hvis dere har spørsmål eller ønsker hjelp til å migrere.
 
