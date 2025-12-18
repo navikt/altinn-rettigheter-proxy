@@ -14,7 +14,6 @@ mock:
 altinn:
   url: "http://localhost:${mock.port}/altinn/"
   apikey: "test"
-  apigw.apikey: "test"
 
 no.nav.security.jwt:
   issuer:
