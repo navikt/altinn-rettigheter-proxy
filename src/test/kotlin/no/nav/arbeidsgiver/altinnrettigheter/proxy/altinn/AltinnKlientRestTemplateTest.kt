@@ -134,7 +134,7 @@ class AltinnKlientRestTemplateTest {
     }
 
     @Test
-    fun altinnKlient_hentOrganisasjoner_kaster_ProxyHttpStatusCodeException_med_HttpStatus_502_dersom_ApiGw_returnerer_502() {
+    fun altinnKlient_hentOrganisasjoner_kaster_ProxyHttpStatusCodeException_med_HttpStatus_502_dersom_Api_returnerer_502() {
         server.expect(
                 ExpectedCount.once(),
                 requestTo(

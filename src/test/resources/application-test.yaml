@@ -6,7 +6,6 @@ spring:
 altinn:
   url: "http://local.test/"
   apikey: "test"
-  apigw.apikey: "test"
 
 no.nav.security.jwt:
   issuer:
